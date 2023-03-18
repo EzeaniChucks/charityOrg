@@ -1,6 +1,11 @@
 import styles2 from "../auth/auth.module.css";
 
-const Register = ({ isLogin, setIsLogin }) => {
+type Props = {
+  isLogin: Boolean;
+  // setIsLogin: (isLogin:boolean) => boolean
+  setIsLogin: React.Dispatch<React.SetStateAction<boolean>>;
+};
+const Register = ({ isLogin, setIsLogin }: Props) => {
   return (
     <div className={styles2.formContainer}>
       <h1>Register</h1>

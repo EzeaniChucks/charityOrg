@@ -7,7 +7,12 @@ import styles2 from "../components/auth/auth.module.css";
 import { useState } from "react";
 
 // const inter = Inter({ subsets: ["latin"] });
+// interface log {
+//   isLogin: any
+// }
+// type Props = {
 
+// }
 export default function Home() {
   const [isLogin, setIsLogin] = useState(true);
   return (
