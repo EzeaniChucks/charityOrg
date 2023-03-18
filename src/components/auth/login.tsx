@@ -11,7 +11,7 @@ const Login = ({ isLogin, setIsLogin }) => {
         Password : <input type={"password"} />
       </label>
       <p>
-        Don't have an account?{" "}
+        No account created yet?{" "}
         <span onClick={() => setIsLogin(!isLogin)}>Register</span>
       </p>
     </div>
