@@ -11,13 +11,8 @@ const ParticlesComp = () => {
   }, []);
 
   const options = useMemo(() => {
+    // return {}
     return {
-      background: {
-        // color: { value: "#000000" },
-      },
-      backgroundMask: {
-        // enable: true,
-      },
       fpsLimit: 120,
       interactivity: {
         events: {
@@ -50,20 +45,13 @@ const ParticlesComp = () => {
           enable: true,
         },
         move: {
-          direction: "right",
           enable: true,
-          outModes: {
-            default: "out",
-          },
+          direction: 360,
+          out_modes: "out",
           random: false,
           speed: 6,
           straight: false,
         },
-        // attract: {
-        //   enable: false,
-        //   rotateX: 600,
-        //   rotateY: 1200,
-        // },
         number: {
           density: {
             enable: true,
@@ -92,8 +80,8 @@ const ParticlesComp = () => {
   return (
     <Particles
       init={particlesInit}
-      loaded={particlesLoaded}
       options={options}
+      loaded={particlesLoaded}
     />
   );
 };

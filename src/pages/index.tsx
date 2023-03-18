@@ -1,10 +1,8 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
+import Head from "next/head";
+import { Inter } from "next/font/google";
 import Login from "../components/auth/login";
 import Register from "@/components/auth/register";
 import ParticlesComp from "@/components/ParticlesComp";
-import styles from "../styles/Home.module.css";
 import styles2 from "../components/auth/auth.module.css";
 import { useState } from "react";
 
