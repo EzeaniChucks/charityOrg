@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import PhoneInput from "react-phone-number-input";
+import DatePicker from "react-datepicker";
 import "react-phone-number-input/style.css";
 import styles2 from "../auth/auth.module.css";
 
@@ -10,6 +11,7 @@ type Props = {
 
 const Register = ({ isLogin, setIsLogin }: Props) => {
   const [value, setValue] = useState("");
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [tabStatus, setTabStatus] = useState("general");
 
   const handleNext = () => {
@@ -40,12 +42,23 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
             <input type={"text"} placeholder={"as seen on your ID"} />
           </label>
           <label>
-            Date of birth: <input />
+            Date of birth:{" "}
+            <DatePicker
+              placeholderText="enter date"
+              selected={selectedDate}
+              dateFormat="dd/MM/yyyy"
+              onChange={(date: Date) => {
+                setSelectedDate(date);
+                console.log(date);
+              }}
+              showYearDropdown
+              scrollableYearDropdown
+            />
           </label>
           <label>
             Phone :{" "}
             <PhoneInput
-              placeholder="Enter your phone number"
+              placeholder="enter your phone number"
               value={value}
               onChange={() => setValue(value)}
             />
@@ -68,8 +81,8 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
       {tabStatus === "account" && (
         <div className={styles2.account_details}>
           <h5>
-            Please enter card details below for online payment (You may skip
-            this process but it is highly recommended)
+            Provide card details to use online transaction (You may skip this
+            process but it is necessary for donation)
           </h5>
           <label>
             Card Number: <input />
@@ -79,7 +92,7 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
               Expiration Date: <input />
             </label>
             <label>
-              CSV: <input />
+              CVV: <input />
             </label>
           </div>
           <div className={styles2.back_skip_btns}>
