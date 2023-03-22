@@ -9,12 +9,15 @@ const Login = ({ isLogin, setIsLogin }: Props) => {
   return (
     <div className={styles2.formContainer}>
       <h1>Login</h1>
-      <label>
-        Email : <input type={"email"} />
-      </label>
-      <label>
-        Password : <input type={"password"} />
-      </label>
+      <div className={styles2.general_details}>
+        <label>
+          Email : <input type={"email"} />
+        </label>
+        <label>
+          Password : <input type={"password"} />
+        </label>
+      </div>
+      <h5>Forgot password?</h5>
       <p>
         No account created yet?{" "}
         <span onClick={() => setIsLogin(!isLogin)}>Register</span>

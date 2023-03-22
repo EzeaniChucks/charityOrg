@@ -19,6 +19,7 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.8.0",
     "react-particles": "^2.9.3",
+    "react-phone-number-input": "^3.2.19",
     "react-tsparticles": "^2.9.3",
     "tsparticles": "^2.9.3",
     "tsparticles-engine": "^2.9.3",
