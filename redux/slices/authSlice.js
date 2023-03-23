@@ -1,12 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const initialState = {};
+const initialState = {
+  error: { type: "", msg: "" },
+};
 
 const userSlice = createSlice({
   name: "UserSlice",
   initialState,
-  reducers: {},
+  reducers: {
+    logError: (state, { payload }) => {
+      state.error.type = payload.type;
+      state.error.msg = payload.msg;
+    },
+  },
 });
 
-export const {} = userSlice.actions;
+export const { logError } = userSlice.actions;
 export default userSlice.reducer;

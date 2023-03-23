@@ -172,6 +172,20 @@
     margin-top: -5px;
     margin-bottom: 10px;
 }
+.right .formContainer .account_details>h6{
+    color: tomato;
+    text-align: center;
+    width: 100%;
+    letter-spacing: 2px;
+    margin-top: -10px;
+}
+.right .formContainer .general_details>h6{
+    color: tomato;
+    text-align: center;
+    width: 100%;
+    letter-spacing: 2px;
+    margin-top: -10px;
+}
 .right .formContainer label{
     display: grid;
     grid-template-columns: 1fr 3fr;

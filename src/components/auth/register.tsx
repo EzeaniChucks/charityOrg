@@ -3,6 +3,7 @@ import PhoneInput from "react-phone-number-input";
 import DatePicker from "react-datepicker";
 import "react-phone-number-input/style.css";
 import styles2 from "../auth/auth.module.css";
+import { useDispatch, useSelector } from "react-redux";
 
 type Props = {
   isLogin: Boolean;
@@ -11,11 +12,15 @@ type Props = {
 
 const Register = ({ isLogin, setIsLogin }: Props) => {
   const [value, setValue] = useState("");
-  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [tabStatus, setTabStatus] = useState("step1");
+  const { error } = useSelector((store: any) => store?.user);
+
+  const dispatch = useDispatch();
 
   const handleNext = () => {
     setTabStatus("step2");
+    // if (selectedDate) console.log(selectedDate - Date.now());
   };
   const handleSubmit = () => {
     // setTabStatus("step2");
@@ -33,10 +38,12 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
             First name :{" "}
             <input type={"text"} placeholder={"as written on your ID"} />
           </label>
+          {error.type === "firstName" && <h6>{error.msg}</h6>}
           <label>
             Last name :{" "}
             <input type={"text"} placeholder={"as written on your ID"} />
           </label>
+          {error.type === "lastName" && <h6>{error.msg}</h6>}
           <label>
             Date of birth:{" "}
             <DatePicker
@@ -62,6 +69,7 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
               }
             /> */}
           </label>
+          {error.type === "dateOfBirth" && <h6>{error.msg}</h6>}
           <label>
             Phone :{" "}
             <PhoneInput
@@ -70,18 +78,24 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
               onChange={() => setValue(value)}
             />
           </label>
+          {error.type === "phoneNumber" && <h6>{error.msg}</h6>}
           <label>
             Email : <input type={"email"} />
           </label>
+          {error.type === "email" && <h6>{error.msg}</h6>}
           <label>
             Password : <input type={"password"} />
           </label>
+          {error.type === "password" && <h6>{error.msg}</h6>}
           <label>
             Confirm Password : <input type={"password"} />
           </label>
+          {error.type === "confirmPass" && <h6>{error.msg}</h6>}
           <label>
             PromoCode/ Referral (optional) : <input type={"password"} />
           </label>
+          {error.type === "promoCode" && <h6>{error.msg}</h6>}
+          {error.type === "nextError" && <h6>{error.msg}</h6>}
           <button className={styles2.btn} onClick={handleNext}>
             NEXT
           </button>
@@ -90,12 +104,13 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
       {tabStatus === "step2" && (
         <div className={styles2.account_details}>
           <h5>
-            Provide card details to use online transaction (You may skip this
-            process but it is necessary for donation)
+            Enter card details for online transaction (You can skip this process
+            but it is necessary for donation)
           </h5>
           <label>
             Card Number: <input />
           </label>
+          {error.type === "cardNumber" && <h6>{error.msg}</h6>}
           <div className={styles2.expiration_input}>
             <label>
               Expiration Date: <input />
@@ -104,6 +119,8 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
               CVV: <input />
             </label>
           </div>
+          {error.type === "expireDate" && <h6>{error.msg}</h6>}
+          {error.type === "cvv" && <h6>{error.msg}</h6>}
           <div className={styles2.back_skip_btns}>
             <button
               className={styles2.btn}
@@ -113,13 +130,14 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
             </button>
             <button className={styles2.btn}>{"skip -->"}</button>
           </div>
+          {error.type === "submit_error" && <h6>{error.msg}</h6>}
           <button className={styles2.btn} onClick={handleSubmit}>
             SUBMIT
           </button>
         </div>
       )}
       <p>
-        Already have an step2?{" "}
+        Already have an account?{" "}
         <span onClick={() => setIsLogin(!isLogin)}>Login</span>
       </p>
     </div>
