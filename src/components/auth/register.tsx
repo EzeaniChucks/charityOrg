@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import PhoneInput from "react-phone-number-input";
 import DatePicker from "react-datepicker";
 import "react-phone-number-input/style.css";
@@ -11,7 +11,7 @@ type Props = {
 
 const Register = ({ isLogin, setIsLogin }: Props) => {
   const [value, setValue] = useState("");
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>();
   const [tabStatus, setTabStatus] = useState("step1");
 
   const handleNext = () => {
@@ -31,25 +31,36 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
         <div className={styles2.general_details}>
           <label>
             First name :{" "}
-            <input type={"text"} placeholder={"as seen on your ID"} />
+            <input type={"text"} placeholder={"as written on your ID"} />
           </label>
           <label>
             Last name :{" "}
-            <input type={"text"} placeholder={"as seen on your ID"} />
+            <input type={"text"} placeholder={"as written on your ID"} />
           </label>
           <label>
             Date of birth:{" "}
             <DatePicker
-              placeholderText="enter date"
+              placeholderText="day/month/year e.g 01/01/2000"
               selected={selectedDate}
               dateFormat="dd/MM/yyyy"
               onChange={(date: Date) => {
                 setSelectedDate(date);
-                console.log(date);
               }}
               showYearDropdown
               scrollableYearDropdown
             />
+            {/* <DayPicker
+              mode="single"
+              selected={selectedDate}
+              onSelect={setSelectedDate}
+              footer={
+                !selectedDate ? (
+                  <p>Please pick date</p>
+                ) : (
+                  <p>You picked {format(selectedDate, "PP")}.</p>
+                )
+              }
+            /> */}
           </label>
           <label>
             Phone :{" "}
@@ -71,7 +82,9 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
           <label>
             PromoCode/ Referral (optional) : <input type={"password"} />
           </label>
-          <button onClick={handleNext}>NEXT</button>
+          <button className={styles2.btn} onClick={handleNext}>
+            NEXT
+          </button>
         </div>
       )}
       {tabStatus === "step2" && (
@@ -92,10 +105,17 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
             </label>
           </div>
           <div className={styles2.back_skip_btns}>
-            <button onClick={() => setTabStatus("step1")}>{"<-- back"}</button>
-            <button>{"skip -->"}</button>
+            <button
+              className={styles2.btn}
+              onClick={() => setTabStatus("step1")}
+            >
+              {"<-- back"}
+            </button>
+            <button className={styles2.btn}>{"skip -->"}</button>
           </div>
-          <button onClick={handleSubmit}>SUBMIT</button>
+          <button className={styles2.btn} onClick={handleSubmit}>
+            SUBMIT
+          </button>
         </div>
       )}
       <p>
