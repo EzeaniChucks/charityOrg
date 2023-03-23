@@ -12,26 +12,22 @@ type Props = {
 const Register = ({ isLogin, setIsLogin }: Props) => {
   const [value, setValue] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [tabStatus, setTabStatus] = useState("general");
+  const [tabStatus, setTabStatus] = useState("step1");
 
   const handleNext = () => {
-    setTabStatus("account");
+    setTabStatus("step2");
   };
   const handleSubmit = () => {
-    // setTabStatus("account");
+    // setTabStatus("step2");
   };
   return (
     <div className={styles2.formContainer}>
       <h1>Register</h1>
       <div className={styles2.stepTabs}>
-        <h3 className={tabStatus === "general" ? styles2.active : ""}>
-          General
-        </h3>
-        <h3 className={tabStatus === "account" ? styles2.active : ""}>
-          Account
-        </h3>
+        <h3 className={tabStatus === "step1" ? styles2.active : ""}>Step 1</h3>
+        <h3 className={tabStatus === "step2" ? styles2.active : ""}>Step 2</h3>
       </div>
-      {tabStatus === "general" && (
+      {tabStatus === "step1" && (
         <div className={styles2.general_details}>
           <label>
             First name :{" "}
@@ -78,7 +74,7 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
           <button onClick={handleNext}>NEXT</button>
         </div>
       )}
-      {tabStatus === "account" && (
+      {tabStatus === "step2" && (
         <div className={styles2.account_details}>
           <h5>
             Provide card details to use online transaction (You may skip this
@@ -96,16 +92,14 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
             </label>
           </div>
           <div className={styles2.back_skip_btns}>
-            <button onClick={() => setTabStatus("general")}>
-              {"<-- back"}
-            </button>
+            <button onClick={() => setTabStatus("step1")}>{"<-- back"}</button>
             <button>{"skip -->"}</button>
           </div>
           <button onClick={handleSubmit}>SUBMIT</button>
         </div>
       )}
       <p>
-        Already have an account?{" "}
+        Already have an step2?{" "}
         <span onClick={() => setIsLogin(!isLogin)}>Login</span>
       </p>
     </div>
