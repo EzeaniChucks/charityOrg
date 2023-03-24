@@ -1,0 +1,10 @@
+.section_flex_center{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 15vh;
+    width: 100%;
+    min-height: 100vh;
+    height: fit-content;
+    font-family: sans-serif;
+}

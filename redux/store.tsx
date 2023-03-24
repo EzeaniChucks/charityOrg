@@ -6,3 +6,6 @@ export const store = configureStore({
     user: userSlice,
   },
 });
+
+export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>;
