@@ -30,6 +30,21 @@ export const register = createAsyncThunk(
     }
   }
 );
+export const login = createAsyncThunk(
+  "auth/login",
+  async (prop: { email: string; password: string }, thunk) => {
+    try {
+      const { data }: { data: string } = await axios.post(
+        `${conString}/auth/login`,
+        prop,
+        {}
+      );
+      return data;
+    } catch (err: any) {
+      return thunk.rejectWithValue(err.message);
+    }
+  }
+);
 export const verify = createAsyncThunk(
   "auth/verify",
   async (prop: ParsedUrlQuery, thunk) => {
@@ -59,9 +74,9 @@ const initialState: Obj = {
   expirationDate: Date(),
   cvv: "",
   loading: false,
-  error: { type: "", msg: "" },
+  error: { type: "", msg: "", code: "" },
   userState: "not registered",
-  verification_status: "",
+  verification_status: false,
 };
 
 const userSlice = createSlice({
@@ -87,8 +102,23 @@ const userSlice = createSlice({
     });
     builder.addCase(register.rejected, (state: any, { payload }) => {
       state.loading = false;
-      state.error = { type: "server_response", msg: payload };
+      state.error = { type: "server_error", msg: payload };
     });
+
+    ///new group
+    builder.addCase(login.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(login.fulfilled, (state: any, { payload }) => {
+      state.loading = false;
+      state.user = payload;
+    });
+    builder.addCase(login.rejected, (state: any, { payload }) => {
+      state.loading = false;
+      state.error = { type: "server_error", msg: payload, code: payload };
+    });
+
+    ///new group
     builder.addCase(verify.pending, (state: any) => {
       state.loading = true;
       state.verification_status = "";

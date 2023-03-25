@@ -31,7 +31,7 @@ export interface Obj {
   cvv: string;
   expirationDate: string;
   loading?: boolean;
-  error?: { type: string; msg: string };
+  error?: { type: string; msg: string; code?: "" };
   userState?: string;
   verification_status?: any;
 }

@@ -14,7 +14,7 @@ const Verify = () => {
   );
 
   const dispatch = useDispatch<AppDispatch>();
-  const { query, isReady } = useRouter();
+  const { query, isReady, push } = useRouter();
 
   useEffect(() => {
     if (isReady) dispatch(verify(query));
@@ -42,8 +42,12 @@ const Verify = () => {
           {error.type === "server_error" && <h2>{error.msg}</h2>}
           {user && (
             <>
-              <h2>Hi, {user.user.firstName},</h2>
+              <h2>Hi, {user.user.firstName}</h2>
               <h3>{user.msg}</h3>
+              <p>
+                You can now login.{" "}
+                <span onClick={() => push("/")}>Click here</span>
+              </p>
             </>
           )}
         </div>
