@@ -58,9 +58,19 @@
 
 .section_flex_center h2{
     color: rgb(160, 160, 160);
+    margin: 10px;
 }
 .section_flex_center h3{
     color: rgb(160, 160, 160);
+    margin: 10px;
+}
+.section_flex_center p{
+    margin: 8px;
+    color: gray;
+}
+.section_flex_center p span{
+    color: aqua;
+    cursor: pointer;
 }
 .left{
     display: flex;
@@ -110,7 +120,7 @@
     /* padding-left: 50px; */
 }
 
-.right .formContainer{
+.formContainer{
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -130,7 +140,7 @@
     animation-delay: 1s;
     animation-fill-mode: forwards;
 }
-.right .formContainer .stepTabs{
+.formContainer .stepTabs{
     display: grid;
     grid-template-columns: 1fr 1fr;
     place-items: center;
@@ -140,16 +150,16 @@
     font-size: 0.9rem;
     background-color: rgb(65, 65, 65, 0.5);
 }
-.right .formContainer .stepTabs h3{
+.formContainer .stepTabs h3{
     color: rgb(71, 71, 71);
 }
-.right .formContainer .stepTabs .active{
+.formContainer .stepTabs .active{
     color: rgb(139, 139, 139);
 }
-.right .formContainer .stepTabs h3{
+.formContainer .stepTabs h3{
     pointer-events: none;
 }
-.right .formContainer h1{
+.formContainer h1{
     text-align: center;
     width: 100%;
     font-size: 1.5rem;
@@ -158,7 +168,7 @@
     color: grey;
 }
 
-.right .formContainer h5{
+.formContainer h5{
     color: rgb(216, 215, 215);
     text-align: left;
     width: 100%;
@@ -166,44 +176,44 @@
     cursor: pointer;
     padding-left: 5%;
 }
-.right .formContainer p{
+.formContainer p{
     text-align: center;
     width: 100%;
     margin-top: 20px;
     color: grey;
 }
-.right .formContainer p span{
+.formContainer p span{
     color: turquoise;
     cursor: pointer;
 }
 
-.right .formContainer .general_details,.account_details{
+.general_details,.account_details{
     display: flex;
     flex-direction: column;
     gap: 15px;
     width: 100%;
     padding: 10px 15px 3px 15px;
 }
-.right .formContainer .account_details h5{
+.account_details h5{
     color: rgb(95, 95, 95);
     margin-top: -5px;
     margin-bottom: 10px;
 }
-.right .formContainer .account_details>h6{
+.account_details>h6{
     color: tomato;
     text-align: center;
     width: 100%;
     letter-spacing: 2px;
     margin-top: -10px;
 }
-.right .formContainer .general_details>h6{
+.general_details h6{
     color: tomato;
     text-align: center;
     width: 100%;
     letter-spacing: 2px;
     margin-top: -10px;
 }
-.right .formContainer label{
+.formContainer label{
     display: grid;
     grid-template-columns: 1fr 3fr;
     align-items: center;
@@ -212,7 +222,7 @@
     font-size: 0.85rem;
     color: rgb(156, 156, 156);
 }
-.right .formContainer label input{
+.formContainer label input{
     border-radius: 10px;
     padding: 5px 10px;
     font-size: 1rem;
@@ -224,23 +234,30 @@
     color: rgb(247, 189, 189);
     font-weight: 100;
 }
-.right .formContainer .expiration_input{
+.formContainer .expiration_input{
     display: flex;
     gap: 15px;
 }
-.right .formContainer .expiration_input input {
+.formContainer>h6{
+    color: rgb(212, 157, 147);
+    text-align: center;
+    width: 100%;
+    text-transform: capitalize;
+    margin: 10px 5px;
+}
+.formContainer .expiration_input input {
     min-width: 50%;
 }
-.right .formContainer .back_skip_btns{
+.formContainer .back_skip_btns{
     display: flex;
     margin-bottom: 10px;
     gap: 10px;
 }
-.right .formContainer .back_skip_btns>button{
+.formContainer .back_skip_btns>button{
     background-color: rgba(46, 56, 53, 0.4);
     color: rgb(138, 138, 138);
 }
-.right .formContainer .back_skip_btns>button:hover{
+.formContainer .back_skip_btns>button:hover{
     background-color: rgba(77, 90, 86, 0.4);
 }
 .right .formContainer .btn{

@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { ReactEventHandler } from "react";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import {
   login,
   updateFormValues,
@@ -38,9 +39,6 @@ const Login = ({ isLogin, setIsLogin }: Props) => {
       password,
     };
     await dispatch(login(finalObject));
-    if (user.user) {
-      push("/dashboard");
-    }
   };
   const handleChange: ReactEventHandler = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -48,6 +46,12 @@ const Login = ({ isLogin, setIsLogin }: Props) => {
     const { name, value }: { name: string; value: any } = e.target;
     dispatch(updateFormValues({ name, value }));
   };
+  useEffect(() => {
+    if (user?.user) {
+      push("/dashboard");
+    }
+  }, [user?.user]);
+
   return (
     <div className={styles2.formContainer}>
       <h1>Login</h1>

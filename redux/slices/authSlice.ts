@@ -26,7 +26,9 @@ export const register = createAsyncThunk(
       );
       return data;
     } catch (err: any) {
-      return thunk.rejectWithValue(err.message);
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
     }
   }
 );
@@ -41,7 +43,9 @@ export const login = createAsyncThunk(
       );
       return data;
     } catch (err: any) {
-      return thunk.rejectWithValue(err.message);
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
     }
   }
 );
@@ -55,7 +59,9 @@ export const verify = createAsyncThunk(
       );
       return data;
     } catch (err: any) {
-      return thunk.rejectWithValue(err.message);
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
     }
   }
 );
@@ -75,7 +81,7 @@ const initialState: Obj = {
   cvv: "",
   loading: false,
   error: { type: "", msg: "", code: "" },
-  userState: "not registered",
+  afterRegistration: "",
   verification_status: false,
 };
 
@@ -93,21 +99,25 @@ const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    ///REGISTER
     builder.addCase(register.pending, (state: any) => {
       state.loading = true;
+      state.afterRegistration = "";
     });
     builder.addCase(register.fulfilled, (state: any, { payload }) => {
       state.loading = false;
-      state.userState = payload;
+      state.afterRegistration = payload;
     });
     builder.addCase(register.rejected, (state: any, { payload }) => {
       state.loading = false;
       state.error = { type: "server_error", msg: payload };
+      state.afterRegistration = ""
     });
 
-    ///new group
+    ///LOGIN
     builder.addCase(login.pending, (state: any) => {
       state.loading = true;
+      state.user = null;
     });
     builder.addCase(login.fulfilled, (state: any, { payload }) => {
       state.loading = false;
@@ -115,10 +125,11 @@ const userSlice = createSlice({
     });
     builder.addCase(login.rejected, (state: any, { payload }) => {
       state.loading = false;
+      state.user = null;
       state.error = { type: "server_error", msg: payload, code: payload };
     });
 
-    ///new group
+    ///VERIFY
     builder.addCase(verify.pending, (state: any) => {
       state.loading = true;
       state.verification_status = "";

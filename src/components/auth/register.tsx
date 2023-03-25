@@ -1,4 +1,4 @@
-import { ReactEventHandler, useState } from "react";
+import { ReactEventHandler, useState, useEffect } from "react";
 import PhoneInput from "react-phone-number-input";
 import DatePicker from "react-datepicker";
 import moment from "moment";
@@ -11,6 +11,7 @@ import {
   register,
   updateFormValues,
 } from "../../../redux/slices/authSlice";
+import { useRouter } from "next/router";
 
 type Props = {
   isLogin: Boolean;
@@ -32,12 +33,13 @@ export interface Obj {
   expirationDate: string;
   loading?: boolean;
   error?: { type: string; msg: string; code?: "" };
-  userState?: string;
+  afterRegistration?: string;
   verification_status?: any;
 }
 
 const Register = ({ isLogin, setIsLogin }: Props) => {
   const {
+    user,
     firstName,
     lastName,
     email,
@@ -49,10 +51,11 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
     cardNumber,
     cvv,
     expirationDate,
+    afterRegistration,
   } = useSelector((store: any) => store.user);
   const [tabStatus, setTabStatus] = useState("step1");
   const { error } = useSelector((store: any) => store?.user);
-
+  const { push } = useRouter();
   const dispatch = useDispatch<AppDispatch>();
 
   const handleChange: ReactEventHandler = (
@@ -132,6 +135,13 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
 
     return dispatch(register(finalObject));
   };
+
+  useEffect(() => {
+    if (afterRegistration) {
+      push("/verify_notify");
+    }
+  }, [afterRegistration]);
+
   return (
     <div className={styles2.formContainer}>
       <h1>Register</h1>
@@ -277,7 +287,7 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
               />
             </label>
             <label>
-              CVV:{" "}
+              CVC:{" "}
               <input
                 type={"number"}
                 value={cvv}
@@ -300,6 +310,7 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
             <button className={styles2.btn}>{"skip -->"}</button>
           </div>
           {error.type === "submit_error" && <h6>{error.msg}</h6>}
+          {error.type === "server_error" && <h6>{error.msg}</h6>}
           <button className={styles2.btn} onClick={handleSubmit}>
             SUBMIT
           </button>
