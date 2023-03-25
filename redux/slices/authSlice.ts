@@ -3,11 +3,11 @@ import { Obj } from "@/components/auth/register";
 import { RootState } from "../store";
 import axios from "axios";
 import { ParsedUrlQuery } from "querystring";
-import { config } from "process";
 
 // const conString = "https://charityapp-381314.uc.r.appspot.com";
 // const conString = "http://localhost:8080";
-const conString = "https://charityapp2.uc.r.appspot.com";
+// const conString = "https://charityapp2.uc.r.appspot.com";
+const conString = "https://charityorg.onrender.com";
 export const register = createAsyncThunk(
   "auth/register",
   async (prop: Obj, thunk) => {
