@@ -107,11 +107,18 @@ const userSlice = createSlice({
     builder.addCase(register.fulfilled, (state: any, { payload }) => {
       state.loading = false;
       state.afterRegistration = payload;
+      state.firstName = "";
+      state.password = "";
+      state.confirmPass = "";
+      state.phoneNumber = "+234";
+      state.cardNumber = "";
+      state.cvv = "";
+      state.promoCode = "";
     });
     builder.addCase(register.rejected, (state: any, { payload }) => {
       state.loading = false;
       state.error = { type: "server_error", msg: payload };
-      state.afterRegistration = ""
+      state.afterRegistration = "";
     });
 
     ///LOGIN
@@ -145,7 +152,6 @@ const userSlice = createSlice({
         msg: "Something went wrong. Please try again",
         code: payload,
       };
-      // state.verification_status = payload;
     });
   },
 });

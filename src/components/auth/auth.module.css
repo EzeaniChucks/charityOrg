@@ -49,6 +49,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 20px;
     padding-top: 15vh;
     width: 100%;
     min-height: 100vh;
@@ -58,12 +59,19 @@
 
 .section_flex_center h2{
     color: rgb(160, 160, 160);
-    margin: 10px;
+    text-align: center;
+    margin: 10px 15px;
 }
 .section_flex_center h3{
     color: rgb(160, 160, 160);
-    margin: 10px;
+    text-align: center;
+    margin: 10px 15px;
 }
+.section_flex_center h3 span{
+    font-style: italic;
+    color: rgb(26, 148, 107);
+}
+
 .section_flex_center p{
     margin: 8px;
     color: gray;
@@ -117,7 +125,6 @@
     padding: 20px;
     width: 100%;
     padding-top: 5vh;
-    /* padding-left: 50px; */
 }
 
 .formContainer{
@@ -128,7 +135,6 @@
     min-width: 250px;
     max-width: 400px;
     height: fit-content;
-    /* border: 1px solid rgb(56, 11, 122); */
     border-radius: 10px;
     background-color: rgba(40, 29, 70, 0.3);
     padding: 20px 0px;
@@ -239,7 +245,7 @@
     gap: 15px;
 }
 .formContainer>h6{
-    color: rgb(212, 157, 147);
+    color: tomato;
     text-align: center;
     width: 100%;
     text-transform: capitalize;

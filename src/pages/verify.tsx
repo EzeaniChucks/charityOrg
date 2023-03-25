@@ -6,12 +6,9 @@ import { useRouter } from "next/router";
 import { AppDispatch } from "../../redux/store";
 import Head from "next/head";
 import styles from "../components/auth/auth.module.css";
-// import styles2 from "../styles/Home.module.css";
 
 const Verify = () => {
-  const { verification_status, user, error } = useSelector(
-    (store: any) => store.user
-  );
+  const { user, error } = useSelector((store: any) => store.user);
 
   const dispatch = useDispatch<AppDispatch>();
   const { query, isReady, push } = useRouter();
