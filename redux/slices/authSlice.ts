@@ -3,14 +3,26 @@ import { Obj } from "@/components/auth/register";
 import { RootState } from "../store";
 import axios from "axios";
 import { ParsedUrlQuery } from "querystring";
+import { config } from "process";
 
+// const conString = "https://charityapp-381314.uc.r.appspot.com";
+// const conString = "http://localhost:8080";
+const conString = "https://charityapp2.uc.r.appspot.com";
 export const register = createAsyncThunk(
   "auth/register",
   async (prop: Obj, thunk) => {
     try {
+      // const data = await fetch(`${conString}/auth/register`, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(prop),
+      // });
       const { data }: { data: string } = await axios.post(
-        "https://charityapp-381314.uc.r.appspot.com/auth/register",
-        prop
+        `${conString}/auth/register`,
+        prop,
+        {}
       );
       return data;
     } catch (err: any) {
@@ -23,7 +35,7 @@ export const verify = createAsyncThunk(
   async (prop: ParsedUrlQuery, thunk) => {
     try {
       const { data }: { data: any } = await axios.post(
-        "https://charityapp-381314.uc.r.appspot.com/auth/verify-email",
+        `${conString}/auth/verify-email`,
         prop
       );
       return data;
