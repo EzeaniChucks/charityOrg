@@ -28,11 +28,16 @@ const Verify = () => {
       </Head>
       <main className={styles.container}>
         <nav className={styles.nav}>
-          <div className={styles.logo}>Logo</div>
+          <img
+            onClick={() => push("/")}
+            className={styles.logo}
+            src="/charityApp.png"
+            alt="CharLogo"
+          />
           <ul className={styles.menu}>
             <li>Wallet</li>
-            <li>Course</li>
-            <li>Theme</li>
+            <li>Event</li>
+            <li>Settings</li>
           </ul>
         </nav>
         <div className={styles.section_flex_center}>

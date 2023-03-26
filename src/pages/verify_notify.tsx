@@ -1,17 +1,24 @@
 import ParticlesComp from "@/components/ParticlesComp";
+import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import styles2 from "../components/auth/auth.module.css";
 
 const Verify_Notify = () => {
+  const { push } = useRouter();
   const { email } = useSelector((store: any) => store.user);
   return (
     <main className={styles2.container}>
       <nav className={styles2.nav}>
-        <div className={styles2.logo}>Logo</div>
+        <img
+          onClick={() => push("/")}
+          className={styles2.logo}
+          src="/charityApp.png"
+          alt="CharLogo"
+        />
         <ul className={styles2.menu}>
           <li>Wallet</li>
-          <li>Course</li>
-          <li>Theme</li>
+          <li>Event</li>
+          <li>Settings</li>
         </ul>
       </nav>
       <div className={styles2.section_flex_center}>

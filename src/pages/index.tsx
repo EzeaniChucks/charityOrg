@@ -27,11 +27,11 @@ export default function Home() {
 
       <main className={styles2.container}>
         <nav className={styles2.nav}>
-          <div className={styles2.logo}>Logo</div>
+          <img className={styles2.logo} src="/charityApp.png" alt="CharLogo" />
           <ul className={styles2.menu}>
             <li>Wallet</li>
-            <li>Course</li>
-            <li>Theme</li>
+            <li>Event</li>
+            <li>Settings</li>
           </ul>
         </nav>
         <div className={styles2.section}>

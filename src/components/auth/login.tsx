@@ -18,7 +18,7 @@ type Props = {
 const Login = ({ isLogin, setIsLogin }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
   const { push } = useRouter();
-  const { error, password, email, user } = useSelector(
+  const { error, password, email, user, loading } = useSelector(
     (store: any) => store.user
   );
 
@@ -79,8 +79,8 @@ const Login = ({ isLogin, setIsLogin }: Props) => {
       </div>
       <h5>Forgot password?</h5>
       {error.type === "server_error" && <h6>{error.msg}</h6>}
-      <button className={styles2.btn} onClick={handleSubmit}>
-        SUBMIT
+      <button className={styles2.btn} onClick={handleSubmit} disabled={loading}>
+        {loading ? "Connecting" : "SUBMIT"}
       </button>
       <p>
         No account created yet?{" "}

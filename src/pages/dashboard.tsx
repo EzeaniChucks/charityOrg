@@ -24,11 +24,16 @@ const Dashboard = () => {
       {user && (
         <main className={styles2.container}>
           <nav className={styles2.nav}>
-            <div className={styles2.logo}>Logo</div>
+            <img
+              onClick={() => push("/")}
+              className={styles2.logo}
+              src="/charityApp.png"
+              alt="CharLogo"
+            />
             <ul className={styles2.menu}>
               <li>Wallet</li>
-              <li>Course</li>
-              <li>Theme</li>
+              <li>Event</li>
+              <li>Settings</li>
             </ul>
           </nav>
           <div className={styles2.section_flex_center}>
@@ -38,7 +43,7 @@ const Dashboard = () => {
                 {user?.user?.firstName} {user?.user?.lastName}
               </span>
             </h3>
-            <p>This will be your dashboard. This is being worked on!!!</p>
+            <p>This will be your dashboard. It is being worked on!!!</p>
           </div>
           <div className={styles2.particles}>
             <ParticlesComp />

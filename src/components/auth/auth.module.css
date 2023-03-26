@@ -15,15 +15,21 @@
     position: fixed;
     top: 0;
     left: 0;
-    padding: 25px 50px 25px 25px;
+    padding: 10px 50px 10px 25px;
     color: white;
     background-color: rgba(46, 46, 46, 0.5);
     backdrop-filter: blur(4px);
     width: 100vw;
     z-index: 100;
 }
+.nav .logo{
+    height: 50px;
+    width: 60px;
+    cursor: pointer;
+}
 .nav ul{
     display: flex;
+    align-items: center;
     justify-content: space-between;
     list-style: none;
     gap: 20px;
@@ -48,9 +54,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    /* justify-content: center; */
     padding: 20px;
-    padding-top: 15vh;
+    padding-top: 30vh;
     width: 100%;
     min-height: 100vh;
     height: fit-content;
@@ -75,6 +81,7 @@
 .section_flex_center p{
     margin: 8px;
     color: gray;
+    text-align: center;
 }
 .section_flex_center p span{
     color: aqua;
@@ -266,7 +273,7 @@
 .formContainer .back_skip_btns>button:hover{
     background-color: rgba(77, 90, 86, 0.4);
 }
-.right .formContainer .btn{
+.formContainer .btn{
     width: 100%;
     padding: 10px;
     margin-bottom: -10px;
@@ -277,9 +284,13 @@
     letter-spacing: 7px;
     color: white;
 }
-.right .formContainer .btn:hover{
+.formContainer .btn:hover{
     background-color: rgba(6, 88, 62, 0.4);
     color: rgb(255, 255, 255);
+}
+
+.formContainer .btn:disabled{
+    background-color: rgba(66, 66, 66, 0.4);
 }
 @keyframes moveUp{
     0%{transform: translateY(100px); opacity: 0;}

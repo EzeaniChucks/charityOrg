@@ -39,7 +39,7 @@ export interface Obj {
 
 const Register = ({ isLogin, setIsLogin }: Props) => {
   const {
-    user,
+    loading,
     firstName,
     lastName,
     email,
@@ -311,8 +311,12 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
           </div>
           {error.type === "submit_error" && <h6>{error.msg}</h6>}
           {error.type === "server_error" && <h6>{error.msg}</h6>}
-          <button className={styles2.btn} onClick={handleSubmit}>
-            SUBMIT
+          <button
+            className={styles2.btn}
+            onClick={handleSubmit}
+            disabled={loading}
+          >
+            {loading ? "Connecting" : "SUBMIT"}
           </button>
         </div>
       )}
