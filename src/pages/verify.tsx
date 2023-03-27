@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { AppDispatch } from "../../redux/store";
 import Head from "next/head";
 import styles from "../components/auth/auth.module.css";
+import { storeUser } from "@/utils/localstorage";
 
 const Verify = () => {
   const { user, error } = useSelector((store: any) => store.user);
@@ -15,8 +16,8 @@ const Verify = () => {
 
   useEffect(() => {
     if (isReady) dispatch(verify(query));
-    else return;
-  }, [isReady]);
+    if (user) storeUser(user);
+  }, [isReady, user]);
 
   return (
     <>

@@ -2,7 +2,7 @@ import ParticlesComp from "@/components/ParticlesComp";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { dashbord_item, latest_transaction } from "@/utils/arrays";
 import {
   AiOutlineSetting,
@@ -13,12 +13,15 @@ import { HiTrendingDown, HiOutlineTrendingUp } from "react-icons/hi";
 import { middle_matrix_items } from "@/utils/arrays";
 import styles2 from "../components/auth/auth.module.css";
 import styles1 from "../styles/dashboard.module.css";
+import { logout } from "../../redux/slices/authSlice";
+import { AppDispatch } from "../../redux/store";
 
 const Dashboard = () => {
   const { user } = useSelector((store: any) => store.user);
   const { push } = useRouter();
   const [showDash, setShowDash] = useState(false);
-
+  const dispatch = useDispatch<AppDispatch>();
+  
   const handleDashboardDisplay = () => {
     return setShowDash(!showDash);
   };
@@ -89,7 +92,7 @@ const Dashboard = () => {
                   <h5>Link</h5>
                 </div>
                 <div className={styles1.logout} onClick={() => push("")}>
-                  <h5>{"<- Log out"}</h5>
+                  <h5 onClick={()=>dispatch(logout())}>{"<- Log out"}</h5>
                 </div>
               </div>
             </div>

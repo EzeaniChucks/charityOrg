@@ -3,6 +3,7 @@ import { Obj } from "@/components/auth/register";
 import { RootState } from "../store";
 import axios from "axios";
 import { ParsedUrlQuery } from "querystring";
+import { removeUser } from "@/utils/localstorage";
 
 // const conString = "https://charityapp-381314.uc.r.appspot.com";
 // const conString = "http://localhost:8080";
@@ -12,13 +13,6 @@ export const register = createAsyncThunk(
   "auth/register",
   async (prop: Obj, thunk) => {
     try {
-      // const data = await fetch(`${conString}/auth/register`, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(prop),
-      // });
       const { data }: { data: string } = await axios.post(
         `${conString}/auth/register`,
         prop,
@@ -97,6 +91,13 @@ const userSlice = createSlice({
       const { name, value } = action.payload;
       state[name] = value;
     },
+    logout: (state: any) => {
+      removeUser();
+      state.user = null;
+    },
+    setUser: (state: any, action: PayloadAction<any>) => {
+      state.user = action.payload;
+    },
   },
   extraReducers: (builder) => {
     ///REGISTER
@@ -156,5 +157,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { logError, updateFormValues } = userSlice.actions;
+export const { logError, updateFormValues, setUser, logout } =
+  userSlice.actions;
 export default userSlice.reducer;

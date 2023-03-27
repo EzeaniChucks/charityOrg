@@ -6,9 +6,11 @@ import {
   login,
   updateFormValues,
   logError,
+  setUser,
 } from "../../../redux/slices/authSlice";
 import styles2 from "../auth/auth.module.css";
 import { AppDispatch } from "../../../redux/store";
+import { checkUser, storeUser } from "@/utils/localstorage";
 
 type Props = {
   isLogin: Boolean;
@@ -47,10 +49,14 @@ const Login = ({ isLogin, setIsLogin }: Props) => {
     dispatch(updateFormValues({ name, value }));
   };
   useEffect(() => {
-    if (user?.user) {
+    if (user) {
+      storeUser(user);
       push("/dashboard");
+    } else {
+      let userValue = checkUser();
+      if (userValue) dispatch(setUser(userValue));
     }
-  }, [user?.user]);
+  }, [user]);
 
   return (
     <div className={styles2.formContainer}>

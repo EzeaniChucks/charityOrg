@@ -4,7 +4,11 @@ import Login from "../components/auth/login";
 import Register from "@/components/auth/register";
 import ParticlesComp from "@/components/ParticlesComp";
 import styles2 from "../components/auth/auth.module.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { checkUser } from "@/utils/localstorage";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../../redux/slices/authSlice";
+import { AppDispatch } from "../../redux/store";
 
 // const inter = Inter({ subsets: ["latin"] });
 // interface log {
@@ -15,6 +19,8 @@ import { useState } from "react";
 // }
 export default function Home() {
   const [isLogin, setIsLogin] = useState(true);
+  const { user } = useSelector((store: any) => store.user);
+  // const dispatch = useDispatch<AppDispatch>();
 
   return (
     <>
