@@ -1,10 +1,15 @@
 .section:root{
     --glass_dark: rgb(101, 101, 150);
 }
+
+/* .section::-webkit-scrollbar{
+    width: 5px;
+} */
 .section{
     display: grid;
     grid-template-columns: 1fr 3fr;
     width: 100%;
+    padding: 10px;
     min-height: 100vh;
     height: fit-content;
     font-family: sans-serif;
@@ -119,6 +124,7 @@
 }
 /* Right part of section */
 .content{
+    place-self: center;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -134,13 +140,14 @@
     position: relative;
     padding: 20px;
     color: grey;
-    min-width: 360px;
+    min-width: 340px;
     max-width: 500px;
     height: 200px;
     border-radius: 5px;
     overflow: hidden;
     background-color: rgba(27, 27, 88, 0.3);
-    backdrop-filter: blur(3px);
+    backdrop-filter: blur(2px);
+    z-index: 1;
 }
 .top_matrix .total_balance_card>div:nth-of-type(1){
     display: flex;
@@ -177,13 +184,13 @@
     justify-content: center;
     align-items: center;
     color: white;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     margin-top: 10px;
     border: 1px solid blueviolet;
     cursor: pointer;
-    padding: 5px 15px;
+    padding: 10px 13px;
     background-color: transparent;
-    border-radius: 10px;
+    border-radius: 20px;
 }
 .top_matrix .total_balance_card>div .btn_div button:hover{
     background-color: blueviolet;
@@ -211,13 +218,13 @@
     display: grid;
     grid-auto-flow: column;
     grid-auto-columns: 26%;
-    gap: 10px;
+    gap: 15px;
     margin-top: 20px;
-    width: 70%;
+    width: 90%;
     overflow-x: auto;
     overscroll-behavior-inline: contain;
     scroll-snap-type: inline mandatory;
-    scroll-padding-inline: 5px;
+    scroll-padding-inline: 10px;
 }
 
 .middle_matrix_card{
@@ -227,6 +234,7 @@
     background-color: rgba(27, 27, 88, 0.3);
     border-radius: 5px;
     color: grey;
+    max-width: 200px;
     min-width: 100px;
     scroll-snap-align: start;
     height: 100px;
@@ -234,18 +242,71 @@
 }
 .bottom_matrix{
     display: flex;
-    padding: 10px;
+    gap: 20px;
+    height: fit-content;
+    padding: 20px;
+    margin: 20px 10px;
 }
-.bottom_matrix .latest_transaction_card{
+.bottom_matrix .latest_transaction_card, .month_piechart_card{
     display: flex;
     flex-direction: column;
     padding: 10px;
+    padding: 20px;
+    color: grey;
+    min-width: 350px;
+    max-width: 500px;
+    height: 350px;
+    border-radius: 5px;
+    overflow: hidden;
+    background-color: rgba(27, 27, 88, 0.3);
+    backdrop-filter: blur(2px);
+    z-index: 1;
 }
-.bottom_matrix .month_piechart_card{
+.bottom_matrix .latest_transaction_card{
+    color: rgb(197, 195, 195);
+}
+.bottom_matrix .latest_transaction_card>h2{
+    margin-bottom: 15px;
+}
+.bottom_matrix .latest_transaction_card>div{
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin: 10px;
+}
+.bottom_matrix .latest_transaction_card>div>div:nth-of-type(1){
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    font-size: 1.5rem;
+    border-radius: 50%;
+    height: 35px;
+    width: 35px;
+    font-weight: 900;
+}
+.bottom_matrix .latest_transaction_card>div>div:nth-of-type(2)>h6{
+    color: rgb(110, 110, 110);
+    margin-top: 3px;
+}
+.month_piechart_card{
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 10px;
 }
+.month_piechart_card>div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(28, 71, 57);
+    height: 200px;
+    width: 200px;
+    color: white;
+    border-radius: 50%;
+}
 
-@media screen and (max-width:1000px){
+@media screen and (max-width:900px){
     .section{
         display: flex;
         flex-direction: column;
@@ -276,7 +337,10 @@
         display: flex;
     }
     .middle_matrix{
-        width: 40%;
+        width: 60%;
         grid-auto-columns: 35%;
+    }
+    .bottom_matrix{
+        flex-direction: column;
     }
 }

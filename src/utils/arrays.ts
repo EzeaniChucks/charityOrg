@@ -5,7 +5,13 @@ import {
   FaChartBar,
   FaDatabase,
 } from "react-icons/fa";
-import { HiTrendingDown, HiOutlineTrendingUp } from "react-icons/hi";
+import {
+  RxAvatar,
+  RxMobile,
+  RxArrowUp,
+  RxArrowDown,
+  RxCheck,
+} from "react-icons/rx";
 
 export const dashbord_item = [
   {
@@ -69,32 +75,52 @@ export const middle_matrix_items = [
     uptrend: true,
     percent: 8,
   },
+];
+
+export const latest_transaction = [
+  {
+    id: 1,
+    transaction_type: "Transfer to Johdi",
+    description: "Personal Payment",
+    avatar: RxAvatar,
+    background: "rgb(110, 110, 163)",
+    font: "rgb(32, 32, 126)",
+    amount: -35.0,
+  },
+  {
+    id: 2,
+    transaction_type: "Nike",
+    description: "Shopping",
+    avatar: RxCheck,
+    background: "rgb(110, 110, 163)",
+    font: "rgb(32, 32, 126)",
+    amouunt: -120.0,
+  },
+  {
+    id: 3,
+    transaction_type: "Mobile Phone Top-Up",
+    description: "Communication",
+    avatar: RxMobile,
+    background: "rgb(110, 110, 163)",
+    font: "rgb(32, 32, 126)",
+    amouunt: -10.0,
+  },
+  {
+    id: 4,
+    transaction_type: "Balance Top-Up",
+    description: "Personal Payment",
+    avatar: RxArrowUp,
+    background: "rgb(110, 163, 130)",
+    font: "rgb(14, 109, 50);",
+    amouunt: +300.0,
+  },
   {
     id: 5,
-    type: "Total income",
-    amount: 18532,
-    uptrend: true,
-    percent: 11,
-  },
-  {
-    id: 6,
-    type: "Total Savings",
-    amount: 137,
-    uptrend: false,
-    percent: -8,
-  },
-  {
-    id: 7,
-    type: "Total Expense",
-    amount: 5000,
-    uptrend: true,
-    percent: 8,
-  },
-  {
-    id: 8,
-    type: "Upcoming",
-    amount: 201,
-    uptrend: true,
-    percent: 8,
+    transaction_type: "Withdrawal",
+    description: "Personal Payment",
+    avatar: RxArrowDown,
+    background: "rgb(163, 110, 110)",
+    font: "rgb(143, 29, 29);",
+    amouunt: -300.0,
   },
 ];

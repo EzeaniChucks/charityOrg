@@ -3,7 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { dashbord_item } from "@/utils/arrays";
+import { dashbord_item, latest_transaction } from "@/utils/arrays";
 import {
   AiOutlineSetting,
   AiOutlineLink,
@@ -185,8 +185,30 @@ const Dashboard = () => {
                 })}
               </div>
               <div className={styles1.bottom_matrix}>
-                <div className={styles1.latest_transaction_card}></div>
-                <div className={styles1.month_piechart_card}></div>
+                <div className={styles1.latest_transaction_card}>
+                  <h2>Latest Transactions</h2>
+                  {latest_transaction.map((item) => {
+                    return (
+                      <div key={item.id}>
+                        <div
+                          style={{
+                            color: item.font,
+                            backgroundColor: item.background,
+                          }}
+                        >
+                          <item.avatar />
+                        </div>
+                        <div>
+                          <p>{item.transaction_type}</p>
+                          <h6>{item.description}</h6>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className={styles1.month_piechart_card}>
+                  <div> Pie Chart Here</div>
+                </div>
               </div>
             </div>
           </div>
