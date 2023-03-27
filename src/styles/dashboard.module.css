@@ -1,0 +1,282 @@
+.section:root{
+    --glass_dark: rgb(101, 101, 150);
+}
+.section{
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    width: 100%;
+    min-height: 100vh;
+    height: fit-content;
+    font-family: sans-serif;
+}
+
+.navdisplay{
+    display: none;
+}
+.dashboard{
+    display: flex;
+    flex-direction: column;
+    /* background-color: var(--glass_dark); */
+    background-color: rgba(27, 27, 88, 0.3);
+    color: white;
+    min-width: 200px;
+    max-width: 250px;
+    padding-top: 20px;
+    border-radius: 0 50px 50px 0;
+    backdrop-filter: blur(3px);
+    z-index: 1;
+}
+.logo_div{
+    display: flex;
+    align-items: center;
+}
+.logo{
+    height: 60px;
+    width: 80px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.logo_div>div{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.logo_div>div h6{
+    color: pink;
+    font-style: italic;
+}
+.list_div{
+    display: flex;
+    flex-direction: column;
+    margin-top: 30px;
+    color: gray;
+    padding: 10px;
+    padding-left: 20%;
+    gap: 30px;
+}
+
+.list_div hr{
+    border: 1px solid rgb(71, 71, 71);
+    width: 80%;
+}
+.list_div>div{
+    display: flex;
+    gap: 10px;
+    padding: 5px;
+    align-items: flex-end;
+    cursor: pointer;
+    transition: all .25s ease-in-out;
+}
+.list_div>div:hover{
+    color: rgb(9, 102, 131);
+    transform: translateX(5px);
+}
+.list_div .logout{
+    margin-top: 20px;
+    cursor: pointer;
+    color: rgb(221, 144, 130);
+}
+
+.modal{
+    display: none;
+    justify-content: flex-end;
+    position: fixed;
+    top: 68px;
+    height: 0vh;
+    backdrop-filter: blur(4px);
+    background-color: rgba(9, 5, 41, 0.5);
+    width: 100vw;
+    z-index: 0;
+    transition: all 0.3s ease-in;
+}
+.dashboard_modal{
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(27, 27, 88, 0.3);
+    color: white;
+    min-width: 250px;
+    max-width: 250px;
+    padding-top: 20px;
+    padding-bottom: 30px;
+    height: fit-content;
+    transform: translateX(100%);
+    border-radius: 50px 0 0 50px;
+    backdrop-filter: blur(3px);
+    transition: all 0.3s ease-in;
+    z-index: 1;
+}
+.modal .list_div{
+    color: rgb(224, 224, 224);
+}
+.show_modal{
+    opacity: 1;
+    height: 100vh;
+    z-index: 10;
+}
+.show_dashboard_modal{
+    transform: translateX(0%);
+    /* z-index: 10; */
+}
+/* Right part of section */
+.content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: fit-content;
+    padding: 20px;
+}
+.top_matrix{
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+}
+.top_matrix .total_balance_card, .balance_graph_card{
+    position: relative;
+    padding: 20px;
+    color: grey;
+    min-width: 360px;
+    max-width: 500px;
+    height: 200px;
+    border-radius: 5px;
+    overflow: hidden;
+    background-color: rgba(27, 27, 88, 0.3);
+    backdrop-filter: blur(3px);
+}
+.top_matrix .total_balance_card>div:nth-of-type(1){
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.top_matrix .total_balance_card>div:nth-of-type(1) h2{
+    color: rgb(221, 221, 221);
+}
+.top_matrix .total_balance_card>div:nth-of-type(1) h3{
+    margin-top: 20px;
+}
+.top_matrix .total_balance_card>div:nth-of-type(2){
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    color: white;
+    background-color: blueviolet;
+    border-radius: 50%;
+    top: -10px;
+    right: -65px;
+    height: 220px;
+    width: 220px;
+    padding: 20px;
+}
+.top_matrix .total_balance_card>div .btn_div{
+    display: flex;
+    gap: 5px;
+}
+.top_matrix .total_balance_card>div .btn_div button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 0.7rem;
+    margin-top: 10px;
+    border: 1px solid blueviolet;
+    cursor: pointer;
+    padding: 5px 15px;
+    background-color: transparent;
+    border-radius: 10px;
+}
+.top_matrix .total_balance_card>div .btn_div button:hover{
+    background-color: blueviolet;
+}
+
+.top_matrix .balance_graph_card{
+    padding: 10px;
+}
+.top_matrix .balance_graph_card>div:nth-of-type(2){
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    color: white;
+    background-color: blueviolet;
+    border-radius: 50%;
+    top: -10px;
+    right: -55px;
+    height: 220px;
+    width: 220px;
+    padding: 20px;
+}
+.middle_matrix{
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 26%;
+    gap: 10px;
+    margin-top: 20px;
+    width: 70%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: inline mandatory;
+    scroll-padding-inline: 5px;
+}
+
+.middle_matrix_card{
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background-color: rgba(27, 27, 88, 0.3);
+    border-radius: 5px;
+    color: grey;
+    min-width: 100px;
+    scroll-snap-align: start;
+    height: 100px;
+    backdrop-filter: blur(3px);
+}
+.bottom_matrix{
+    display: flex;
+    padding: 10px;
+}
+.bottom_matrix .latest_transaction_card{
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+.bottom_matrix .month_piechart_card{
+    padding: 10px;
+}
+
+@media screen and (max-width:1000px){
+    .section{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding-top: 70px;
+    }
+    .navdisplay{
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        padding-right: 20px;
+        align-items: center;
+    }
+    .navdisplay svg{
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+    .top_matrix{
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .dashboard{
+        display: none;
+    }
+    .modal{
+        display: flex;
+    }
+    .middle_matrix{
+        width: 40%;
+        grid-auto-columns: 35%;
+    }
+}

@@ -24,7 +24,8 @@ const Verify_Notify = () => {
       <div className={styles2.section_flex_center}>
         <h2>Account Created!!!</h2>
         <h3>
-          Please check your inbox at <span>{email}</span> to verify your account
+          Please check your inbox <span>{`at ${email}`}</span> to verify your
+          account
         </h3>
       </div>
       <div className={styles2.particles}>
