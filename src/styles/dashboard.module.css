@@ -53,13 +53,24 @@
 .list_div{
     display: flex;
     flex-direction: column;
+    position: relative;
     margin-top: 30px;
     color: gray;
     padding: 10px;
     padding-left: 20%;
     gap: 30px;
 }
-
+.list_div>svg{
+    position: absolute;
+    right: 15px;
+    top: -30px;
+    font-size: 1.7rem;
+    cursor: pointer;
+    color: tomato;
+}
+.list_div>svg:hover{
+    color: rgb(247, 154, 137);
+}
 .list_div hr{
     border: 1px solid rgb(71, 71, 71);
     width: 80%;
@@ -120,7 +131,7 @@
 }
 .show_dashboard_modal{
     transform: translateX(0%);
-    /* z-index: 10; */
+    z-index: 100;
 }
 /* Right part of section */
 .content{

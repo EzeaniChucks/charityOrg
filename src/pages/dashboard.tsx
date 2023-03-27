@@ -8,6 +8,7 @@ import {
   AiOutlineSetting,
   AiOutlineLink,
   AiOutlineUnorderedList,
+  AiOutlineCloseCircle,
 } from "react-icons/ai";
 import { HiTrendingDown, HiOutlineTrendingUp } from "react-icons/hi";
 import { middle_matrix_items } from "@/utils/arrays";
@@ -21,7 +22,7 @@ const Dashboard = () => {
   const { push } = useRouter();
   const [showDash, setShowDash] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  
+
   const handleDashboardDisplay = () => {
     return setShowDash(!showDash);
   };
@@ -91,8 +92,8 @@ const Dashboard = () => {
                   <AiOutlineLink />
                   <h5>Link</h5>
                 </div>
-                <div className={styles1.logout} onClick={() => push("")}>
-                  <h5 onClick={()=>dispatch(logout())}>{"<- Log out"}</h5>
+                <div className={styles1.logout}>
+                  <h5 onClick={() => dispatch(logout())}>{"<- Log out"}</h5>
                 </div>
               </div>
             </div>
@@ -114,6 +115,7 @@ const Dashboard = () => {
                 }
               >
                 <div className={styles1.list_div}>
+                  <AiOutlineCloseCircle onClick={() => setShowDash(false)} />
                   {dashbord_item.map((item) => {
                     return (
                       <div key={item.id} onClick={() => push(item.link)}>
@@ -132,7 +134,7 @@ const Dashboard = () => {
                     <h5>Link</h5>
                   </div>
                   <div className={styles1.logout} onClick={() => push("")}>
-                    <h5>{"<- Log out"}</h5>
+                    <h5 onClick={() => dispatch(logout())}>{"<- Log out"}</h5>
                   </div>
                 </div>
               </div>
