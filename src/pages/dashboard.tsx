@@ -172,13 +172,20 @@ const Dashboard = () => {
                         ${item.amount}
                         <span>.52</span>
                       </h2>
-                      <div>
+                      <div
+                        style={
+                          item.uptrend
+                            ? { backgroundColor: "rgb(38, 131, 38)" }
+                            : { backgroundColor: "rgb(134, 41, 41)" }
+                        }
+                        className={styles1.trend}
+                      >
                         {item.uptrend ? (
                           <HiOutlineTrendingUp />
                         ) : (
                           <HiTrendingDown />
                         )}
-                        <h5></h5>
+                        <h5>{item.percent}%</h5>
                       </div>
                     </div>
                   );

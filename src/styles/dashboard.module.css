@@ -218,7 +218,7 @@
     display: grid;
     grid-auto-flow: column;
     grid-auto-columns: 26%;
-    gap: 15px;
+    gap: 18px;
     margin-top: 20px;
     width: 90%;
     overflow-x: auto;
@@ -229,16 +229,26 @@
 
 .middle_matrix_card{
     display: flex;
+    justify-content: center;
+    align-items: flex-start;
     flex-direction: column;
     padding: 10px;
+    gap: 8px;
     background-color: rgba(27, 27, 88, 0.3);
     border-radius: 5px;
     color: grey;
     max-width: 200px;
-    min-width: 100px;
+    min-width: 120px;
     scroll-snap-align: start;
     height: 100px;
     backdrop-filter: blur(3px);
+}
+.trend{
+    display: flex;
+    gap: 5px;
+    padding: 7px;
+    border-radius: 10px;
+    color: white;
 }
 .bottom_matrix{
     display: flex;
@@ -339,6 +349,15 @@
     .middle_matrix{
         width: 60%;
         grid-auto-columns: 35%;
+    }
+    .middle_matrix_card{
+
+    }
+    .middle_matrix_card>h2{
+        font-size: 0.9rem;
+    }
+    .middle_matrix_card>h4{
+        font-size: 0.9rem;
     }
     .bottom_matrix{
         flex-direction: column;
