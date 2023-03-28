@@ -16,8 +16,11 @@ const Verify = () => {
 
   useEffect(() => {
     if (isReady) dispatch(verify(query));
+  }, [isReady]);
+
+  useEffect(() => {
     if (user) storeUser(user);
-  }, [isReady, user]);
+  }, [user]);
 
   return (
     <>
