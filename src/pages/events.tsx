@@ -10,22 +10,21 @@ import {
 import { FaList, FaSearch, FaSearchLocation } from "react-icons/fa";
 import { upcoming_event } from "@/utils/arrays";
 import Event_Form from "@/components/events/event-form";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import { handleEventModule } from "../../redux/slices/eventSlice";
 
 const Events = () => {
   const { user } = useSelector((store: any) => store.user);
   const { push } = useRouter();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!user) push("/");
-  });
+    if (!user) push("/dashboard");
+  }, []);
   return (
     <main className={styles2.container}>
-      <div className={style.form_background}>
-        <Event_Form />
-      </div>
       <div className={style.section}>
         <div className={styles2.dashboard}></div>
         <div className={style.content}>
@@ -42,7 +41,7 @@ const Events = () => {
               </div>
             </div>
             <div className={style.floaters}>
-              <div>
+              <div onClick={() => dispatch(handleEventModule())}>
                 <IoMdFootball /> Create Event
               </div>
               <div>
@@ -158,6 +157,7 @@ const Events = () => {
           </div>
         </div>
       </div>
+      <Event_Form />
       <div className={styles2.particles}>
         <ParticlesComp />
       </div>
