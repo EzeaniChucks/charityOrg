@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { Obj } from "@/components/auth/register";
 import { RootState } from "../store";
 import axios from "axios";
 import { ParsedUrlQuery } from "querystring";
@@ -61,16 +60,29 @@ const conString = "https://charityorg.onrender.com";
 //   }
 // );
 
-const initialState = {
+interface Obj {
+  eventName: String;
+  eventDate: String;
+  timeZone: String;
+  hostStatus: String;
+  currency: String;
+  eventDescription: String;
+  depositDeadline: String;
+  completionDeadline: String;
+  showEventForm: Boolean;
+  createEventStep: String;
+}
+const initialState: Obj = {
   eventName: "",
-  eventDate: Date.now(),
-  timeZone: "",
-  hostStatus: "",
-  currency: "",
+  eventDate: Date(),
+  timeZone: "Etc/GMT-12 (GMT-12:00)",
+  hostStatus: "Depositor",
+  currency: "Euro",
   eventDescription: "",
-  depositDeadline: "",
-  completionDeadline: "",
+  depositDeadline: Date(),
+  completionDeadline: Date(),
   showEventForm: false,
+  createEventStep: "step1",
 };
 
 const eventSlice = createSlice({
@@ -79,6 +91,20 @@ const eventSlice = createSlice({
   reducers: {
     handleEventModule: (state) => {
       state.showEventForm = !state.showEventForm;
+    },
+    updateEventForm: (state: any, action: PayloadAction<any>) => {
+      const { name, value } = action.payload;
+      state[name] = value;
+      if (name === "depositDeadline") {
+        const depDate = new Date(state.depositDeadline).getTime();
+        const compDate = new Date(state.completionDeadline).getTime();
+        if (depDate > compDate) {
+          state["completionDeadline"] = value;
+        }
+      }
+    },
+    switchStep: (state, action: PayloadAction<any>) => {
+      state.createEventStep = action.payload;
     },
   },
   //   reducers: {
@@ -156,5 +182,6 @@ const eventSlice = createSlice({
   //   },
 });
 
-export const { handleEventModule } = eventSlice.actions;
+export const { handleEventModule, updateEventForm, switchStep } =
+  eventSlice.actions;
 export default eventSlice.reducer;

@@ -20,9 +20,6 @@ const Events = () => {
   const { push } = useRouter();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (!user) push("/dashboard");
-  }, []);
   return (
     <main className={styles2.container}>
       <div className={style.section}>

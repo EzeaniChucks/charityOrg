@@ -1,11 +1,11 @@
 .eventformcontainer{
     display: none;
     justify-content: center;
+    align-items: center;
     position: fixed;
     top: 0;
     left: 0;
     font-family: sans-serif;
-    padding-top: 100px;
     transition: all 0.3s ease-in;
     height: 0vh;
     width: 100vw;
@@ -17,6 +17,7 @@
 }
 .formContainer{
     background-color: transparent;
+    animation-delay: 0.5s;
 }
 .eventform{
     display: none;
@@ -25,18 +26,23 @@
     max-width: 400px;
     min-height: 450px;
     height: fit-content;
-    padding: 10px;
+    margin: 10px;
+    padding: 5px;
     padding-top: 20px;
     border-radius: 20px;
     transition: all 0.3s ease-in;
+    border: 1px solid rgb(14, 15, 85);
     opacity: 0;
-    /* background-color: rgba(1, 26, 34, 0.5); */
-    background-color: rgba(40, 29, 70, 0.8);
+    background-color: rgba(40, 29, 70, 0.7);
     backdrop-filter: blur(3px);
     z-index: 101;
 }
 .eventform>h1{
-color: rgb(153, 95, 8);
+    color: rgb(243, 187, 154);
+    margin-left: 6px;
+    margin-bottom: -10px;
+    font-size: 1.4rem;
+    z-index: 107;
 }
 .showeventform{
     display: flex;
@@ -45,11 +51,12 @@ color: rgb(153, 95, 8);
 }
 .eventform>svg{
     position: absolute;
-    color: white;
-    top: 20px;
+    color: rgb(6, 95, 46);
+    top: 10px;
     right: 20px;
     font-size: 2rem;
     cursor: pointer;
+    z-index: 105;
 }
 .eventformbackground{
     position: absolute;
@@ -59,6 +66,79 @@ color: rgb(153, 95, 8);
     background-color: rgba(27, 27, 88, 0.5);
     backdrop-filter: blur(5px);
 }
+
+.step2{
+    width: 100%;
+    padding: 10px;
+}
+.coverdiv{
+    position: relative;
+    height: 150px;
+    width: 310px;
+    padding: 5px;
+    border-radius: 20px;
+}
+.coverdiv>p{
+    z-index: 106;
+    color: rgb(12, 189, 100);
+    position: absolute;
+}
+.coverdiv>p:nth-of-type(1){
+    top: -15px;
+}
+.coverdiv>p:nth-of-type(2){
+    text-decoration: underline;
+    bottom: 0;
+    cursor: pointer;
+    color: aliceblue;
+}
+.coverdiv>img{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 10px;
+    /* filter: drop-shadow(8px 25px 10px grey); */
+    /* filter: grayscale(50%); */
+    filter: saturate(40%);
+    z-index: 105;
+}
+
+.invitediv{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(28, 28, 51, 0.7);
+    padding: 15px;
+    border-radius: 10px;
+    gap: 10px;
+    height: 100px;
+    width: 310px;
+    margin-top: 20px;
+}
+.invitediv p{
+    margin: 0;
+    margin-bottom: 10px;
+}
+.btn{
+    width: 85%;
+    padding: 10px;
+    margin-top: 30px;
+    border-radius: 5px;
+    background-color: rgba(5, 58, 41, 0.7);
+    cursor: pointer;
+    border: none;
+    letter-spacing: 7px;
+    color: rgb(202, 202, 202);
+}
+.btn:hover{
+    background-color: rgba(6, 88, 62, 0.4);
+    color: rgb(255, 255, 255);
+}
+
+
 .section{
     display: grid;
     grid-template-columns: 1fr 3fr;

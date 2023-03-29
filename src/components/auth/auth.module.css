@@ -223,9 +223,10 @@
     margin-top: -10px;
 }
 .general_details h6{
+    align-self: flex-end;
     color: tomato;
-    text-align: center;
-    width: 100%;
+    text-align: end;
+    width: 80%;
     letter-spacing: 2px;
     margin-top: -10px;
 }
@@ -251,13 +252,39 @@
     color: rgb(212, 133, 133);
     font-weight: 100;
 }
+.formContainer label select{
+    border-radius: 10px;
+    padding: 5px 10px;
+    font-size: 1rem;
+    outline: none;
+    border: 1px solid rgb(6, 14, 53);
+    min-width: 215px;
+    width: 100%;
+    background-color:rgb(14, 0, 37);
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color: rgb(212, 133, 133);
+    font-weight: 100;
+}
+.formContainer label textarea{
+    border-radius: 10px;
+    padding: 5px 10px;
+    font-size: 1rem;
+    outline: none;
+    border: 1px solid rgb(6, 14, 53);
+    min-width: 215px;
+    width: 100%;
+    background-color:rgb(14, 0, 37);
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color: rgb(212, 133, 133);
+    font-weight: 100;
+}
 .formContainer .expiration_input{
     display: flex;
     gap: 15px;
 }
 .formContainer>h6{
     color: tomato;
-    text-align: center;
+    text-align: right;
     width: 100%;
     text-transform: capitalize;
     margin: 10px 5px;
