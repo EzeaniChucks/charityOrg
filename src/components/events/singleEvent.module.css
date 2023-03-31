@@ -1,0 +1,85 @@
+.content{
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100%;
+    height: 100%;
+    color: grey;
+}
+
+.eventCard{
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+    max-width: 500px;
+    width: 100vw;
+    min-width: 300px;
+}
+
+.hero{
+    position: relative;
+    margin-bottom: 20px;
+}
+.hero>div{
+    position: absolute;
+    display: flex;
+    justify-content: space-around;
+    color: rgb(255, 255, 255);
+    z-index: 2;
+    width: 100%;
+    top: 20px;
+    left: 0;
+}
+.hero>img{
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+}
+.hero>div>div{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+.hero>div>svg{
+    background-color: grey;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 2.3rem;
+}
+.eventCard>h2{
+    position: relative;
+    color: white;
+    text-transform: capitalize;
+    margin-top: 200px;
+    text-align: center;
+    z-index: 3;
+}
+.participant{
+    display: flex;
+    align-items: flex-end;
+    position: relative;
+    width: 135px;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    color: rgb(126, 126, 253);
+}
+.participant>div>img{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    position: absolute;
+    top: -5px;
+}
+.participant>div>img:nth-of-type(2){
+    left: 15px;
+    z-index: 1;
+}
+.participant>div>img:nth-of-type(3){
+    left: 30px;
+    z-index: 2;
+}

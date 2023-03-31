@@ -69,6 +69,9 @@ interface Obj {
   eventDescription: String;
   depositDeadline: String;
   completionDeadline: String;
+  eventImageName: String;
+  eventImagePath: String;
+  invitationEmails: String[];
   showEventForm: Boolean;
   createEventStep: String;
 }
@@ -81,6 +84,9 @@ const initialState: Obj = {
   eventDescription: "",
   depositDeadline: Date(),
   completionDeadline: Date(),
+  eventImageName: "",
+  eventImagePath: "",
+  invitationEmails: [],
   showEventForm: false,
   createEventStep: "step1",
 };

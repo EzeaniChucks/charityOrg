@@ -1,6 +1,6 @@
 import ParticlesComp from "@/components/ParticlesComp";
-import styles2 from "../components/auth/auth.module.css";
-import style from "../components/events/events.module.css";
+import styles2 from "../../components/auth/auth.module.css";
+import style from "../../components/events/events.module.css";
 import {
   IoIosPlanet,
   IoIosNotifications,
@@ -8,12 +8,16 @@ import {
   IoLogoAndroid,
 } from "react-icons/io";
 import { FaList, FaSearch, FaSearchLocation } from "react-icons/fa";
-import { upcoming_event } from "@/utils/arrays";
+import {
+  academic_related_event,
+  health_related_event,
+  upcoming_event,
+} from "@/utils/arrays";
 import Event_Form from "@/components/events/event-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { handleEventModule } from "../../redux/slices/eventSlice";
+import { handleEventModule } from "../../../redux/slices/eventSlice";
 
 const Events = () => {
   const { user } = useSelector((store: any) => store.user);
@@ -23,7 +27,7 @@ const Events = () => {
   return (
     <main className={styles2.container}>
       <div className={style.section}>
-        <div className={styles2.dashboard}></div>
+        {/* <div className={styles2.dashboard}></div> */}
         <div className={style.content}>
           <div className={style.headboard}>
             <div className={style.upper_headboard}>
@@ -55,11 +59,17 @@ const Events = () => {
             <div className={style.cardcontainer}>
               {upcoming_event.map((item) => {
                 return (
-                  <div key={item.id} className={style.card}>
+                  <div
+                    onClick={() =>
+                      push(`/events/${item.eventCategory}/${item.id}`)
+                    }
+                    key={item.id}
+                    className={style.card}
+                  >
                     <img src={item.img} alt="event_img" />
                     <div className={style.date}>
-                      <h4>10</h4>
-                      <h5>June</h5>
+                      <h4>{item.day}</h4>
+                      <h5>{item.month}</h5>
                     </div>
                     <IoLogoAndroid className={style.datesvg} />
                     <h4>{item.title}</h4>
@@ -88,12 +98,18 @@ const Events = () => {
               <p>{"See all ->"}</p>
             </div>
             <div className={style.cardcontainer}>
-              {upcoming_event.map((item) => {
+              {health_related_event.map((item) => {
                 return (
-                  <div key={item.id} className={style.card}>
+                  <div
+                    onClick={() =>
+                      push(`/events/${item.eventCategory}/${item.id}`)
+                    }
+                    key={item.id}
+                    className={style.card}
+                  >
                     <img src={item.img} alt="event_img" />
                     <div className={style.date}>
-                      <h4>10</h4>
+                      <h4>{item.day}</h4>
                       <h5>June</h5>
                     </div>
                     <IoLogoAndroid className={style.datesvg} />
@@ -104,7 +120,7 @@ const Events = () => {
                         <img src={item.participant2} alt="participant" />
                         <img src={item.participant3} alt="participant" />
                       </div>
-                      <h5>+{item.part_number} going</h5>
+                      <h5>+{item.part_number} participants</h5>
                     </div>
                     <div className={style.location}>
                       <FaSearchLocation />
@@ -119,17 +135,23 @@ const Events = () => {
           </div>
           <div className={style.eventcontainer}>
             <div className={style.heading}>
-              <h3>Upcoming Events</h3>
+              <h3>Academic Events</h3>
               <p>{"See all ->"}</p>
             </div>
             <div className={style.cardcontainer}>
-              {upcoming_event.map((item) => {
+              {academic_related_event.map((item) => {
                 return (
-                  <div key={item.id} className={style.card}>
+                  <div
+                    onClick={() =>
+                      push(`/events/${item.eventCategory}/${item.id}`)
+                    }
+                    key={item.id}
+                    className={style.card}
+                  >
                     <img src={item.img} alt="event_img" />
                     <div className={style.date}>
-                      <h4>10</h4>
-                      <h5>June</h5>
+                      <h4>{item.day}</h4>
+                      <h5>{item.month}</h5>
                     </div>
                     <IoLogoAndroid className={style.datesvg} />
                     <h4>{item.title}</h4>
@@ -139,7 +161,7 @@ const Events = () => {
                         <img src={item.participant2} alt="participant" />
                         <img src={item.participant3} alt="participant" />
                       </div>
-                      <h5>+{item.part_number} going</h5>
+                      <h5>+{item.part_number} participants</h5>
                     </div>
                     <div className={style.location}>
                       <FaSearchLocation />

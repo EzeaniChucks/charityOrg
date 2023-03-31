@@ -24,14 +24,28 @@ const Event_Form = () => {
     eventDescription,
     depositDeadline,
     completionDeadline,
+    eventImageName,
+    eventImagePath,
+    invitationEmails,
     showEventForm,
     createEventStep,
   } = useSelector((store: any) => store.event);
   const { error } = useSelector((store: any) => store.user);
   const dispatch = useDispatch<AppDispatch>();
   const picref = useRef<HTMLInputElement>(null);
+  const emailInviteRef = useRef<HTMLInputElement>(null);
+
   const handleChange = (e: React.ChangeEvent<any>) => {
-    const { name, value } = e.target;
+    const { name, value, files } = e.target;
+    if (files?.length > 0) {
+      const imgObj = files[0];
+      const imgPath = URL.createObjectURL(imgObj);
+      const imgName = `${Date.now()}${imgObj.name}`;
+      dispatch(updateEventForm({ name: "eventImageName", value: imgName }));
+      return dispatch(
+        updateEventForm({ name: "eventImagePath", value: imgPath })
+      );
+    }
     dispatch(updateEventForm({ name, value }));
   };
 
@@ -73,11 +87,11 @@ const Event_Form = () => {
     // console.log(finalObj);
   };
   const handleformcontdisplay = () => {
-    if (showEventForm) return style.eventformcontainer;
+    if (!showEventForm) return style.eventformcontainer;
     else return [style.eventformcontainer, style.showformcontainer].join(" ");
   };
   const handleformdisplay = () => {
-    if (showEventForm) return style.eventform;
+    if (!showEventForm) return style.eventform;
     else return [style.eventform, style.showeventform].join(" ");
   };
 
@@ -236,19 +250,90 @@ const Event_Form = () => {
             <div className={style.step2}>
               <div className={style.coverdiv}>
                 <p>Events are better with theme photos.</p>
-                <p onClick={() => picref?.current?.click()}>Upload one</p>
-                <input type={"file"} ref={picref} accept="image/*" />
+                <p onClick={() => picref?.current?.click()}>
+                  {eventImageName ? "Change Image" : "Upload one"}
+                </p>
+                {eventImageName && (
+                  <p
+                    onClick={() => {
+                      dispatch(
+                        updateEventForm({ name: "eventImageName", value: "" })
+                      );
+                      dispatch(
+                        updateEventForm({ name: "eventImagePath", value: "" })
+                      );
+                    }}
+                  >
+                    Remove
+                  </p>
+                )}
+                <input
+                  type={"file"}
+                  ref={picref}
+                  accept="image/*"
+                  onChange={handleChange}
+                />
+                <div className={style.image_veil}></div>
                 <img
-                  src="/images/helping-hand-moonlight.jpg"
+                  src={
+                    eventImagePath
+                      ? eventImagePath
+                      : "/images/helping-hand-moonlight.jpg"
+                  }
                   alt="prospective event cover"
                 />
               </div>
               <div className={style.invitediv}>
-                <p>Invite participants to this event</p>
+                <p>Invite participants to this event (optional)</p>
+                <h6>
+                  Enter email address below and 'add to queue', or skip to
+                  'finish'
+                </h6>
                 <label>
-                  Send Invitation
-                  <input type={"text"} placeholder="enter email address" />
+                  <input
+                    id="invitationEmails"
+                    type={"text"}
+                    placeholder="enter email address"
+                    ref={emailInviteRef}
+                  />
+                  <button
+                    onClick={() => {
+                      const email =
+                        document.querySelector<any>("#invitationEmails");
+                      dispatch(
+                        updateEventForm({
+                          name: "invitationEmails",
+                          value: [...invitationEmails, email.value],
+                        })
+                      );
+                      email.value = "";
+                    }}
+                  >
+                    Add to Queue
+                  </button>
                 </label>
+                <div className={style.emailList}>
+                  {invitationEmails.map((item: string, i: number) => {
+                    return (
+                      <div key={i}>
+                        <p>{item}</p>;
+                        <FaTimesCircle
+                          onClick={() => {
+                            const newVal = invitationEmails.filter(
+                              (mail: string) => mail !== item
+                            );
+                            dispatch(
+                              updateEventForm({
+                                name: "invitationEmails",
+                                value: newVal,
+                              })
+                            );
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
               <button className={styles2.btn} onClick={handleCreate}>
                 FINISH

@@ -56,7 +56,7 @@
     right: 20px;
     font-size: 2rem;
     cursor: pointer;
-    z-index: 105;
+    z-index: 108;
 }
 .eventformbackground{
     position: absolute;
@@ -73,24 +73,41 @@
 }
 .coverdiv{
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     height: 150px;
     width: 310px;
     padding: 5px;
     border-radius: 20px;
+    margin: 15px 0;
 }
 .coverdiv>p{
-    z-index: 106;
-    color: rgb(12, 189, 100);
+    z-index: 107;
+    color: rgb(10, 240, 125);
+    width: fit-content;
     position: absolute;
 }
 .coverdiv>p:nth-of-type(1){
-    top: -15px;
+    top: -40px;
 }
 .coverdiv>p:nth-of-type(2){
     text-decoration: underline;
-    bottom: 0;
+    bottom: 20px;
     cursor: pointer;
+    font-weight: 700;
     color: aliceblue;
+}
+.coverdiv>p:nth-of-type(3){
+    text-decoration: underline;
+    bottom: -3px;
+    cursor: pointer;
+    font-weight: 700;
+    color: rgb(202, 70, 47);
+}
+.coverdiv>input{
+    display: none;
 }
 .coverdiv>img{
     width: 100%;
@@ -104,7 +121,20 @@
     filter: saturate(40%);
     z-index: 105;
 }
-
+.coverdiv>.image_veil{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    background: radial-gradient(rgba(255, 255, 255, 0.3) 10%, rgba(59, 59, 59, 0.4) 90%);
+    transition: background 0.3s ease;
+    z-index: 106;
+}
+.coverdiv>.image_veil:hover{
+    background: transparent;
+}
 .invitediv{
     display: flex;
     flex-direction: column;
@@ -114,13 +144,54 @@
     padding: 15px;
     border-radius: 10px;
     gap: 10px;
-    height: 100px;
     width: 310px;
-    margin-top: 20px;
+    /* margin-top: 50px; */
 }
 .invitediv p{
     margin: 0;
+    font-size: 0.8rem;
+    /* margin-bottom: 10px; */
+}
+.invitediv>h6{
+    text-align: center;
+    color: grey;
+    font-style: italic;
+}
+.invitediv>label>button{
+    padding: 5px 8px;
+    cursor: pointer;
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    border-radius: 10px;
+    outline: none;
+    border: none;
+    background-color: rgb(0, 100, 67);
+    color: whitesmoke;
+}
+.invitediv>label>button:active{
+    transform: scale(90%);
+}
+.emailList{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 5px;
+    align-items: flex-start;
+    width: 100%;
     margin-bottom: 10px;
+}
+.emailList>div{
+    display: flex;
+    align-items: center;
+    background-color: gray;
+    cursor: pointer;
+    border-radius: 10px;
+}
+.emailList>div>p{
+    width: fit-content;
+    margin: 0;
+    color: white;
+    padding: 5px;
 }
 .btn{
     width: 85%;
@@ -140,8 +211,10 @@
 
 
 .section{
-    display: grid;
-    grid-template-columns: 1fr 3fr;
+    /* display: grid;
+    grid-template-columns: 1fr 3fr 1fr; */
+    display: flex;
+    flex-direction: column;
     color: grey;
     width: 100%;
     min-height: 100vh;
@@ -241,7 +314,7 @@
     display: grid;
     grid-auto-flow: column;
     grid-auto-columns: 200px;
-    width: 50vw;
+    width: 70vw;
     padding: 10px 10px 10px 0;
     min-width: 280px;
     border-radius: 10px;
