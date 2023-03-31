@@ -286,8 +286,8 @@ const Event_Form = () => {
               <div className={style.invitediv}>
                 <p>Invite participants to this event (optional)</p>
                 <h6>
-                  Enter email address below and 'add to queue', or skip to
-                  'finish'
+                  {`Enter valid email addresses below and 'add to queue', or skip to
+                  'finish' button`}
                 </h6>
                 <label>
                   <input

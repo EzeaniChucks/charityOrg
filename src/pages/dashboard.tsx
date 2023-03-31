@@ -1,7 +1,7 @@
 import ParticlesComp from "@/components/ParticlesComp";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { dashbord_item, latest_transaction } from "@/utils/arrays";
 import {
@@ -26,9 +26,12 @@ const Dashboard = () => {
   const handleDashboardDisplay = () => {
     return setShowDash(!showDash);
   };
+  const changeRoute = useCallback(() => {
+    return push("/");
+  }, []);
   useEffect(() => {
     if (!user) {
-      push("/");
+      changeRoute();
     }
   }, [user]);
   return (
