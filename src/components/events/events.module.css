@@ -208,6 +208,10 @@
     background-color: rgba(6, 88, 62, 0.4);
     color: rgb(255, 255, 255);
 }
+.btn:disabled{
+    background-color: grey;
+    cursor: progress;
+}
 
 
 .section{

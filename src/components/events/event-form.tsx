@@ -4,6 +4,7 @@ import { FaTimesCircle } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../../redux/store";
 import {
+  createEvent,
   handleEventModule,
   switchStep,
   updateEventForm,
@@ -12,10 +13,13 @@ import DatePicker from "react-datepicker";
 import { timezone } from "@/utils/arrays";
 import moment from "moment";
 import { logError } from "../../../redux/slices/authSlice";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { uploadEventImage } from "../../../redux/slices/fileUploadSlice";
+import { useRouter } from "next/router";
 
 const Event_Form = () => {
   const {
+    event,
     eventName,
     eventDate,
     timeZone,
@@ -29,9 +33,14 @@ const Event_Form = () => {
     invitationEmails,
     showEventForm,
     createEventStep,
+    loading,
+    creationStatus,
   } = useSelector((store: any) => store.event);
-  const { error } = useSelector((store: any) => store.user);
+  const { error, user } = useSelector((store: any) => store.user);
+  const [imagefile, setImagefile] = useState<any>({ name: "", file: {} });
+
   const dispatch = useDispatch<AppDispatch>();
+  const { push } = useRouter();
   const picref = useRef<HTMLInputElement>(null);
   const emailInviteRef = useRef<HTMLInputElement>(null);
 
@@ -41,7 +50,8 @@ const Event_Form = () => {
       const imgObj = files[0];
       const imgPath = URL.createObjectURL(imgObj);
       const imgName = `${Date.now()}${imgObj.name}`;
-      dispatch(updateEventForm({ name: "eventImageName", value: imgName }));
+      setImagefile({ name: imgName, file: imgObj });
+      // dispatch(updateEventForm({ name: "eventImageName", value: imgName }));
       return dispatch(
         updateEventForm({ name: "eventImagePath", value: imgPath })
       );
@@ -49,7 +59,7 @@ const Event_Form = () => {
     dispatch(updateEventForm({ name, value }));
   };
 
-  const handleCreate = () => {
+  const handleNext = () => {
     if (!eventName) {
       return dispatch(
         logError({ type: "eventName", msg: "fill name of event" })
@@ -74,17 +84,34 @@ const Event_Form = () => {
     }
 
     dispatch(switchStep("step2"));
-    // const finalObj = {
-    //   eventName,
-    //   eventDate,
-    //   timeZone,
-    //   hostStatus,
-    //   currency,
-    //   eventDescription,
-    //   depositDeadline,
-    //   completionDeadline,
-    // };
-    // console.log(finalObj);
+  };
+
+  const handleCreate = () => {
+    const finalObj = {
+      creatorId: user.user._id,
+      eventName,
+      eventDate,
+      timeZone,
+      hostStatus,
+      currency,
+      eventDescription,
+      depositDeadline,
+      completionDeadline,
+      eventImageName,
+      invitationEmails,
+    };
+    const { name, file } = imagefile;
+    const imageData = new FormData();
+    const json = JSON.stringify(finalObj);
+    const blob = new Blob([json], { type: "application/json" });
+    imageData.append("document", blob, "finalObj");
+
+    if (eventImagePath) {
+      imageData.append("image", file, name);
+      return dispatch(createEvent(imageData));
+      // return dispatch(uploadEventImage(imageData));
+    }
+    return dispatch(createEvent(imageData));
   };
   const handleformcontdisplay = () => {
     if (!showEventForm) return style.eventformcontainer;
@@ -94,7 +121,11 @@ const Event_Form = () => {
     if (!showEventForm) return style.eventform;
     else return [style.eventform, style.showeventform].join(" ");
   };
-
+  useEffect(() => {
+    if (creationStatus) {
+      push(`/event/upcoming_event/${event._id}`);
+    }
+  }, [creationStatus, event]);
   return (
     <div className={handleformcontdisplay()}>
       <div className={handleformdisplay()}>
@@ -241,8 +272,8 @@ const Event_Form = () => {
               </label>
               {error.type === "eventDescription" && <h6>{error.msg}</h6>}
               {error.type !== "" && <h6>{"An error occured"}</h6>}
-              <button className={styles2.btn} onClick={handleCreate}>
-                CREATE
+              <button className={styles2.btn} onClick={handleNext}>
+                NEXT
               </button>
             </div>
           )}
@@ -335,8 +366,12 @@ const Event_Form = () => {
                   })}
                 </div>
               </div>
-              <button className={styles2.btn} onClick={handleCreate}>
-                FINISH
+              <button
+                className={styles2.btn}
+                onClick={handleCreate}
+                disabled={loading}
+              >
+                CREATE EVENT
               </button>
             </div>
           )}

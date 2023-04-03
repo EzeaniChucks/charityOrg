@@ -17,13 +17,27 @@ import Event_Form from "@/components/events/event-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { handleEventModule } from "../../../redux/slices/eventSlice";
+import {
+  getAllEvents,
+  handleEventModule,
+} from "../../../redux/slices/eventSlice";
+import { checkUser } from "@/utils/localstorage";
+import { setUser } from "../../../redux/slices/authSlice";
+import { AppDispatch } from "../../../redux/store";
+import moment from "moment";
 
 const Events = () => {
   const { user } = useSelector((store: any) => store.user);
+  const { allEvents } = useSelector((store: any) => store.event);
   const { push } = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
+  useEffect(() => {
+    let userValue = checkUser();
+    if (userValue) dispatch(setUser(userValue));
+    dispatch(getAllEvents());
+  }, []);
+  console.log(allEvents);
   return (
     <main className={styles2.container}>
       <div className={style.section}>
@@ -42,9 +56,11 @@ const Events = () => {
               </div>
             </div>
             <div className={style.floaters}>
-              <div onClick={() => dispatch(handleEventModule())}>
-                <IoMdFootball /> Create Event
-              </div>
+              {user && (
+                <div onClick={() => dispatch(handleEventModule())}>
+                  <IoMdFootball /> Create Event
+                </div>
+              )}
               <div>
                 Filter Events <IoIosPlanet />
               </div>
@@ -66,13 +82,64 @@ const Events = () => {
                     key={item.id}
                     className={style.card}
                   >
-                    <img src={item.img} alt="event_img" />
+                    <img src={item.eventImageName} alt="event_img" />
                     <div className={style.date}>
-                      <h4>{item.day}</h4>
-                      <h5>{item.month}</h5>
+                      <h4>
+                        {moment(new Date(item.completionDeadline)).format("DD")}
+                      </h4>
+                      <h5>
+                        {moment(new Date(item.completionDeadline)).format("MM")}
+                      </h5>
                     </div>
                     <IoLogoAndroid className={style.datesvg} />
-                    <h4>{item.title}</h4>
+                    <h4>{item.eventName}</h4>
+                    <div className={style.participant}>
+                      <div>
+                        <img src={item.participant1} alt="participant" />
+                        <img src={item.participant2} alt="participant" />
+                        <img src={item.participant3} alt="participant" />
+                      </div>
+                      <h5>+{item.part_number} going</h5>
+                    </div>
+                    <div className={style.location}>
+                      <FaSearchLocation />
+                      <h5>
+                        5, Chief Spectacular avenue, off Lagoa highway, Lagos
+                      </h5>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div className={style.eventcontainer}>
+            <div className={style.heading}>
+              <h3>Backend Events</h3>
+              <p>{"See all ->"}</p>
+            </div>
+            <div className={style.cardcontainer}>
+              {allEvents.map((item: any) => {
+                return (
+                  <div
+                    onClick={() =>
+                      push(`/events/${"backend_category"}/${item._id}`)
+                    }
+                    key={item._id}
+                    className={style.card}
+                  >
+                    <img src={item.eventImageName} alt="event_img" />
+                    <div className={style.date}>
+                      <h4>
+                        {moment(new Date(item.completionDeadline)).format("DD")}
+                      </h4>
+                      <h5>
+                        {moment(new Date(item.completionDeadline)).format(
+                          "MMM"
+                        )}
+                      </h5>
+                    </div>
+                    <IoLogoAndroid className={style.datesvg} />
+                    <h4>{item.eventName}</h4>
                     <div className={style.participant}>
                       <div>
                         <img src={item.participant1} alt="participant" />
@@ -107,13 +174,19 @@ const Events = () => {
                     key={item.id}
                     className={style.card}
                   >
-                    <img src={item.img} alt="event_img" />
+                    <img src={item.eventImageName} alt="event_img" />
                     <div className={style.date}>
-                      <h4>{item.day}</h4>
-                      <h5>June</h5>
+                      <h4>
+                        {moment(new Date(item.completionDeadline)).format("DD")}
+                      </h4>
+                      <h5>
+                        {moment(new Date(item.completionDeadline)).format(
+                          "MMM"
+                        )}
+                      </h5>
                     </div>
                     <IoLogoAndroid className={style.datesvg} />
-                    <h4>{item.title}</h4>
+                    <h4>{item.eventName}</h4>
                     <div className={style.participant}>
                       <div>
                         <img src={item.participant1} alt="participant" />
@@ -148,13 +221,19 @@ const Events = () => {
                     key={item.id}
                     className={style.card}
                   >
-                    <img src={item.img} alt="event_img" />
+                    <img src={item.eventImageName} alt="event_img" />
                     <div className={style.date}>
-                      <h4>{item.day}</h4>
-                      <h5>{item.month}</h5>
+                      <h4>
+                        {moment(new Date(item.completionDeadline)).format("DD")}
+                      </h4>
+                      <h5>
+                        {moment(new Date(item.completionDeadline)).format(
+                          "MMM"
+                        )}
+                      </h5>
                     </div>
                     <IoLogoAndroid className={style.datesvg} />
-                    <h4>{item.title}</h4>
+                    <h4>{item.eventName}</h4>
                     <div className={style.participant}>
                       <div>
                         <img src={item.participant1} alt="participant" />

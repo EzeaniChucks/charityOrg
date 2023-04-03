@@ -7,8 +7,11 @@ import { FaArrowLeft, FaCalendar } from "react-icons/fa";
 import { IoMdRibbon } from "react-icons/io";
 import styles2 from "../../../components/auth/auth.module.css";
 import style from "../../../components/events/singleEvent.module.css";
+import { useSelector } from "react-redux";
+import moment from "moment";
 
 const SingleEvent = () => {
+  const { allEvents } = useSelector((store: any) => store.event);
   const { eventId, eventCategory } = useRouter().query;
   const { isReady } = useRouter();
 
@@ -28,8 +31,13 @@ const SingleEvent = () => {
         return event.id === Number(eventId);
       });
     }
+    if (eventCategory === "backend_category") {
+      const test = allEvents.find((event: any) => {
+        return event._id === eventId;
+      });
+      return test;
+    }
   };
-
   useEffect(() => {
     if (isReady) setSingleEvent(generateSingleEvent());
   }, [isReady]);
@@ -64,22 +72,27 @@ const SingleEvent = () => {
                 />
                 <h5>
                   +{singleEvent?.part_number}{" "}
-                  {singleEvent.eventCategory === "upcoming_event"
+                  {singleEvent?.eventCategory === "upcoming_event"
                     ? "going"
                     : "participants"}
                 </h5>
               </div>
               <button className={style.btn}>View</button>
             </div>
-            <img src={singleEvent?.img} alt={singleEvent?.title} />
+            <img src={singleEvent?.eventImageName} alt={singleEvent?.title} />
           </div>
           <div className={style.eventcardbody}>
-            <h2>{singleEvent?.title}</h2>
+            <h2>{singleEvent?.eventName}</h2>
             <div className={style.datecontainer}>
               <FaCalendar />
               <div>
                 <h3>Event Duration</h3>
-                <h6>13 Jan, 2023 - 2 Feb, 2023</h6>
+                <h6>
+                  {moment(new Date()).format("DD, MMM")} -{" "}
+                  {moment(new Date(singleEvent?.completionDeadline)).format(
+                    "DD, MMM"
+                  )}
+                </h6>
               </div>
             </div>
             <div className={style.creatorcontainer}>
@@ -99,15 +112,9 @@ const SingleEvent = () => {
                 Event
               </h3>
               <p>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                Consequuntur officiis quis magnam aliquid repudiandae nisi
-                delectus quo aliquam quam. Sequi dolorem accusantium cumque sit
-                temporibus nemo porro molestias numquam deserunt.
+                {singleEvent?.eventDescription}
                 <br /> <br />
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                Consequuntur officiis quis magnam aliquid repudiandae nisi
-                delectus quo aliquam quam. Sequi dolorem accusantium cumque sit
-                temporibus nemo porro molestias numquam deserunt .
+                {singleEvent?.eventDescription}
               </p>
               <button className={style.btn}>Join Event</button>
             </div>

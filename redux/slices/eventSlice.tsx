@@ -2,65 +2,10 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import axios from "axios";
 import { ParsedUrlQuery } from "querystring";
-import { removeUser } from "@/utils/localstorage";
-
-// const conString = "https://charityapp-381314.uc.r.appspot.com";
-// const conString = "http://localhost:8080";
-// const conString = "https://charityapp2.uc.r.appspot.com";
-
-const conString = "https://charityorg.onrender.com";
-// export const register = createAsyncThunk(
-//   "auth/register",
-//   async (prop: Obj, thunk) => {
-//     try {
-//       const { data }: { data: string } = await axios.post(
-//         `${conString}/auth/register`,
-//         prop,
-//         {}
-//       );
-//       return data;
-//     } catch (err: any) {
-//       return (
-//         thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
-//       );
-//     }
-//   }
-// );
-// export const login = createAsyncThunk(
-//   "auth/login",
-//   async (prop: { email: string; password: string }, thunk) => {
-//     try {
-//       const { data }: { data: string } = await axios.post(
-//         `${conString}/auth/login`,
-//         prop,
-//         {}
-//       );
-//       return data;
-//     } catch (err: any) {
-//       return (
-//         thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
-//       );
-//     }
-//   }
-// );
-// export const verify = createAsyncThunk(
-//   "auth/verify",
-//   async (prop: ParsedUrlQuery, thunk) => {
-//     try {
-//       const { data }: { data: any } = await axios.post(
-//         `${conString}/auth/verify-email`,
-//         prop
-//       );
-//       return data;
-//     } catch (err: any) {
-//       return (
-//         thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
-//       );
-//     }
-//   }
-// );
 
 interface Obj {
+  event?: any;
+  allEvents: any;
   eventName: String;
   eventDate: String;
   timeZone: String;
@@ -69,13 +14,54 @@ interface Obj {
   eventDescription: String;
   depositDeadline: String;
   completionDeadline: String;
-  eventImageName: String;
-  eventImagePath: String;
-  invitationEmails: String[];
-  showEventForm: Boolean;
-  createEventStep: String;
+  eventImageName?: String;
+  eventImagePath?: String;
+  invitationEmails?: String[];
+  loading: Boolean;
+  creationStatus: Boolean;
+  showEventForm?: Boolean;
+  createEventStep?: String;
 }
+
+// const conString = "http://localhost:8080";
+
+const conString = "https://charityorg.onrender.com";
+
+export const createEvent = createAsyncThunk(
+  "event/createEvent",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.post(
+        `${conString}/create_event`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
+export const getAllEvents = createAsyncThunk(
+  "event/getAllEvents",
+  async (_, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.get(
+        `${conString}/get_all_events`
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
+
 const initialState: Obj = {
+  event: null,
+  allEvents: [],
   eventName: "",
   eventDate: Date(),
   timeZone: "Etc/GMT-12 (GMT-12:00)",
@@ -87,6 +73,8 @@ const initialState: Obj = {
   eventImageName: "",
   eventImagePath: "",
   invitationEmails: [],
+  loading: false,
+  creationStatus: false,
   showEventForm: false,
   createEventStep: "step1",
 };
@@ -113,79 +101,47 @@ const eventSlice = createSlice({
       state.createEventStep = action.payload;
     },
   },
-  //   reducers: {
-  //     logError: (state: any, { payload }) => {
-  //       state.error.type = payload.type;
-  //       state.error.msg = payload.msg;
-  //     },
-  //     updateFormValues: (state: any, action: PayloadAction<any>) => {
-  //       const { name, value } = action.payload;
-  //       state[name] = value;
-  //     },
-  //     logout: (state: any) => {
-  //       removeUser();
-  //       state.user = null;
-  //     },
-  //     setUser: (state: any, action: PayloadAction<any>) => {
-  //       state.user = action.payload;
-  //     },
-  //   },
-  //   extraReducers: (builder) => {
-  //     ///REGISTER
-  //     builder.addCase(register.pending, (state: any) => {
-  //       state.loading = true;
-  //       state.afterRegistration = "";
-  //     });
-  //     builder.addCase(register.fulfilled, (state: any, { payload }) => {
-  //       state.loading = false;
-  //       state.afterRegistration = payload;
-  //       state.firstName = "";
-  //       state.password = "";
-  //       state.confirmPass = "";
-  //       state.phoneNumber = "+234";
-  //       state.cardNumber = "";
-  //       state.cvv = "";
-  //       state.promoCode = "";
-  //     });
-  //     builder.addCase(register.rejected, (state: any, { payload }) => {
-  //       state.loading = false;
-  //       state.error = { type: "server_error", msg: payload };
-  //       state.afterRegistration = "";
-  //     });
-
-  //     ///LOGIN
-  //     builder.addCase(login.pending, (state: any) => {
-  //       state.loading = true;
-  //       state.user = null;
-  //     });
-  //     builder.addCase(login.fulfilled, (state: any, { payload }) => {
-  //       state.loading = false;
-  //       state.user = payload;
-  //     });
-  //     builder.addCase(login.rejected, (state: any, { payload }) => {
-  //       state.loading = false;
-  //       state.user = null;
-  //       state.error = { type: "server_error", msg: payload, code: payload };
-  //     });
-
-  //     ///VERIFY
-  //     builder.addCase(verify.pending, (state: any) => {
-  //       state.loading = true;
-  //       state.verification_status = "";
-  //     });
-  //     builder.addCase(verify.fulfilled, (state: any, { payload }) => {
-  //       state.loading = false;
-  //       state.user = payload;
-  //     });
-  //     builder.addCase(verify.rejected, (state: any, { payload }) => {
-  //       state.loading = false;
-  //       state.error = {
-  //         type: "server_error",
-  //         msg: "Something went wrong. Please try again",
-  //         code: payload,
-  //       };
-  //     });
-  //   },
+  extraReducers: (builder) => {
+    ///CREATE EVENT
+    builder.addCase(createEvent.pending, (state: any) => {
+      state.loading = true;
+      state.creationStatus = false;
+    });
+    builder.addCase(createEvent.fulfilled, (state: any, { payload }) => {
+      state.loading = false;
+      state.event = payload;
+      state.eventName = "";
+      state.eventImageName = "";
+      state.eventImagePath = "";
+      state.invitationEmails = [];
+      state.eventDescription = "";
+      state.creationStatus = true;
+    });
+    builder.addCase(createEvent.rejected, (state: any, { payload }) => {
+      state.loading = false;
+      state.creationStatus = false;
+      state.error = {
+        type: "server_error",
+        msg: "please resubmision again",
+        code: payload,
+      };
+    });
+    builder.addCase(getAllEvents.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(getAllEvents.fulfilled, (state: any, { payload }) => {
+      state.loading = false;
+      state.allEvents = payload.allEvents;
+    });
+    builder.addCase(getAllEvents.rejected, (state: any, { payload }) => {
+      state.loading = false;
+      state.error = {
+        type: "server_error",
+        msg: "please resubmit form again",
+        code: payload,
+      };
+    });
+  },
 });
 
 export const { handleEventModule, updateEventForm, switchStep } =
