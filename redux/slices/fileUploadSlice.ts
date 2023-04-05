@@ -3,9 +3,9 @@ import { RootState } from "../store";
 import axios from "axios";
 import { ParsedUrlQuery } from "querystring";
 
-const conString = "http://localhost:8080";
+// const conString = "http://localhost:8080";
 
-// const conString = "https://charityorg.onrender.com";
+const conString = "https://charityorg.onrender.com";
 
 export const uploadEventImage = createAsyncThunk(
   "event/uploadEventImage",

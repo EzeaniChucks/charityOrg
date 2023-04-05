@@ -146,7 +146,7 @@ const Events = () => {
                         <img src={item.participant2} alt="participant" />
                         <img src={item.participant3} alt="participant" />
                       </div>
-                      <h5>+{item.part_number} going</h5>
+                      <h5>+{10} participants</h5>
                     </div>
                     <div className={style.location}>
                       <FaSearchLocation />
