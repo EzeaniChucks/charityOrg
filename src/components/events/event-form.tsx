@@ -124,7 +124,7 @@ const Event_Form = () => {
   useEffect(() => {
     if (creationStatus) {
       if (event) {
-        push(`/event/upcoming_event/${event._id}`);
+        push(`/event/backend_category/${event._id}`);
       }
     }
   }, [creationStatus, event]);
