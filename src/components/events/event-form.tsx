@@ -123,7 +123,9 @@ const Event_Form = () => {
   };
   useEffect(() => {
     if (creationStatus) {
-      push(`/event/upcoming_event/${event._id}`);
+      if (event) {
+        push(`/event/upcoming_event/${event._id}`);
+      }
     }
   }, [creationStatus, event]);
   return (
