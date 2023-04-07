@@ -6,9 +6,9 @@ import { ParsedUrlQuery } from "querystring";
 import { removeUser } from "@/utils/localstorage";
 
 // const conString = "https://charityapp-381314.uc.r.appspot.com";
-// const conString = "http://localhost:8080";
+const conString = "http://localhost:8080";
 // const conString = "https://charityapp2.uc.r.appspot.com";
-const conString = "https://charityorg.onrender.com";
+// const conString = "https://charityorg.onrender.com";
 export const register = createAsyncThunk(
   "auth/register",
   async (prop: Obj, thunk) => {

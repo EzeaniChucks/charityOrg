@@ -9,7 +9,7 @@ import styles from "../components/auth/auth.module.css";
 import { storeUser } from "@/utils/localstorage";
 
 const Verify = () => {
-  const { user, error } = useSelector((store: any) => store.user);
+  const { user, error, loading } = useSelector((store: any) => store.user);
 
   const dispatch = useDispatch<AppDispatch>();
   const { query, isReady, push } = useRouter();
@@ -46,6 +46,7 @@ const Verify = () => {
         </nav>
         <div className={styles.section_flex_center}>
           {error.type === "server_error" && <h2>{error.msg}</h2>}
+          {loading && <p>Verifying account... Please wait</p>}
           {user && (
             <>
               <h2>Hi, {user.user.firstName}</h2>

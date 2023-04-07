@@ -14,7 +14,7 @@ import { timezone } from "@/utils/arrays";
 import moment from "moment";
 import { logError } from "../../../redux/slices/authSlice";
 import { useEffect, useRef, useState } from "react";
-import { uploadEventImage } from "../../../redux/slices/fileUploadSlice";
+// import { uploadEventImage } from "../../../redux/slices/fileUploadSlice";
 import { useRouter } from "next/router";
 
 const Event_Form = () => {

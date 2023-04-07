@@ -5,6 +5,10 @@ import { ParsedUrlQuery } from "querystring";
 
 // const conString = "http://localhost:8080";
 
+
+//This Slice isnt used in ay module yet. I'm keeping it for future use
+
+
 const conString = "https://charityorg.onrender.com";
 
 export const uploadEventImage = createAsyncThunk(

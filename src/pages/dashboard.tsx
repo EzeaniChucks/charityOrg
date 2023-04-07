@@ -16,6 +16,7 @@ import styles2 from "../components/auth/auth.module.css";
 import styles1 from "../styles/dashboard.module.css";
 import { logout } from "../../redux/slices/authSlice";
 import { AppDispatch } from "../../redux/store";
+import { getWalletBalance } from "../../redux/slices/walletSlice";
 
 const Dashboard = () => {
   const { user } = useSelector((store: any) => store.user);
@@ -33,6 +34,7 @@ const Dashboard = () => {
     if (!user) {
       changeRoute();
     }
+    if (user) dispatch(getWalletBalance(user.user._id));
   }, [user]);
   return (
     <>
@@ -78,6 +80,10 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className={styles1.list_div}>
+                <div onClick={() => push("")}>
+                  <AiOutlineSetting />
+                  <h5>Top up Wallet</h5>
+                </div>
                 {dashbord_item.map((item) => {
                   return (
                     <div key={item.id} onClick={() => push(item.link)}>
