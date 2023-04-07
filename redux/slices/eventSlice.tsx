@@ -23,9 +23,9 @@ interface Obj {
   createEventStep?: String;
 }
 
-const conString = "http://localhost:8080";
+// const conString = "http://localhost:8080";
 
-// const conString = "https://charityorg.onrender.com";
+const conString = "https://charityorg.onrender.com";
 
 export const createEvent = createAsyncThunk(
   "event/createEvent",

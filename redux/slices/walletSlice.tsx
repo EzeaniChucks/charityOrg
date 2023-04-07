@@ -4,9 +4,9 @@ import axios from "axios";
 import { ParsedUrlQuery } from "querystring";
 import { removeUser } from "@/utils/localstorage";
 
-const conString = "http://localhost:8080";
+// const conString = "http://localhost:8080";
 
-// const conString = "https://charityorg.onrender.com";
+const conString = "https://charityorg.onrender.com";
 
 export const getWalletBalance = createAsyncThunk(
   "/getWalletBalance",
