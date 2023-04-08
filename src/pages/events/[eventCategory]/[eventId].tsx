@@ -1,19 +1,22 @@
 import ParticlesComp from "@/components/ParticlesComp";
 import { health_related_event, upcoming_event } from "@/utils/arrays";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { AiFillProfile, AiTwotoneProfile } from "react-icons/ai";
 import { FaArrowLeft, FaCalendar } from "react-icons/fa";
 import { IoMdRibbon } from "react-icons/io";
 import styles2 from "../../../components/auth/auth.module.css";
 import style from "../../../components/events/singleEvent.module.css";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
+import { getAllEvents } from "../../../../redux/slices/eventSlice";
+import { AppDispatch } from "../../../../redux/store";
 
 const SingleEvent = () => {
   const { allEvents } = useSelector((store: any) => store.event);
   const { eventId, eventCategory } = useRouter().query;
   const { isReady } = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
 
   const generateSingleEvent = () => {
     if (eventCategory === "upcoming_event") {
@@ -38,11 +41,20 @@ const SingleEvent = () => {
       return test;
     }
   };
-  useEffect(() => {
-    if (isReady) setSingleEvent(generateSingleEvent());
-  }, [isReady]);
-
   const [singleEvent, setSingleEvent] = useState<any>({});
+
+  const updateEventsArray = useCallback(() => {
+    return dispatch(getAllEvents());
+  }, [allEvents]);
+
+  useEffect(() => {
+    updateEventsArray();
+  }, []);
+  useEffect(() => {
+    if (isReady) {
+      setSingleEvent(generateSingleEvent());
+    }
+  }, [isReady, allEvents]);
 
   return (
     <main className={styles2.container}>

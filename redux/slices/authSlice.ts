@@ -8,6 +8,7 @@ import { removeUser } from "@/utils/localstorage";
 
 // const conString = "http://localhost:8080";
 const conString = "https://charityorg.onrender.com";
+
 export const register = createAsyncThunk(
   "auth/register",
   async (prop: Obj, thunk) => {

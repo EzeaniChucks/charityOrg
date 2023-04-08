@@ -1,6 +1,4 @@
 import ParticlesComp from "@/components/ParticlesComp";
-import styles2 from "../../components/auth/auth.module.css";
-import style from "../../components/events/events.module.css";
 import {
   IoIosPlanet,
   IoIosNotifications,
@@ -25,6 +23,8 @@ import { checkUser } from "@/utils/localstorage";
 import { setUser } from "../../../redux/slices/authSlice";
 import { AppDispatch } from "../../../redux/store";
 import moment from "moment";
+import styles2 from "../../components/auth/auth.module.css";
+import style from "../../components/events/events.module.css";
 
 const Events = () => {
   const { user } = useSelector((store: any) => store.user);
@@ -37,7 +37,7 @@ const Events = () => {
     if (userValue) dispatch(setUser(userValue));
     dispatch(getAllEvents());
   }, []);
-  console.log(allEvents);
+
   return (
     <main className={styles2.container}>
       <div className={style.section}>

@@ -16,25 +16,50 @@ import styles2 from "../components/auth/auth.module.css";
 import styles1 from "../styles/dashboard.module.css";
 import { logout } from "../../redux/slices/authSlice";
 import { AppDispatch } from "../../redux/store";
-import { getWalletBalance } from "../../redux/slices/walletSlice";
+import {
+  getWalletBalance,
+  getLatestTransactions,
+  paymentResponse,
+} from "../../redux/slices/walletSlice";
+import TopUpForm from "@/components/payment/topUpForm";
+import { handleTopUpModule } from "../../redux/slices/walletSlice";
+import moment from "moment";
 
 const Dashboard = () => {
   const { user } = useSelector((store: any) => store.user);
-  const { push } = useRouter();
+  const { walletBalance, latestTx } = useSelector((store: any) => store.wallet);
+  const { push, query, isReady } = useRouter();
   const [showDash, setShowDash] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
 
   const handleDashboardDisplay = () => {
     return setShowDash(!showDash);
   };
+
   const changeRoute = useCallback(() => {
     return push("/");
   }, []);
+
+  useEffect(() => {
+    if (isReady && query.transaction_id) {
+      dispatch(
+        paymentResponse({
+          transaction_id: query.transaction_id,
+          tx_ref: query.tx_ref,
+          description: "Wallet Top-up",
+        })
+      );
+    }
+  }, [isReady]);
+
   useEffect(() => {
     if (!user) {
       changeRoute();
     }
-    if (user) dispatch(getWalletBalance(user.user._id));
+    if (user) {
+      dispatch(getWalletBalance(user.user._id));
+      dispatch(getLatestTransactions(user.user._id));
+    }
   }, [user]);
   return (
     <>
@@ -80,7 +105,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className={styles1.list_div}>
-                <div onClick={() => push("")}>
+                <div onClick={() => dispatch(handleTopUpModule())}>
                   <AiOutlineSetting />
                   <h5>Top up Wallet</h5>
                 </div>
@@ -125,6 +150,10 @@ const Dashboard = () => {
               >
                 <div className={styles1.list_div}>
                   <AiOutlineCloseCircle onClick={() => setShowDash(false)} />
+                  <div onClick={() => dispatch(handleTopUpModule())}>
+                    <AiOutlineSetting />
+                    <h5>Top up Wallet</h5>
+                  </div>
                   {dashbord_item.map((item) => {
                     return (
                       <div key={item.id} onClick={() => push(item.link)}>
@@ -153,18 +182,25 @@ const Dashboard = () => {
                 <div className={styles1.total_balance_card}>
                   <div>
                     <h2>Total Balance</h2>
-                    <h3>+$28.55</h3>
+                    <h3>
+                      +{latestTx[0].currency}
+                      {latestTx[0]?.amount}
+                    </h3>
                     <h6>Last Transaction</h6>
                     <div className={styles1.btn_div}>
-                      <button>Top UP</button>
+                      <button onClick={() => dispatch(handleTopUpModule())}>
+                        Top UP
+                      </button>
                       <button>WITHDRAWAL</button>
                     </div>
                   </div>
                   <div>
                     <h2>
-                      $200<span>.58</span>
+                      {latestTx[0].currency}
+                      {walletBalance}
+                      <span>.00</span>
                     </h2>
-                    <h6>WALLETS AMOUNT</h6>
+                    <h6>WALLET AMOUNT</h6>
                   </div>
                 </div>
                 <div className={styles1.balance_graph_card}>
@@ -208,20 +244,25 @@ const Dashboard = () => {
               <div className={styles1.bottom_matrix}>
                 <div className={styles1.latest_transaction_card}>
                   <h2>Latest Transactions</h2>
-                  {latest_transaction.map((item) => {
+                  {latestTx.map((item: any) => {
                     return (
-                      <div key={item.id}>
+                      <div key={item._id}>
                         <div
                           style={{
                             color: item.font,
                             backgroundColor: item.background,
                           }}
                         >
-                          <item.avatar />
+                          {/* <item.avatar /> */}
                         </div>
                         <div>
-                          <p>{item.transaction_type}</p>
-                          <h6>{item.description}</h6>
+                          <p>{item.description}</p>
+                          <h6>{item.narration}</h6>
+                          <h6>
+                            {moment(item.createdAt).format(
+                              "D, MMM, yyyy hh:mm A"
+                            )}
+                          </h6>
                         </div>
                       </div>
                     );
@@ -233,6 +274,7 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
+          <TopUpForm />
           <div className={styles2.particles}>
             <ParticlesComp />
           </div>

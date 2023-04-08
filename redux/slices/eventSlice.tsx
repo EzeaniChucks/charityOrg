@@ -100,6 +100,9 @@ const eventSlice = createSlice({
     switchStep: (state, action: PayloadAction<any>) => {
       state.createEventStep = action.payload;
     },
+    resetEvent: (state) => {
+      state.event = null;
+    },
   },
   extraReducers: (builder) => {
     ///CREATE EVENT
@@ -144,6 +147,6 @@ const eventSlice = createSlice({
   },
 });
 
-export const { handleEventModule, updateEventForm, switchStep } =
+export const { handleEventModule, updateEventForm, switchStep, resetEvent } =
   eventSlice.actions;
 export default eventSlice.reducer;

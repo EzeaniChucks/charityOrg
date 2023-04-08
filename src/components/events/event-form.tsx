@@ -1,11 +1,10 @@
-import style from "../events/events.module.css";
-import styles2 from "../auth/auth.module.css";
 import { FaTimesCircle } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../../redux/store";
 import {
   createEvent,
   handleEventModule,
+  resetEvent,
   switchStep,
   updateEventForm,
 } from "../../../redux/slices/eventSlice";
@@ -16,6 +15,8 @@ import { logError } from "../../../redux/slices/authSlice";
 import { useEffect, useRef, useState } from "react";
 // import { uploadEventImage } from "../../../redux/slices/fileUploadSlice";
 import { useRouter } from "next/router";
+import style from "../events/events.module.css";
+import styles2 from "../auth/auth.module.css";
 
 const Event_Form = () => {
   const {
@@ -124,7 +125,8 @@ const Event_Form = () => {
   useEffect(() => {
     if (creationStatus) {
       if (event) {
-        push(`/event/backend_category/${event?.event?._id}`);
+        dispatch(resetEvent());
+        push(`/events/backend_category/${event?.event?._id}`);
       }
     }
   }, [creationStatus, event]);
