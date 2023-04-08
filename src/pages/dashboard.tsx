@@ -183,7 +183,7 @@ const Dashboard = () => {
                   <div>
                     <h2>Total Balance</h2>
                     <h3>
-                      +{latestTx[0].currency}
+                      +{latestTx[0]?.currency}
                       {latestTx[0]?.amount}
                     </h3>
                     <h6>Last Transaction</h6>
@@ -196,7 +196,7 @@ const Dashboard = () => {
                   </div>
                   <div>
                     <h2>
-                      {latestTx[0].currency}
+                      {latestTx[0]?.currency}
                       {walletBalance}
                       <span>.00</span>
                     </h2>
