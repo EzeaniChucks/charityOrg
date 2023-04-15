@@ -45,49 +45,57 @@ const Request_Description = ({
           {isexpand && <FaArrowAltCircleUp onClick={expandDropDown} />}
         </h3>
       </div>
-      {/* {isexpand && (
+      {isexpand && (
         <div className={style.description_body}>
-          <div>
-            <h6>Depositor</h6>
-            <h6>Date</h6>
-            <h6>Amount (NGN)</h6>
+          <div style={{ gridTemplateColumns: "1fr 3fr" }}>
+            <h6>{moment(new Date(item?.date)).format("DD/MM/YY mm:ss a")}</h6>
+            <h6
+              style={{
+                textAlign: "right",
+                fontSize: "0.8rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+              }}
+            >
+              <span style={{ fontSize: "1rem", color: "grey" }}>
+                Description
+              </span>
+              {item.description}
+            </h6>
           </div>
-          <hr />
-          {item?.contributors.map((eachcontributor: any) => {
-            return (
-              <div key={eachcontributor?._id}>
-                <p>{eachcontributor?.name}</p>
-                <p>
-                  {moment(new Date(eachcontributor?.date)).format(
-                    "DD/MM/YYYY mm:ss a"
-                  )}
-                </p>
-                <p>{eachcontributor?.amount}</p>
-              </div>
-            );
-          })}
-          <div>
-            <input
+          <div style={{ display: "flex" }}>
+            {/* <input
               value={depositAmount}
               name="depositAmount"
               type="number"
-              placeholder="Deposit amount"
+              placeholder="Edit amount"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 dispatch(setCategoryName(item?.description));
                 handleChange(e);
               }}
-            />
+            /> */}
             <button
+              className={style.btn_add}
+              style={{ width: "100%" }}
+              onClick={() => {
+                handleShowModal();
+              }}
+            >
+              Edit Amount
+            </button>
+            <button
+              style={{ width: "100%" }}
               className={style.btn_add}
               onClick={() => {
                 handleShowModal();
               }}
             >
-              Deposit
+              Delete Request
             </button>
           </div>
         </div>
-      )} */}
+      )}
     </div>
   );
 };

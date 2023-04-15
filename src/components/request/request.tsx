@@ -158,7 +158,7 @@ const RequestForm = () => {
             color: "tomato",
           }}
         >
-          NGN {0}
+          NGN {totalMemberRequestsAmount}
         </h2>
         <div className={style.deadlines}>
           <h4>Completion Deadline</h4>

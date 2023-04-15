@@ -122,18 +122,20 @@ const Events = () => {
                 return (
                   <div
                     onClick={() =>
-                      push(`/events/${"backend_category"}/${item._id}`)
+                      push(`/events/${"backend_category"}/${item?._id}`)
                     }
-                    key={item._id}
+                    key={item?._id}
                     className={style.card}
                   >
-                    <img src={item.eventImageName} alt="event_img" />
+                    <img src={item?.eventImageName} alt="event_img" />
                     <div className={style.date}>
                       <h4>
-                        {moment(new Date(item.completionDeadline)).format("DD")}
+                        {moment(new Date(item?.completionDeadline)).format(
+                          "DD"
+                        )}
                       </h4>
                       <h5>
-                        {moment(new Date(item.completionDeadline)).format(
+                        {moment(new Date(item?.completionDeadline)).format(
                           "MMM"
                         )}
                       </h5>
@@ -141,12 +143,20 @@ const Events = () => {
                     <IoLogoAndroid className={style.datesvg} />
                     <h4>{item.eventName}</h4>
                     <div className={style.participant}>
-                      <div>
-                        <img src={item.participant1} alt="participant" />
-                        <img src={item.participant2} alt="participant" />
-                        <img src={item.participant3} alt="participant" />
-                      </div>
-                      <h5>+{10} participant</h5>
+                      {item?.members?.length > 0 && (
+                        <div>
+                          {item?.members?.map((_: any, i: number) => {
+                            if (i < 3) {
+                              return (
+                                <img key={i} src={item.participant1} alt="p" />
+                              );
+                            }
+                          })}
+                          {/* <img src={item.participant2} alt="" />
+                        <img src={item.participant3} alt="" /> */}
+                        </div>
+                      )}
+                      <h5>{item?.members?.length} participant(s)</h5>
                     </div>
                     <div className={style.location}>
                       <FaSearchLocation />

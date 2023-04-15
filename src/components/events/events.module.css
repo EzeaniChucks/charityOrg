@@ -374,18 +374,25 @@
 
 .participant{
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     position: relative;
-    width: 135px;
-    justify-content: space-between;
+    width: 100%;
+    justify-content: flex-start;
     margin-bottom: 20px;
     color: rgb(126, 126, 253);
+}
+.participant>div{
+    position: relative;
+    /* background-color: aqua; */
+    /* width: 100%; */
+    margin-right: 10px;
+    z-index: 3;
 }
 .participant>div>img{
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    position: absolute;
+    /* position: absolute; */
     top: -5px;
 }
 .participant>div>img:nth-of-type(2){
@@ -395,6 +402,9 @@
 .participant>div>img:nth-of-type(3){
     left: 30px;
     z-index: 2;
+}
+.participant>h5{
+    
 }
 .location{
     display: flex;
