@@ -175,3 +175,29 @@
 .eventcardbody.aboutcontainer>button{
     align-self: center;
 }
+
+.shareEvent{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+}
+.shareEvent>div{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-left: 20px;
+    cursor: pointer;
+    color: rgb(109, 197, 182);
+}
+.shareEvent>div:hover{
+    color: rgb(192, 191, 126);
+}
+.shareEvent>div>h5{
+    color: greenyellow;
+    padding: 5px;
+    background-color: rgb(44, 44, 43);
+}
+.shareEvent>div>svg{
+    font-size: 2rem;
+}

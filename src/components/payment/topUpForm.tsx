@@ -1,12 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../../redux/store";
-import { handleTopUpModule } from "../../../redux/slices/walletSlice";
+import {
+  handleTopUpModule,
+  updateWalletTopUpForm,
+} from "../../../redux/slices/walletSlice";
 import { FaTimesCircle } from "react-icons/fa";
 import { FlutterWaveButton, closePaymentModal } from "flutterwave-react-v3";
 import { country_array, currency_array } from "@/utils/fundsArrays";
 import style from "../../components/events/events.module.css";
 import styles2 from "../../components/auth/auth.module.css";
-import ReactDatePicker from "react-datepicker";
 
 // const conString = "http://localhost:3000/dashboard";
 const conString = "https://charityorg.vercel.app/dashboard";
@@ -17,25 +19,29 @@ const TopUpForm = () => {
     error,
     public_key,
     tx_ref,
-    amount,
-    currency,
-    country,
+    topup_amount,
+    topup_currency,
+    topup_country,
   } = useSelector((store: any) => store.wallet);
   const { user } = useSelector((store: any) => store.user);
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleChange = () => {};
+  const handleChange = (e: any) => {
+    const { name, value } = e.target;
+    dispatch(updateWalletTopUpForm({ name, value }));
+    console.log(topup_amount, topup_country, topup_currency);
+  };
   const config = {
     public_key,
     tx_ref,
-    amount: 459,
-    currency: "NGN",
-    country: "NG",
-    payment_options: "card,mobilemoney,ussd",
+    amount: Number(topup_amount),
+    currency: topup_currency,
+    country: topup_country,
+    payment_options: "card",
     redirect_url: conString,
     customer: {
       email: user.user.email,
-      phone_number: "+2348067268692",
+      phone_number: "08067268692",
       name: `${user.user.firstName} ${user.user.lastName}`,
     },
     text: "PAY",
@@ -70,17 +76,17 @@ const TopUpForm = () => {
             <label>
               Amount:{" "}
               <input
-                // value={cardNumber}
+                value={topup_amount}
                 type={"number"}
-                name={"amount"}
+                name={"topup_amount"}
                 onChange={handleChange}
               />
             </label>
             <label>
               Currency :{" "}
               <select
-                // value={timeZone}
-                name={"currency"}
+                value={topup_currency}
+                name={"topup_currency"}
                 onChange={handleChange}
               >
                 {currency_array.map((item: any, i) => {
@@ -94,8 +100,8 @@ const TopUpForm = () => {
             <label>
               Country :{" "}
               <select
-                // value={currency}
-                name={"country"}
+                value={topup_country}
+                name={"topup_country"}
                 onChange={handleChange}
               >
                 {country_array.map((item: any, i) => {

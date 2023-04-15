@@ -109,10 +109,12 @@ const Event_Form = () => {
 
     if (eventImagePath) {
       imageData.append("image", file, name);
-      return dispatch(createEvent(imageData));
+      dispatch(createEvent(imageData));
       // return dispatch(uploadEventImage(imageData));
+      return dispatch(handleEventModule(showEventForm));
     }
-    return dispatch(createEvent(imageData));
+    dispatch(createEvent(imageData));
+    dispatch(handleEventModule(showEventForm));
   };
   const handleformcontdisplay = () => {
     if (!showEventForm) return style.eventformcontainer;

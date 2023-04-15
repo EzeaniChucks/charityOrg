@@ -197,6 +197,7 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
             <PhoneInput
               placeholder="enter your phone number"
               value={phoneNumber}
+              name={"phoneNumber"}
               onChange={() =>
                 dispatch(
                   updateFormValues({ name: "phoneNumber", value: phoneNumber })

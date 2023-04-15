@@ -3,7 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { dashbord_item, latest_transaction } from "@/utils/arrays";
+import { dashbord_item } from "@/utils/arrays";
 import {
   AiOutlineSetting,
   AiOutlineLink,
@@ -12,8 +12,6 @@ import {
 } from "react-icons/ai";
 import { HiTrendingDown, HiOutlineTrendingUp } from "react-icons/hi";
 import { middle_matrix_items } from "@/utils/arrays";
-import styles2 from "../components/auth/auth.module.css";
-import styles1 from "../styles/dashboard.module.css";
 import { logout } from "../../redux/slices/authSlice";
 import { AppDispatch } from "../../redux/store";
 import {
@@ -24,10 +22,21 @@ import {
 import TopUpForm from "@/components/payment/topUpForm";
 import { handleTopUpModule } from "../../redux/slices/walletSlice";
 import moment from "moment";
+import {
+  RxAvatar,
+  RxMobile,
+  RxArrowUp,
+  RxArrowDown,
+  RxCheck,
+} from "react-icons/rx";
+import styles2 from "../components/auth/auth.module.css";
+import styles1 from "../styles/dashboard.module.css";
 
 const Dashboard = () => {
   const { user } = useSelector((store: any) => store.user);
-  const { walletBalance, latestTx } = useSelector((store: any) => store.wallet);
+  const { walletBalance, latestTx, topupStatus } = useSelector(
+    (store: any) => store.wallet
+  );
   const { push, query, isReady } = useRouter();
   const [showDash, setShowDash] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
@@ -60,7 +69,8 @@ const Dashboard = () => {
       dispatch(getWalletBalance(user.user._id));
       dispatch(getLatestTransactions(user.user._id));
     }
-  }, [user]);
+  }, [user, topupStatus]);
+
   return (
     <>
       <Head>
@@ -183,8 +193,8 @@ const Dashboard = () => {
                   <div>
                     <h2>Total Balance</h2>
                     <h3>
-                      +{latestTx[0]?.currency}
-                      {latestTx[0]?.amount}
+                      {latestTx[0]?.description?.includes("Top-up") ? "+" : "-"}
+                      {latestTx[0]?.amount} {latestTx[0]?.currency}
                     </h3>
                     <h6>Last Transaction</h6>
                     <div className={styles1.btn_div}>
@@ -196,9 +206,9 @@ const Dashboard = () => {
                   </div>
                   <div>
                     <h2>
-                      {latestTx[0]?.currency}
                       {walletBalance}
-                      <span>.00</span>
+                      <span>.00</span> {latestTx[0]?.currency}
+                      {!walletBalance && 0}
                     </h2>
                     <h6>WALLET AMOUNT</h6>
                   </div>
@@ -244,16 +254,38 @@ const Dashboard = () => {
               <div className={styles1.bottom_matrix}>
                 <div className={styles1.latest_transaction_card}>
                   <h2>Latest Transactions</h2>
+                  {latestTx.length === 0 && (
+                    <div>
+                      <p>No transaction history yet</p>
+                    </div>
+                  )}
                   {latestTx.map((item: any) => {
                     return (
                       <div key={item._id}>
-                        <div
-                          style={{
-                            color: item.font,
-                            backgroundColor: item.background,
-                          }}
-                        >
-                          {/* <item.avatar /> */}
+                        <div>
+                          {item.description === "Wallet Top-up" && (
+                            <RxArrowUp
+                              style={{
+                                background: "rgb(11, 100, 140)",
+                                font: "rgb(14, 109, 50)",
+                                borderRadius: "50%",
+                                width: "35px",
+                                height: "35px",
+                              }}
+                            />
+                          )}
+                          {item.description === "Wallet Withdraw" ||
+                            (item.description === "Event Deposit" && (
+                              <RxArrowDown
+                                style={{
+                                  background: "rgb(200, 10, 140)",
+                                  font: "rgb(14, 10, 50)",
+                                  borderRadius: "50%",
+                                  width: "35px",
+                                  height: "35px",
+                                }}
+                              />
+                            ))}
                         </div>
                         <div>
                           <p>{item.description}</p>

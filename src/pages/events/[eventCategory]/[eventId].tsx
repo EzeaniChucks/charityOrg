@@ -1,58 +1,94 @@
 import ParticlesComp from "@/components/ParticlesComp";
 import { health_related_event, upcoming_event } from "@/utils/arrays";
 import { useRouter } from "next/router";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { AiFillProfile, AiTwotoneProfile } from "react-icons/ai";
-import { FaArrowLeft, FaCalendar } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaCalendar,
+  FaCopy,
+  FaShareAltSquare,
+} from "react-icons/fa";
 import { IoMdRibbon } from "react-icons/io";
-import styles2 from "../../../components/auth/auth.module.css";
-import style from "../../../components/events/singleEvent.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
-import { getAllEvents } from "../../../../redux/slices/eventSlice";
+import {
+  fetchEventCreatorDetails,
+  getAllEvents,
+  joinEvents,
+  resetCreator,
+} from "../../../../redux/slices/eventSlice";
 import { AppDispatch } from "../../../../redux/store";
+import styles2 from "../../../components/auth/auth.module.css";
+import style from "../../../components/events/singleEvent.module.css";
+import { checkUser, storeUser } from "@/utils/localstorage";
+import { setUser } from "../../../../redux/slices/authSlice";
 
 const SingleEvent = () => {
-  const { allEvents } = useSelector((store: any) => store.event);
+  const { allEvents, eventCreator } = useSelector((store: any) => store.event);
   const { eventId, eventCategory } = useRouter().query;
-  const { isReady } = useRouter();
-  const dispatch = useDispatch<AppDispatch>();
+  const { isReady, asPath, push } = useRouter();
+  const linkcopyref = useRef<any>(null);
+
+  // console.log(useRouter().route);
 
   const generateSingleEvent = () => {
     if (eventCategory === "upcoming_event") {
+      dispatch(resetCreator());
       return upcoming_event.find((event) => {
         return event.id === Number(eventId);
       });
     }
     if (eventCategory === "health_category") {
+      dispatch(resetCreator());
       return health_related_event.find((event) => {
         return event.id === Number(eventId);
       });
     }
     if (eventCategory === "academic_category") {
+      dispatch(resetCreator());
       return health_related_event.find((event) => {
         return event.id === Number(eventId);
       });
     }
     if (eventCategory === "backend_category") {
-      const test = allEvents.find((event: any) => {
+      dispatch(resetCreator());
+      const event = allEvents.find((event: any) => {
         return event._id === eventId;
       });
-      return test;
+      if (event) dispatch(fetchEventCreatorDetails(event?.creatorId));
+      return event;
     }
   };
+
+  const isEventMember = () => {
+    const memberExists = singleEvent?.members?.find((item: any) => {
+      return item?.userId === user?.user?._id;
+    });
+    if (memberExists) return true;
+    else return false;
+  };
+
   const [singleEvent, setSingleEvent] = useState<any>({});
+  const { user } = useSelector((store: any) => store.user);
+  const dispatch = useDispatch<AppDispatch>();
 
   const updateEventsArray = useCallback(() => {
     return dispatch(getAllEvents());
   }, [allEvents]);
 
+  // console.log(eventCreator?._id, user?.user._id);
+
   useEffect(() => {
     updateEventsArray();
+    let userValue = checkUser();
+    if (userValue) dispatch(setUser(userValue));
   }, []);
+
   useEffect(() => {
     if (isReady) {
       setSingleEvent(generateSingleEvent());
+      isEventMember();
     }
   }, [isReady, allEvents]);
 
@@ -98,9 +134,9 @@ const SingleEvent = () => {
             <div className={style.datecontainer}>
               <FaCalendar />
               <div>
-                <h3>Event Duration</h3>
+                <h3>Event Deadline</h3>
                 <h6>
-                  {moment(new Date()).format("DD, MMM")} -{" "}
+                  {/* {moment(new Date()).format("DD, MMM")} -{" "} */}
                   {moment(new Date(singleEvent?.completionDeadline)).format(
                     "DD, MMM"
                   )}
@@ -111,9 +147,12 @@ const SingleEvent = () => {
               <img src="/images/female-social-profile.jpg" />
               <div>
                 <h3>{singleEvent?.eventCreator}</h3>
+                <h5>
+                  {eventCreator?.firstName} {eventCreator?.lastName}
+                </h5>
                 <h6>Event Creator</h6>
               </div>
-              <button>Follow</button>
+              {eventCreator?._id !== user?.user._id && <button>Follow</button>}
             </div>
             <div className={style.aboutcontainer}>
               <h3>
@@ -123,13 +162,49 @@ const SingleEvent = () => {
                   : ""}
                 Event
               </h3>
-              <p>
-                {singleEvent?.eventDescription}
-                <br /> <br />
-                {singleEvent?.eventDescription}
-              </p>
-              <button className={style.btn}>Join Event</button>
+              <p>{singleEvent?.eventDescription}</p>
             </div>
+            <div className={style.shareEvent}>
+              <h4>
+                <FaShareAltSquare /> INVITE FRIENDS TO THIS EVENT
+              </h4>
+              <div
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    `https://charityorg.vercel.app${asPath}`
+                  );
+                  if (linkcopyref.current)
+                    linkcopyref.current.textContent = "Link copied";
+                  setTimeout(() => {
+                    linkcopyref.current.textContent = "";
+                  }, 2000);
+                }}
+              >
+                <h4>Copy Link</h4>
+                <FaCopy />
+                <h5 ref={linkcopyref}></h5>
+              </div>
+            </div>
+            {isEventMember() && (
+              <button
+                className={style.btn}
+                onClick={() =>
+                  push(`/events/${eventCategory}/${eventId}/activity_room`)
+                }
+              >
+                Open Event
+              </button>
+            )}
+            {!isEventMember() && (
+              <button
+                className={style.btn}
+                onClick={() => {
+                  dispatch(joinEvents({ eventId, userId: user?.user._id }));
+                }}
+              >
+                Join Event
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -1,0 +1,101 @@
+.content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    width: 60%;
+    height: 100%;
+    font-family: sans-serif;
+    color: grey;
+}
+
+.heading{
+    display: flex;
+    height: 50px;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+.heading>svg{
+    cursor: pointer;
+}
+
+.section_logos{
+    display: flex;
+    width: 100%;
+    justify-content: space-around;
+    margin: 10px 0;
+    padding: 8px 20px;
+    background-color: rgb(97, 97, 97, 0.5);
+    color: rgb(189, 189, 189);
+}
+.section_logos>div{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding-bottom: 5px;
+    border-bottom: 3px solid rgb(189, 189, 189, 0);
+    transition: all 0.3s ease;
+}
+.section_logos>div:hover{
+    transform: scale(105%);
+    border-bottom: 3px solid rgb(189, 189, 189, 1);
+}
+.section_logos>div>svg{
+    font-size: 1.3rem;
+}
+.section_logos>div>h4{
+    font-size: 0.9rem;
+}
+
+.allEventsDirector{
+    display: flex;
+    padding: 5px 20px;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+.allEventsDirector>div{
+    display: flex;
+    gap: 10px;
+    color: greenyellow;
+    cursor: pointer;
+}
+.allEventsDirector>svg{
+    font-size: 1.5rem;
+    font-weight: 800;
+    cursor: pointer;
+    color: greenyellow;
+}
+
+.mainField{
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 10px 25px;
+}
+.mainField input, .mainField textarea{
+    border: 1px solid white;
+    background-color: transparent;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: sans-serif;
+    color: grey;
+    font-size: 1rem;
+}
+
+.mainField>h3{
+    align-self: flex-start;
+}
+
+@media screen and (max-width:650px){
+    .content{
+        width: 100%;
+    }
+}

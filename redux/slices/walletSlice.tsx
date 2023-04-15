@@ -62,9 +62,10 @@ interface Obj {
   error: { type: String; msg: String };
   public_key: String;
   tx_ref: String;
-  amount: Number;
-  currency: String;
-  country: String;
+  topup_amount: String;
+  topup_currency: String;
+  topup_country: String;
+  topupStatus: String;
   payment_options: String;
 }
 const initialState: Obj = {
@@ -75,9 +76,10 @@ const initialState: Obj = {
   error: { type: "", msg: "" },
   public_key: "FLWPUBK_TEST-31f261f02a971b32bd56cf4deff5e74a-X",
   tx_ref: `charityapp${Date.now()}${Math.random()}`,
-  amount: 0,
-  currency: "",
-  country: "",
+  topup_amount: "0",
+  topup_currency: "NGN",
+  topup_country: "Nigeria",
+  topupStatus: "",
   payment_options: "",
 };
 
@@ -90,6 +92,10 @@ const walletSlice = createSlice({
     },
     logError: (state: any, { payload }) => {
       state.error = payload;
+    },
+    updateWalletTopUpForm: (state: any, action: PayloadAction<any>) => {
+      const { name, value } = action.payload;
+      state[name] = value;
     },
   },
   extraReducers: (builder) => {
@@ -132,6 +138,7 @@ const walletSlice = createSlice({
     builder.addCase(paymentResponse.fulfilled, (state: any, { payload }) => {
       state.loading = false;
       state.walletBalance = payload.balance;
+      state.topupStatus = "successful";
     });
     builder.addCase(paymentResponse.rejected, (state: any, { payload }) => {
       state.loading = false;
@@ -140,5 +147,6 @@ const walletSlice = createSlice({
   },
 });
 
-export const { handleTopUpModule, logError } = walletSlice.actions;
+export const { handleTopUpModule, updateWalletTopUpForm, logError } =
+  walletSlice.actions;
 export default walletSlice.reducer;

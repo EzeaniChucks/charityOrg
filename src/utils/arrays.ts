@@ -1116,3 +1116,11 @@ export const timezone = [
     name: "Pacific/Kiritimati",
   },
 ];
+
+export const depositor_category_arrays = [
+  { depositor: "Ezeani", date: "12/3/2022 2:30pm", amount: "20" },
+  { depositor: "Boye", date: "1/3/2022 9:10pm", amount: "20" },
+  { depositor: "Promise", date: "20/4/2022 4:65pm", amount: "20" },
+  { depositor: "Emanuella", date: "14/2/2022 6:37pm", amount: "20" },
+  { depositor: "Oyeyemi", date: "31/1/2022 8:32pm", amount: "20" },
+];

@@ -6,8 +6,10 @@ import { ParsedUrlQuery } from "querystring";
 interface Obj {
   event?: any;
   allEvents: any;
+  eventCreator: any;
   eventName: String;
   eventDate: String;
+  fullEventDetails: any;
   timeZone: String;
   hostStatus: String;
   currency: String;
@@ -18,9 +20,18 @@ interface Obj {
   eventImagePath?: String;
   invitationEmails?: String[];
   loading: Boolean;
+  error: { type: String; msg: String; code: String };
+  depositAmount: String;
+  categoryDesc: String;
+  requestAmount: String;
+  requestDescription: String;
+  memberRequestList: any;
+  totalMemberRequestsAmount: String | Number;
   creationStatus: Boolean;
   showEventForm?: Boolean;
   createEventStep?: String;
+  joineventNotification: String;
+  tabState: String;
 }
 
 // const conString = "http://localhost:8080";
@@ -33,6 +44,22 @@ export const createEvent = createAsyncThunk(
     try {
       const { data }: { data: any } = await axios.post(
         `${conString}/create_event`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
+export const fetchEventCreatorDetails = createAsyncThunk(
+  "event/fetchEventCreatorDetails",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.get(
+        `${conString}/event_creator_details/${prop}`,
         prop
       );
       return data;
@@ -58,12 +85,124 @@ export const getAllEvents = createAsyncThunk(
     }
   }
 );
+export const joinEvents = createAsyncThunk(
+  "event/joinEvents",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.post(
+        `${conString}/join_event`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
+export const getEventDetail = createAsyncThunk(
+  "event/getEventDetail",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.get(
+        `${conString}/${prop}/get_event_details`
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
+export const acceptEventDeposit = createAsyncThunk(
+  "event/acceptEventDeposit",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.post(
+        `${conString}/accept_event_deposit`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
+export const editMemberRequest = createAsyncThunk(
+  "event/editMemberRequest",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.put(
+        `${conString}/edit_member_request`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
+export const deleteMemberRequest = createAsyncThunk(
+  "event/deleteMemberRequest",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.delete(
+        `${conString}/delete_member_request`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
+export const getMemberRequestList = createAsyncThunk(
+  "event/getMemberRequestList",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.get(
+        `${conString}/get_member_request_list/${prop}`
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
+export const uploadMemberRequest = createAsyncThunk(
+  "event/uploadMemberRequest",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.post(
+        `${conString}/upload_member_request`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
 
 const initialState: Obj = {
   event: null,
   allEvents: [],
+  eventCreator: null,
   eventName: "",
   eventDate: Date(),
+  fullEventDetails: [],
   timeZone: "Etc/GMT-12 (GMT-12:00)",
   hostStatus: "Depositor",
   currency: "Euro",
@@ -73,10 +212,19 @@ const initialState: Obj = {
   eventImageName: "",
   eventImagePath: "",
   invitationEmails: [],
+  depositAmount: "",
+  categoryDesc: "",
+  requestAmount: "",
+  requestDescription: "",
+  memberRequestList: [],
+  totalMemberRequestsAmount: 0,
   loading: false,
+  error: { type: "", msg: "", code: "" },
   creationStatus: false,
   showEventForm: false,
   createEventStep: "step1",
+  joineventNotification: "",
+  tabState: "deposit",
 };
 
 const eventSlice = createSlice({
@@ -102,6 +250,22 @@ const eventSlice = createSlice({
     },
     resetEvent: (state) => {
       state.event = null;
+    },
+    resetCreator: (state) => {
+      state.eventCreator = null;
+    },
+    resetEventPaymentInfo: (state) => {
+      state.depositAmount = "";
+      state.categoryDesc = "";
+    },
+    setCategoryName: (state, { payload }) => {
+      state.categoryDesc = payload;
+    },
+    setTabState: (state, { payload }) => {
+      state.tabState = payload;
+    },
+    logError: (state, { payload }) => {
+      state.error = payload;
     },
   },
   extraReducers: (builder) => {
@@ -129,6 +293,8 @@ const eventSlice = createSlice({
         code: payload,
       };
     });
+
+    //Get All Events
     builder.addCase(getAllEvents.pending, (state: any) => {
       state.loading = true;
     });
@@ -144,9 +310,187 @@ const eventSlice = createSlice({
         code: payload,
       };
     });
+
+    //Get Event Creator
+    builder.addCase(fetchEventCreatorDetails.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(
+      fetchEventCreatorDetails.fulfilled,
+      (state: any, { payload }) => {
+        state.loading = false;
+        state.eventCreator = payload.creator;
+      }
+    );
+    builder.addCase(
+      fetchEventCreatorDetails.rejected,
+      (state: any, { payload }) => {
+        state.loading = false;
+        state.error = {
+          type: "server_error",
+          msg: "Not Available",
+          code: payload,
+        };
+      }
+    );
+
+    //Join Event
+    builder.addCase(joinEvents.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(joinEvents.fulfilled, (state: any, { payload }) => {
+      state.loading = false;
+      state.joineventNotification = payload.msg;
+    });
+    builder.addCase(joinEvents.rejected, (state: any, { payload }) => {
+      state.loading = false;
+      state.error = {
+        type: "server_error",
+        msg: "Not able to join event. Please try again",
+        code: payload,
+      };
+    });
+
+    //Get Full Event Object with necessary details
+    builder.addCase(getEventDetail.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(getEventDetail.fulfilled, (state: any, { payload }) => {
+      state.loading = false;
+      state.fullEventDetails = payload.eventDetail;
+    });
+    builder.addCase(getEventDetail.rejected, (state: any, { payload }) => {
+      state.loading = false;
+      state.error = {
+        type: "server_error",
+        msg: "Not able to get event datails. Please try again",
+        code: payload,
+      };
+    });
+
+    //ACCEPT EVENT DEPOSIT
+    builder.addCase(acceptEventDeposit.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(acceptEventDeposit.fulfilled, (state: any, { payload }) => {
+      state.loading = false;
+      state.fullEventDetails = payload.completeDetail;
+    });
+    builder.addCase(
+      acceptEventDeposit.rejected,
+      (state: any, { payload }: { payload: any }) => {
+        state.loading = false;
+        state.error = {
+          type: "server_error",
+          msg: "Not able to proceed with event deposit. Please try again",
+          code: payload,
+        };
+      }
+    );
+
+    //UPLOAD EVENT REQUEST AMOUNT
+    builder.addCase(uploadMemberRequest.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(
+      uploadMemberRequest.fulfilled,
+      (state: any, { payload }) => {
+        state.loading = false;
+        state.memberRequestList = payload?.memberRequests;
+        state.totalMemberRequestsAmount = payload?.totalMemberRequestsAmount;
+      }
+    );
+    builder.addCase(
+      uploadMemberRequest.rejected,
+      (state: any, { payload }: { payload: any }) => {
+        state.loading = false;
+        state.error = {
+          type: "server_error",
+          msg: "Not able to proceed with amount request. Please try again",
+          code: payload,
+        };
+      }
+    );
+
+    //Get Member Request List
+    builder.addCase(getMemberRequestList.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(
+      getMemberRequestList.fulfilled,
+      (state: any, { payload }) => {
+        state.loading = false;
+        state.memberRequestList = payload?.memberRequests;
+        state.totalMemberRequestsAmount = payload?.totalMemberRequestsAmount;
+      }
+    );
+    builder.addCase(
+      getMemberRequestList.rejected,
+      (state: any, { payload }: { payload: any }) => {
+        state.loading = false;
+        state.error = {
+          type: "server_error",
+          msg: "Not able to proceed with amount request. Please try again",
+          code: payload,
+        };
+      }
+    );
+
+    //EDIT EVENT REQUEST AMOUNT/DESCRIPTION
+    builder.addCase(editMemberRequest.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(editMemberRequest.fulfilled, (state: any, { payload }) => {
+      state.loading = false;
+      console.log(payload);
+    });
+    builder.addCase(
+      editMemberRequest.rejected,
+      (state: any, { payload }: { payload: any }) => {
+        state.loading = false;
+        state.error = {
+          type: "server_error",
+          msg: "Not able to proceed with event deposit. Please try again",
+          code: payload,
+        };
+      }
+    );
+
+    //DELETE EVENT REQUEST
+    builder.addCase(deleteMemberRequest.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(
+      deleteMemberRequest.fulfilled,
+      (state: any, { payload }) => {
+        state.loading = false;
+        console.log(payload);
+        state.memberRequestList = payload?.memberRequests;
+      }
+    );
+    builder.addCase(
+      deleteMemberRequest.rejected,
+      (state: any, { payload }: { payload: any }) => {
+        state.loading = false;
+        state.error = {
+          type: "server_error",
+          msg: "Not able to proceed with event deposit. Please try again",
+          code: payload,
+        };
+      }
+    );
   },
 });
 
-export const { handleEventModule, updateEventForm, switchStep, resetEvent } =
-  eventSlice.actions;
+export const {
+  handleEventModule,
+  updateEventForm,
+  switchStep,
+  resetEvent,
+  resetCreator,
+  resetEventPaymentInfo,
+  setCategoryName,
+  setTabState,
+  logError,
+} = eventSlice.actions;
 export default eventSlice.reducer;
