@@ -112,6 +112,7 @@
     background-color: rgb(17, 17, 17, 0.3);
     width: 100vw;
     height: 100vh;
+    z-index: 100;
 }
 /*  */
 
