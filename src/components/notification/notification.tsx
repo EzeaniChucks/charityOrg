@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import {
   get_Notification,
+  handleNotifModal,
   message_checked_status,
 } from "../../../redux/slices/notificationsSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,6 +15,7 @@ const Notification = () => {
   const { notifications, notifLogStatus } = useSelector(
     (store: any) => store.notifications
   );
+  const { push } = useRouter();
   const { user } = useSelector((store: any) => store.user);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -27,22 +29,24 @@ const Notification = () => {
     <div className={style.notification_container}>
       {notifications.map((item: any) => {
         return (
-          <a key={item._id} href={`${item?.link}`}>
+          <div key={item._id}>
             <p
-              onClick={() =>
+              onClick={() => {
+                push(`${item?.link}`);
+                dispatch(handleNotifModal());
                 dispatch(
                   message_checked_status({
                     messageId: item._id,
                     userId: user?.user?._id,
                   })
-                )
-              }
+                );
+              }}
               className={!item?.has_checked ? style.checkedmessage : ""}
             >
               {item?.message}
             </p>
             <hr />
-          </a>
+          </div>
         );
       })}
     </div>

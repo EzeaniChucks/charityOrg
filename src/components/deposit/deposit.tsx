@@ -46,7 +46,7 @@ const DepositForm = () => {
       let userValue = checkUser();
       if (userValue) dispatch(setUser(userValue));
     }
-  }, [isReady]);
+  }, [isReady, eventId]);
 
   useEffect(() => {
     if (error.type) {

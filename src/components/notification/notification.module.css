@@ -3,9 +3,11 @@
     bottom: 110px;
     left: 30vw;
     min-height: 300px;
+    max-height: 400px;
     width: 60vw;
     max-width: 300px;
     border-radius: 20px;
+    overflow-y: auto;
     padding: 20px;
     background-color: rgb(165, 165, 165);
 }
