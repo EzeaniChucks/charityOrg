@@ -16,19 +16,19 @@ import {
 export const dashbord_item = [
   {
     id: 1,
-    name: "Event",
+    name: "All Events",
     logo: FaDashcube,
     link: "/events",
   },
   {
     id: 3,
-    name: "Wallet",
+    name: "My Events",
     logo: FaWallet,
     link: "",
   },
   {
     id: 2,
-    name: "Invoice",
+    name: "Messages",
     logo: FaFileInvoice,
     link: "",
   },

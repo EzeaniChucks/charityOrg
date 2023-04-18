@@ -17,6 +17,10 @@ import { checkUser } from "@/utils/localstorage";
 import { setUser } from "../../../redux/slices/authSlice";
 import style2 from "../../pages/events/[eventCategory]/[eventId]/activity_room.module.css";
 import style from "./deposit.module.css";
+import {
+  get_Notification,
+  log_Notification,
+} from "../../../redux/slices/notificationsSlice";
 
 const DepositForm = () => {
   const {
@@ -35,7 +39,7 @@ const DepositForm = () => {
   const { isReady } = useRouter();
   const { eventId } = useRouter().query;
 
-  // console.log(isReady, eventId);
+  // console.log(fullEventDetails);
   useEffect(() => {
     if (isReady) {
       dispatch(getEventDetail(eventId));
@@ -78,6 +82,14 @@ const DepositForm = () => {
       currency: "NGN", //Please make this dynamic
     };
     dispatch(acceptEventDeposit(finalObj));
+    dispatch(
+      log_Notification({
+        message: `${finalObj.userName} has made a deposit of ${finalObj.depositAmount} to your event ${fullEventDetails.eventName}`,
+        userId: user.user._id,
+        link: `/events/backend_category/${eventId}/activity_room`,
+        eventId,
+      })
+    );
     dispatch(resetEventPaymentInfo());
     setShowModal(!showModal);
   };
@@ -97,8 +109,11 @@ const DepositForm = () => {
       <h3>Deposit details</h3>
       <div className={style.total_deposit_board}>
         <div className={style.currency}>
-          Currency
-          <IoIosArrowDropdown />
+          <p>Event summary</p>
+          <div>
+            Currency
+            <IoIosArrowDropdown />
+          </div>
         </div>
         <h3>Total Deposited Amount</h3>
         <h2
@@ -131,7 +146,7 @@ const DepositForm = () => {
       <div className={style.add_new_category}>
         <h3>Create New Category</h3>
         <h6>
-          (or proceed below to existing categories (if any) to make deposit)
+          (or proceed to existing categories below (if any) to make deposit)
         </h6>
         <div>
           <input

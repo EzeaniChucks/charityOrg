@@ -9,6 +9,15 @@
     border-radius: 10px;
 }
 .currency{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+}
+.currency>p{
+    color: rgb(143, 110, 50);
+}
+.currency>div{
     align-self: flex-end;
     display: flex;
     gap: 10px;
@@ -79,7 +88,7 @@
     border-radius: 5px;
 }
 .btn_add:disabled{
-    cursor: progress;
+    cursor:not-allowed;
     color: rgb(44, 38, 38);
 }
 .depositors_container{
@@ -147,6 +156,7 @@
     display: flex;
     flex-direction: column;
     padding: 10px;
+    width: 100%;
     padding-right: 20px;
     background-color: rgba(32, 32, 32, 0.5);
     backdrop-filter: blur(2px);
@@ -156,6 +166,7 @@
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     gap: 10px;
+    width: 100%;
     place-items:center;
     margin-bottom: 10px;
 }
@@ -217,7 +228,7 @@
     background-color: rgb(58, 49, 66);
     padding: 10px;
     height: 50px;
-    text-align: right;
+    text-align: center;
     position: fixed;
     top: 10px;
     z-index: 100;
@@ -230,6 +241,7 @@
     flex-direction: column;
     align-items: flex-start;
     width: 100%;
+    color: rgb(97, 60, 52);
 }
 .add_new_category>div>input{
     width: 100%;

@@ -210,9 +210,10 @@
 }
 
 .top_matrix .balance_graph_card{
-    padding: 10px;
+    padding: 5px;
+    height: fit-content;
 }
-.top_matrix .balance_graph_card>div:nth-of-type(2){
+/* .top_matrix .balance_graph_card>div:nth-of-type(2){
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -226,7 +227,7 @@
     height: 220px;
     width: 220px;
     padding: 20px;
-}
+} */
 .middle_matrix{
     display: grid;
     grid-auto-flow: column;
@@ -311,20 +312,21 @@
 }
 .month_piechart_card{
     display: flex;
-    align-items: center;
+    height: 100%;
+    /* align-items: center; */
     justify-content: center;
     padding: 10px;
 }
-.month_piechart_card>div{
+/* .month_piechart_card>div{
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: rgb(28, 71, 57);
-    height: 200px;
+    height: 250px;
     width: 200px;
     color: white;
     border-radius: 50%;
-}
+} */
 
 @media screen and (max-width:900px){
     .section{

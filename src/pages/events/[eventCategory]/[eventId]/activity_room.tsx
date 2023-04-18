@@ -4,8 +4,6 @@ import DepositForm from "@/components/deposit/deposit";
 import RequestForm from "@/components/request/request";
 import DisputeForm from "@/components/dispute/dispute";
 import ChatRoom from "@/components/chat/chat";
-import style from "./activity_room.module.css";
-import styles2 from "../../../../components/auth/auth.module.css";
 import {
   FaArrowAltCircleLeft,
   FaGavel,
@@ -14,17 +12,111 @@ import {
   FaPiggyBank,
 } from "react-icons/fa";
 import { HiChatAlt2 } from "react-icons/hi";
-import { AiOutlineEllipsis } from "react-icons/ai";
+import {
+  AiFillCustomerService,
+  AiFillDashboard,
+  AiFillEnvironment,
+  AiOutlineEllipsis,
+} from "react-icons/ai";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setTabState } from "../../../../../redux/slices/eventSlice";
+import { IoIosNotifications } from "react-icons/io";
+import Notification from "@/components/notification/notification";
+import {
+  get_Notification,
+  handleNotifModal,
+} from "../../../../../redux/slices/notificationsSlice";
+import { AppDispatch } from "../../../../../redux/store";
+import { io } from "socket.io-client";
+import { conString } from "@/utils/conString";
+import { useRouter } from "next/router";
+import style from "./activity_room.module.css";
+import styles2 from "../../../../components/auth/auth.module.css";
 
 const ActivityRoom = () => {
-  const { tabState } = useSelector((store: any) => store.event);
-  const dispatch = useDispatch();
+  const { tabState, fullEventDetails } = useSelector(
+    (store: any) => store.event
+  );
+  const { notifLogStatus, notifModalIsOpen, notifications } = useSelector(
+    (store: any) => store.notifications
+  );
+  const { user } = useSelector((store: any) => store.user);
+  const [lowerTab, setLowerTab] = useState<String>("0");
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { push } = useRouter();
+  const { eventId } = useRouter().query;
+
+  useEffect(() => {
+    const links = document.querySelectorAll(`.${style.link}`);
+    links.forEach((item, i) => {
+      item.classList.remove(`${style.active}`);
+      if (i === Number(lowerTab)) {
+        return item.classList?.add(`${style.active}`);
+      }
+    });
+    const uppertabs = document.querySelector(`.${style.section_logos}`);
+    // console.log(uppertabs?.childNodes);
+    uppertabs?.childNodes.forEach((item: any, i) => {
+      item?.classList.remove(`${style.activeUpperTab}`);
+      if (tabState === "deposit" && i === 0) {
+        return item.classList?.add(`${style.activeUpperTab}`);
+      }
+      if (tabState === "request" && i === 1) {
+        return item.classList?.add(`${style.activeUpperTab}`);
+      }
+      if (tabState === "dispute" && i === 2) {
+        return item.classList?.add(`${style.activeUpperTab}`);
+      }
+      if (tabState === "chat" && i === 3) {
+        return item.classList?.add(`${style.activeUpperTab}`);
+      }
+    });
+  }, [lowerTab, tabState]);
+
+  useEffect(() => {
+    if (localStorage?.getItem("charityOrgTabState")) {
+      dispatch(setTabState(localStorage.getItem("charityOrgTabState")));
+    }
+  }, []);
+  useEffect(() => {
+    if (user) {
+      dispatch(get_Notification(user?.user?._id));
+    }
+  }, [user, notifLogStatus]);
+
+  // useEffect(() => {
+  //   if (eventId) {
+  //     socket.emit<any>(eventId, { post: "Message from frontend" });
+  //   }
+  // }, [eventId]);
+
+  const uncheckedMessages = () => {
+    let number = 0;
+    notifications.map((item: any) => {
+      if (item?.has_checked) return;
+      return number++;
+    });
+    return number;
+  };
+  const testSocket = () => {
+    // const socket = io(conString, { transports: ["websocket"] });
+    // socket.emit<any>(eventId, { post: "Message from frontend" });
+    // socket.on("response", (data) => {
+    //   console.log(data);
+    // });
+  };
+  const setLowerTabState = (state: String) => {
+    setLowerTab((prevState) => {
+      prevState = state;
+      return prevState;
+    });
+  };
   return (
     <>
       <Head>
-        <title>Charity Org</title>
+        <title>Charity Org: {fullEventDetails?.eventName}</title>
         <meta name="description" content="Event activity room" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/charityApp.png" />
@@ -33,10 +125,15 @@ const ActivityRoom = () => {
         <div className={style.content}>
           <div className={style.heading}>
             <FaList />
-            <h2>Events Page</h2>
+            <h3>{fullEventDetails?.eventName}</h3>
           </div>
           <div className={style.section_logos}>
-            <div onClick={() => dispatch(setTabState("deposit"))}>
+            <div
+              onClick={() => {
+                dispatch(setTabState("deposit"));
+                testSocket();
+              }}
+            >
               <FaPiggyBank />
               <h4>Deposit</h4>
             </div>
@@ -64,6 +161,54 @@ const ActivityRoom = () => {
           {tabState === "request" && <RequestForm />}
           {tabState === "dispute" && <DisputeForm />}
           {tabState === "chat" && <ChatRoom />}
+        </div>
+        {notifModalIsOpen && (
+          <div className={style.notification_modal}>
+            <Notification />
+          </div>
+        )}
+        <div className={[style.bottom_bar_container].join(" ")}>
+          <div className={style.bottom_bar}>
+            <div
+              onMouseOver={() => setLowerTabState("0")}
+              onClick={() => dispatch(handleNotifModal())}
+              className={[style.link, style.active].join(" ")}
+            >
+              {uncheckedMessages() > 0 && (
+                <div className={style.notif_alert}>{uncheckedMessages()}</div>
+              )}
+              <IoIosNotifications />
+              <p>Notifications</p>
+            </div>
+            <div
+              onMouseOver={() => setLowerTabState("1")}
+              onClick={() => push("/dashboard")}
+              className={style.link}
+            >
+              <AiFillDashboard />
+              <p>Dashboard</p>
+            </div>
+            <div
+              onMouseOver={() => setLowerTabState("2")}
+              onClick={() => push("/events")}
+              className={style.link}
+            >
+              <AiFillEnvironment />
+              <p>All events</p>
+            </div>
+            <div
+              onMouseOver={() => setLowerTabState("3")}
+              // onClick={() => setLowerTabState("3")}
+              className={[style.link].join(" ")}
+            >
+              <AiFillCustomerService />
+              <p>Customer Service</p>
+            </div>
+            <div
+              // onClick={() => setLowerTabState("4")}
+              className={style.indicator}
+            ></div>
+          </div>
         </div>
         <div className={styles2.particles}>
           <ParticlesComp />

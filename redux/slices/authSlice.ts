@@ -4,10 +4,7 @@ import { RootState } from "../store";
 import axios from "axios";
 import { ParsedUrlQuery } from "querystring";
 import { removeUser } from "@/utils/localstorage";
-
-
-// const conString = "http://localhost:8080";
-const conString = "https://charityorg.onrender.com";
+import { conString } from "@/utils/conString";
 
 export const register = createAsyncThunk(
   "auth/register",

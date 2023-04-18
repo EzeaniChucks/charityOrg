@@ -3,13 +3,14 @@ import userSlice from "./slices/authSlice";
 import eventSlice from "./slices/eventSlice";
 import walletSlice from "./slices/walletSlice";
 import eventsPageSlice from "./slices/eventsPageSlice";
-
+import notificationsSlice from "./slices/notificationsSlice";
 export const store = configureStore({
   reducer: {
     user: userSlice,
     event: eventSlice,
     wallet: walletSlice,
     eventPage: eventsPageSlice,
+    notifications: notificationsSlice,
   },
 });
 

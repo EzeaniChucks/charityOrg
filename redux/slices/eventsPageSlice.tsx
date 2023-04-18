@@ -2,10 +2,8 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import axios from "axios";
 import { ParsedUrlQuery } from "querystring";
+import { conString } from "@/utils/conString";
 
-// const conString = "http://localhost:8080";
-
-const conString = "https://charityorg.onrender.com";
 
 interface Obj {
   tabState: String;

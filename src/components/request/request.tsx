@@ -70,11 +70,11 @@ const RequestForm = () => {
     dispatch(updateEventForm({ name, value }));
   };
   const handleRequestSubmission = () => {
-    if (requestAmount === "" || requestDescription === "") {
+    if (!requestAmount || !requestDescription) {
       return dispatch(
         logError({
           type: "deposit_form_error",
-          msg: "Requested amount with description must be filled",
+          msg: "Amount can't be zero and request description can't be empty",
         })
       );
     }
@@ -92,14 +92,14 @@ const RequestForm = () => {
     setShowModal(!showModal);
   };
   const handleShowModal = () => {
-    if (requestAmount === "" || requestDescription === "") {
-      return dispatch(
-        logError({
-          type: "deposit_form_error",
-          msg: "Deposit amount and new category name must be filled",
-        })
-      );
-    }
+    // if (requestAmount === "" || requestDescription === "") {
+    //   return dispatch(
+    //     logError({
+    //       type: "deposit_form_error",
+    //       msg: "Deposit amount and new category name must be filled",
+    //     })
+    //   );
+    // }
     return setShowModal(!showModal);
   };
 
@@ -137,8 +137,11 @@ const RequestForm = () => {
       <h3>Summary</h3>
       <div className={style.total_deposit_board}>
         <div className={style.currency}>
-          Currency
-          <IoIosArrowDropdown />
+          <p>Event summary</p>
+          <div>
+            Currency
+            <IoIosArrowDropdown />
+          </div>
         </div>
         <h3>Total Deposited Amount</h3>
         <h2
@@ -168,7 +171,6 @@ const RequestForm = () => {
             )}
           </h4>
         </div>
-        {/* <button className={style.btn_end}>End Deposit Stage</button> */}
       </div>
 
       <div className={style.depositors_container}>
@@ -181,6 +183,11 @@ const RequestForm = () => {
           </div>
         </div>
         <div className={style.depositors}>
+          {memberRequestList?.length === 0 && (
+            <p style={{ textAlign: "center" }}>
+              No Requests Submitted yet. Fill form above to create first request
+            </p>
+          )}
           {memberRequestList?.map((item: any) => {
             return (
               <Request_Description
@@ -189,7 +196,9 @@ const RequestForm = () => {
                 handleRequestSubmission={handleRequestSubmission}
                 handleChange={handleChange}
                 handleShowModal={handleShowModal}
+                getMemberRequestList={getMemberRequestList}
                 error={error}
+                eventId={eventId}
                 dispatch={dispatch}
               />
             );

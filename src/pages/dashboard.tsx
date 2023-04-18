@@ -1,5 +1,6 @@
 import ParticlesComp from "@/components/ParticlesComp";
 import Head from "next/head";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,8 +30,11 @@ import {
   RxArrowDown,
   RxCheck,
 } from "react-icons/rx";
+// const Pie = dynamic(() => import("../components/charts/Pie"), { ssr: false });
+import Example from "@/components/charts/PieChart";
 import styles2 from "../components/auth/auth.module.css";
 import styles1 from "../styles/dashboard.module.css";
+import Doughnut from "@/components/charts/Doughnut";
 
 const Dashboard = () => {
   const { user } = useSelector((store: any) => store.user);
@@ -48,6 +52,25 @@ const Dashboard = () => {
   const changeRoute = useCallback(() => {
     return push("/");
   }, []);
+
+  const pieData = Object.values(
+    latestTx.reduce((total: any, item: any) => {
+      const { description, amount } = item;
+      if (!description) return total;
+      if (!total[description]) {
+        total[description] = {
+          label: description,
+          value: amount,
+        };
+      } else {
+        total[description] = {
+          ...total[description],
+          value: total[description].value + amount,
+        };
+      }
+      return total;
+    }, {})
+  );
 
   useEffect(() => {
     if (isReady && query.transaction_id) {
@@ -214,13 +237,14 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <div className={styles1.balance_graph_card}>
-                  <div>
+                  {/* <div>
                     <h2>Report</h2>
-                  </div>
-                  <div>
+                  </div> */}
+                  <Example />
+                  {/* <div>
                     <h2>Graph</h2>
                     <h6>will be displayed here</h6>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className={styles1.middle_matrix}>
@@ -301,7 +325,8 @@ const Dashboard = () => {
                   })}
                 </div>
                 <div className={styles1.month_piechart_card}>
-                  <div> Pie Chart Here</div>
+                  {/* <div> Pie Chart Here</div> */}
+                  <Doughnut />
                 </div>
               </div>
             </div>

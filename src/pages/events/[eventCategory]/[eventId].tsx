@@ -19,13 +19,14 @@ import {
   resetCreator,
 } from "../../../../redux/slices/eventSlice";
 import { AppDispatch } from "../../../../redux/store";
-import styles2 from "../../../components/auth/auth.module.css";
-import style from "../../../components/events/singleEvent.module.css";
 import { checkUser, storeUser } from "@/utils/localstorage";
 import { setUser } from "../../../../redux/slices/authSlice";
+import styles2 from "../../../components/auth/auth.module.css";
+import style from "../../../components/events/singleEvent.module.css";
 
 const SingleEvent = () => {
-  const { allEvents, eventCreator } = useSelector((store: any) => store.event);
+  const { allEvents, eventCreator, loading, joineventNotification } =
+    useSelector((store: any) => store.event);
   const { eventId, eventCategory } = useRouter().query;
   const { isReady, asPath, push } = useRouter();
   const linkcopyref = useRef<any>(null);
@@ -83,7 +84,7 @@ const SingleEvent = () => {
     updateEventsArray();
     let userValue = checkUser();
     if (userValue) dispatch(setUser(userValue));
-  }, []);
+  }, [joineventNotification]);
 
   useEffect(() => {
     if (isReady) {
@@ -201,6 +202,7 @@ const SingleEvent = () => {
                 onClick={() => {
                   dispatch(joinEvents({ eventId, userId: user?.user._id }));
                 }}
+                disabled={loading}
               >
                 Join Event
               </button>

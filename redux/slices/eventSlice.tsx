@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import axios from "axios";
 import { ParsedUrlQuery } from "querystring";
+import { conString } from "@/utils/conString";
 
 interface Obj {
   event?: any;
@@ -23,8 +24,11 @@ interface Obj {
   error: { type: String; msg: String; code: String };
   depositAmount: String;
   categoryDesc: String;
-  requestAmount: String;
+  requestAmount: String | Number;
   requestDescription: String;
+  editRequestAmount: String;
+  editRequestDescription: String;
+  hasEditCompleted: Boolean;
   memberRequestList: any;
   totalMemberRequestsAmount: String | Number;
   creationStatus: Boolean;
@@ -33,10 +37,6 @@ interface Obj {
   joineventNotification: String;
   tabState: String;
 }
-
-// const conString = "http://localhost:8080";
-
-const conString = "https://charityorg.onrender.com";
 
 export const createEvent = createAsyncThunk(
   "event/createEvent",
@@ -138,7 +138,7 @@ export const editMemberRequest = createAsyncThunk(
     try {
       const { data }: { data: any } = await axios.put(
         `${conString}/edit_member_request`,
-        prop
+        prop?.data
       );
       return data;
     } catch (err: any) {
@@ -151,6 +151,7 @@ export const editMemberRequest = createAsyncThunk(
 export const deleteMemberRequest = createAsyncThunk(
   "event/deleteMemberRequest",
   async (prop: any, thunk) => {
+    console.log(prop);
     try {
       const { data }: { data: any } = await axios.delete(
         `${conString}/delete_member_request`,
@@ -214,10 +215,13 @@ const initialState: Obj = {
   invitationEmails: [],
   depositAmount: "",
   categoryDesc: "",
-  requestAmount: "",
+  requestAmount: "" || 0,
   requestDescription: "",
+  editRequestAmount: "",
+  editRequestDescription: "",
   memberRequestList: [],
   totalMemberRequestsAmount: 0,
+  hasEditCompleted: false,
   loading: false,
   error: { type: "", msg: "", code: "" },
   creationStatus: false,
@@ -263,6 +267,11 @@ const eventSlice = createSlice({
     },
     setTabState: (state, { payload }) => {
       state.tabState = payload;
+      localStorage.setItem("charityOrgTabState", payload);
+    },
+    setEditsForRequestPage: (state: any, { payload }) => {
+      state.editRequestAmount = payload.requestAmount;
+      state.editRequestDescription = payload.requestDescription;
     },
     logError: (state, { payload }) => {
       state.error = payload;
@@ -337,19 +346,24 @@ const eventSlice = createSlice({
     //Join Event
     builder.addCase(joinEvents.pending, (state: any) => {
       state.loading = true;
+      state.joineventNotification = "";
     });
     builder.addCase(joinEvents.fulfilled, (state: any, { payload }) => {
       state.loading = false;
       state.joineventNotification = payload.msg;
     });
-    builder.addCase(joinEvents.rejected, (state: any, { payload }) => {
-      state.loading = false;
-      state.error = {
-        type: "server_error",
-        msg: "Not able to join event. Please try again",
-        code: payload,
-      };
-    });
+    builder.addCase(
+      joinEvents.rejected,
+      (state: any, { payload }: { payload: any }) => {
+        state.loading = false;
+        state.joineventNotification = payload;
+        state.error = {
+          type: "server_error",
+          msg: "Not able to join event. Please try again",
+          code: payload,
+        };
+      }
+    );
 
     //Get Full Event Object with necessary details
     builder.addCase(getEventDetail.pending, (state: any) => {
@@ -388,7 +402,7 @@ const eventSlice = createSlice({
       }
     );
 
-    //UPLOAD EVENT REQUEST AMOUNT
+    //UPLOAD REQUEST AMOUNT
     builder.addCase(uploadMemberRequest.pending, (state: any) => {
       state.loading = true;
     });
@@ -439,15 +453,19 @@ const eventSlice = createSlice({
     //EDIT EVENT REQUEST AMOUNT/DESCRIPTION
     builder.addCase(editMemberRequest.pending, (state: any) => {
       state.loading = true;
+      state.hasEditCompleted = false;
     });
     builder.addCase(editMemberRequest.fulfilled, (state: any, { payload }) => {
       state.loading = false;
-      console.log(payload);
+      state.hasEditCompleted = true;
+      state.memberRequestList = payload?.memberRequests;
+      state.totalMemberRequestsAmount = payload?.totalMemberRequestsAmount;
     });
     builder.addCase(
       editMemberRequest.rejected,
       (state: any, { payload }: { payload: any }) => {
         state.loading = false;
+        state.hasEditCompleted = false;
         state.error = {
           type: "server_error",
           msg: "Not able to proceed with event deposit. Please try again",
@@ -459,19 +477,22 @@ const eventSlice = createSlice({
     //DELETE EVENT REQUEST
     builder.addCase(deleteMemberRequest.pending, (state: any) => {
       state.loading = true;
+      state.hasEditCompleted = false;
     });
     builder.addCase(
       deleteMemberRequest.fulfilled,
       (state: any, { payload }) => {
         state.loading = false;
-        console.log(payload);
+        state.hasEditCompleted = true;
         state.memberRequestList = payload?.memberRequests;
+        state.totalMemberRequestsAmount = payload?.totalMemberRequestsAmount;
       }
     );
     builder.addCase(
       deleteMemberRequest.rejected,
       (state: any, { payload }: { payload: any }) => {
         state.loading = false;
+        state.hasEditCompleted = false;
         state.error = {
           type: "server_error",
           msg: "Not able to proceed with event deposit. Please try again",
@@ -491,6 +512,7 @@ export const {
   resetEventPaymentInfo,
   setCategoryName,
   setTabState,
+  setEditsForRequestPage,
   logError,
 } = eventSlice.actions;
 export default eventSlice.reducer;

@@ -2,14 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import axios from "axios";
 import { ParsedUrlQuery } from "querystring";
-
-// const conString = "http://localhost:8080";
-
-
-//This Slice isnt used in ay module yet. I'm keeping it for future use
-
-
-const conString = "https://charityorg.onrender.com";
+import { conString } from "@/utils/conString";
 
 export const uploadEventImage = createAsyncThunk(
   "event/uploadEventImage",

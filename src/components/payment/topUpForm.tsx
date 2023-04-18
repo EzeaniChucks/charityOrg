@@ -9,9 +9,7 @@ import { FlutterWaveButton, closePaymentModal } from "flutterwave-react-v3";
 import { country_array, currency_array } from "@/utils/fundsArrays";
 import style from "../../components/events/events.module.css";
 import styles2 from "../../components/auth/auth.module.css";
-
-// const conString = "http://localhost:3000/dashboard";
-const conString = "https://charityorg.vercel.app/dashboard";
+import { conStringFrontEnd } from "@/utils/conString";
 
 const TopUpForm = () => {
   const {
@@ -38,7 +36,7 @@ const TopUpForm = () => {
     currency: topup_currency,
     country: topup_country,
     payment_options: "card",
-    redirect_url: conString,
+    redirect_url: `${conStringFrontEnd}/dashboard`,
     customer: {
       email: user.user.email,
       phone_number: "08067268692",

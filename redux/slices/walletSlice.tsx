@@ -3,10 +3,8 @@ import { RootState } from "../store";
 import axios from "axios";
 import { ParsedUrlQuery } from "querystring";
 import { removeUser } from "@/utils/localstorage";
+import { conString } from "@/utils/conString";
 
-// const conString = "http://localhost:8080";
-
-const conString = "https://charityorg.onrender.com";
 
 export const getWalletBalance = createAsyncThunk(
   "/getWalletBalance",
