@@ -38,12 +38,6 @@ export const dashbord_item = [
     logo: FaChartBar,
     link: "",
   },
-  {
-    id: 5,
-    name: "Transactions",
-    logo: FaDatabase,
-    link: "",
-  },
 ];
 
 export const middle_matrix_items = [

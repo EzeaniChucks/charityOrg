@@ -285,13 +285,6 @@ const eventSlice = createSlice({
     updateEventForm: (state: any, action: PayloadAction<any>) => {
       const { name, value } = action.payload;
       state[name] = value;
-      if (name === "depositDeadline") {
-        const depDate = new Date(state.depositDeadline).getTime();
-        const compDate = new Date(state.completionDeadline).getTime();
-        if (depDate > compDate) {
-          state["completionDeadline"] = value;
-        }
-      }
     },
     switchStep: (state, action: PayloadAction<any>) => {
       state.createEventStep = action.payload;

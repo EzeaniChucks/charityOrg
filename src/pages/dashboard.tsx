@@ -35,6 +35,7 @@ import Example from "@/components/charts/PieChart";
 import styles2 from "../components/auth/auth.module.css";
 import styles1 from "../styles/dashboard.module.css";
 import Doughnut from "@/components/charts/Doughnut";
+import { FaDatabase } from "react-icons/fa";
 
 const Dashboard = () => {
   const { user } = useSelector((store: any) => store.user);
@@ -139,7 +140,7 @@ const Dashboard = () => {
               </div>
               <div className={styles1.list_div}>
                 <div onClick={() => dispatch(handleTopUpModule())}>
-                  <AiOutlineSetting />
+                  <FaDatabase />
                   <h5>Top up Wallet</h5>
                 </div>
                 {dashbord_item.map((item) => {
@@ -154,10 +155,6 @@ const Dashboard = () => {
                 <div onClick={() => push("")}>
                   <AiOutlineSetting />
                   <h5>Settings</h5>
-                </div>
-                <div onClick={() => push("")}>
-                  <AiOutlineLink />
-                  <h5>Link</h5>
                 </div>
                 <div className={styles1.logout}>
                   <h5 onClick={() => dispatch(logout())}>{"<- Log out"}</h5>
@@ -184,7 +181,7 @@ const Dashboard = () => {
                 <div className={styles1.list_div}>
                   <AiOutlineCloseCircle onClick={() => setShowDash(false)} />
                   <div onClick={() => dispatch(handleTopUpModule())}>
-                    <AiOutlineSetting />
+                    <FaDatabase />
                     <h5>Top up Wallet</h5>
                   </div>
                   {dashbord_item.map((item) => {
@@ -199,10 +196,6 @@ const Dashboard = () => {
                   <div onClick={() => push("")}>
                     <AiOutlineSetting />
                     <h5>Settings</h5>
-                  </div>
-                  <div onClick={() => push("")}>
-                    <AiOutlineLink />
-                    <h5>Link</h5>
                   </div>
                   <div className={styles1.logout} onClick={() => push("")}>
                     <h5 onClick={() => dispatch(logout())}>{"<- Log out"}</h5>

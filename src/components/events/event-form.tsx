@@ -15,6 +15,7 @@ import { logError } from "../../../redux/slices/authSlice";
 import { useEffect, useRef, useState } from "react";
 // import { uploadEventImage } from "../../../redux/slices/fileUploadSlice";
 import { useRouter } from "next/router";
+import { CgMathEqual } from "react-icons/cg";
 import style from "../events/events.module.css";
 import styles2 from "../auth/auth.module.css";
 
@@ -80,6 +81,16 @@ const Event_Form = () => {
         logError({
           type: "",
           msg: "",
+        })
+      );
+    }
+    const depDate = new Date(depositDeadline).getTime();
+    const compDate = new Date(completionDeadline).getTime();
+    if (depDate > compDate) {
+      return dispatch(
+        logError({
+          type: "completionDeadline",
+          msg: "completion deadline should be after deposit deadline",
         })
       );
     }
@@ -226,23 +237,38 @@ const Event_Form = () => {
               {error.type === "currency" && <h6>{error.msg}</h6>}
               <label>
                 Deposit Deadline:{" "}
-                <DatePicker
-                  placeholderText="day/month/year e.g 01/01/2000"
-                  selected={new Date(depositDeadline)}
-                  dateFormat="dd/MM/yyyy"
-                  onChange={(date: Date) => {
-                    console.log(date);
-                    dispatch(
-                      updateEventForm({
-                        name: "depositDeadline",
-                        value: moment(date).format(),
-                      })
-                    );
-                  }}
-                  showYearDropdown
-                  scrollableYearDropdown
-                  minDate={new Date()}
-                />
+                <div className={styles2.depositDeadline}>
+                  <DatePicker
+                    placeholderText="day/month/year e.g 01/01/2000"
+                    selected={new Date(depositDeadline)}
+                    dateFormat="dd/MM/yyyy"
+                    onChange={(date: Date) => {
+                      dispatch(
+                        updateEventForm({
+                          name: "depositDeadline",
+                          value: moment(date).format(),
+                        })
+                      );
+                    }}
+                    showYearDropdown
+                    scrollableYearDropdown
+                    minDate={new Date()}
+                  />
+
+                  <span
+                    onClick={() =>
+                      dispatch(
+                        updateEventForm({
+                          name: "completionDeadline",
+                          value: moment(depositDeadline).format(),
+                        })
+                      )
+                    }
+                  >
+                    equalize dates
+                    <CgMathEqual />
+                  </span>
+                </div>
               </label>
               {error.type === "depositDeadline" && <h6>{error.msg}</h6>}
               <label>
@@ -264,9 +290,9 @@ const Event_Form = () => {
                   minDate={new Date(depositDeadline)}
                 />
               </label>
-              <h6 style={{ color: "grey" }}>
-                Note that completion date must be on or after deposit deadline
-              </h6>
+              {/* <h6 style={{ color: "grey" }}>
+                
+              </h6> */}
               {error.type === "completionDeadline" && <h6>{error.msg}</h6>}
               <label>
                 Description :{" "}
