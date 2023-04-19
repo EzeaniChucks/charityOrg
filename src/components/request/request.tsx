@@ -12,7 +12,9 @@ import {
   logError,
   resetEventPaymentInfo,
   updateEventForm,
+  setAlertType,
   uploadMemberRequest,
+  create_dispute,
 } from "../../../redux/slices/eventSlice";
 import moment from "moment";
 import { checkUser } from "@/utils/localstorage";
@@ -30,6 +32,11 @@ const RequestForm = () => {
     requestDescription,
     error,
     loading,
+    tabStateAlertType,
+    disputeDescription,
+    requestId,
+    requestOwnerId,
+    hasDisputeAddedOrRemoved,
     currency,
   } = useSelector((store: any) => store.event);
   const { user } = useSelector((store: any) => store.user);
@@ -40,20 +47,19 @@ const RequestForm = () => {
   const { isReady } = useRouter();
   const { eventId } = useRouter().query;
 
-  // console.log(isReady, eventId);
   useEffect(() => {
     if (isReady) {
       dispatch(getEventDetail(eventId));
       let userValue = checkUser();
       if (userValue) dispatch(setUser(userValue));
     }
-  }, [isReady]);
+  }, [isReady, eventId]);
 
   useEffect(() => {
     if (eventId) {
       dispatch(getMemberRequestList(eventId));
     }
-  }, [eventId]);
+  }, [eventId, hasDisputeAddedOrRemoved]);
   useEffect(() => {
     if (error.type) {
       const timeout = setTimeout(() => {
@@ -100,32 +106,113 @@ const RequestForm = () => {
     //     })
     //   );
     // }
-    return setShowModal(!showModal);
+    setShowModal(!showModal);
+    dispatch(setAlertType("request submit"));
   };
+
+  const getDateCountDown = (date: any) => {
+    const dateVar = Math.ceil(
+      (Date.parse(date) - Date.now()) / 1000 / 60 / 60 / 24
+    );
+    if (dateVar >= 0) return dateVar;
+    else return 0;
+  };
+
+  const handleDisputeSubmit = () => {
+    const data = {
+      requestId,
+      requestOwnerId,
+      dispute_complainerId: user?.user._id,
+      eventId,
+      description: disputeDescription,
+    };
+    dispatch(create_dispute(data));
+    setShowModal(!showModal);
+    dispatch(updateEventForm({ name: "disputeDescription", value: "" }));
+  };
+  const calcRequestWithDispute = () => {
+    let number = 0;
+    memberRequestList?.map((item: any) => {
+      if (item?.disputes.length > 0) {
+        return number++;
+      }
+    });
+    return number;
+  };
+  const calcDisputes = () => {
+    let number = 0;
+    memberRequestList?.map((item: any) => {
+      if (item?.disputes.length > 0) {
+        return (number += item.disputes.length);
+      }
+    });
+    return number;
+  };
+  // useEffect(() => {
+  //   if (memberRequestList) {
+
+  //     // console.log("memberRequestList:", memberRequestList);
+  //     console.log(calcDisputes(), calcRequestWithDispute());
+  //   }
+  // }, [memberRequestList]);
 
   return (
     <div className={style2.mainField}>
       <div className={style.add_new_category}>
         <h3>Make A Request</h3>
         <div style={{ flexDirection: "column" }}>
-          <input
-            style={{ width: "100%" }}
-            value={requestAmount}
-            name="requestAmount"
-            type="number"
-            placeholder="Request amount"
-            onChange={handleChange}
-          />
-          <textarea
-            style={{ width: "100%" }}
-            value={requestDescription}
-            name="requestDescription"
-            placeholder="Request Description"
-            onChange={handleChange}
-          />
-          <button className={style.btn_add} onClick={handleShowModal}>
-            Submit Your Request
-          </button>
+          {fullEventDetails.eventParticipantNumber ===
+            memberRequestList.length && (
+            <div className={style.request_completion}>
+              <h3>All Users have made requests.</h3>
+              {!calcDisputes() && (
+                <>
+                  <p className={style.request_ok}>
+                    There are no disputes to settle.
+                  </p>
+                  <p className={style.request_ok}>
+                    Awaiting host to move on to the next stage of disbursing
+                    payments.
+                  </p>
+                </>
+              )}
+              {calcDisputes() > 0 && (
+                <>
+                  <p className={style.request_notok}>
+                    But there are {calcDisputes()} dispute(s) on{" "}
+                    {calcRequestWithDispute()} request(s) yet to be settled.
+                  </p>
+                  <p className={style.request_notok}>
+                    If these are not resolved by participants before completion
+                    deadline, they will be moved to dispute page for resolution
+                  </p>
+                </>
+              )}
+            </div>
+          )}
+          {fullEventDetails.eventParticipantNumber !==
+            memberRequestList.length && (
+            <>
+              <input
+                style={{ width: "100%" }}
+                value={requestAmount}
+                name="requestAmount"
+                type="number"
+                placeholder="Request amount"
+                onChange={handleChange}
+              />
+              <textarea
+                style={{ width: "100%" }}
+                value={requestDescription}
+                name="requestDescription"
+                placeholder="Request Description"
+                onChange={handleChange}
+              />
+              <button className={style.btn_add} onClick={handleShowModal}>
+                Submit Your Request
+              </button>
+            </>
+          )}
         </div>
         {error?.type === "server_error" && (
           <h5 className={style.warning}>{error?.code}</h5>
@@ -164,11 +251,16 @@ const RequestForm = () => {
           NGN {totalMemberRequestsAmount}
         </h2>
         <div className={style.deadlines}>
-          <h4>Completion Deadline</h4>
+          <div>
+            <h4>Completion Deadline</h4>
+            <h4>
+              {moment(new Date(fullEventDetails.completionDeadline)).format(
+                "DD/MM mm:ss a"
+              )}
+            </h4>
+          </div>
           <h4>
-            {moment(new Date(fullEventDetails.completionDeadline)).format(
-              "DD/MM mm:ss a"
-            )}
+            {getDateCountDown(fullEventDetails.completionDeadline)} days left
           </h4>
         </div>
       </div>
@@ -200,31 +292,83 @@ const RequestForm = () => {
                 error={error}
                 eventId={eventId}
                 dispatch={dispatch}
+                fullEventDetails={fullEventDetails}
+                showModal={showModal}
+                setShowModal={setShowModal}
               />
             );
           })}
         </div>
       </div>
       {showModal && (
-        <div className={style.modal}>
-          <FaTimesCircle onClick={handleShowModal} />
-          <div>
-            <h4>
-              You are about to request {requestAmount}
-              {" NGN"} from this event
-            </h4>
-            <h5>
-              This amount will be sent to your bank account after all event
-              disputes have been settled
-            </h5>
-            <div>
-              <button onClick={handleRequestSubmission} disabled={loading}>
-                Proceed?
-              </button>
-              <button>Reject</button>
+        <>
+          {tabStateAlertType === "request submit" && (
+            <div className={style.modal}>
+              <FaTimesCircle onClick={handleShowModal} />
+              <div>
+                <h4>
+                  You are about to request {requestAmount}
+                  {" NGN"} from this event
+                </h4>
+                <h5>
+                  This amount will be sent to your bank account after all event
+                  disputes have been settled
+                </h5>
+                <div>
+                  <button onClick={handleRequestSubmission} disabled={loading}>
+                    Proceed?
+                  </button>
+                  <button>Reject</button>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          )}
+          {tabStateAlertType === "request dispute" && (
+            <div className={style.modal}>
+              <FaTimesCircle onClick={handleShowModal} />
+              <div>
+                <h4>
+                  {`It appears you are dissatisfied with this user's request`}
+                </h4>
+                <h5>{`Let them know what to adjust in their request.`}</h5>
+                <h6 style={{ color: "rgb(100, 30, 30)" }}>
+                  {`Your
+                identity won't be sent alongside this dispute`}
+                </h6>
+                <div>
+                  <label>
+                    <textarea
+                      style={{
+                        width: "100%",
+                        marginBottom: "10px",
+                        outline: "none",
+                        color: "black",
+                        padding: "10px",
+                      }}
+                      value={disputeDescription}
+                      onChange={(e) =>
+                        dispatch(
+                          updateEventForm({
+                            name: "disputeDescription",
+                            value: e.target.value,
+                          })
+                        )
+                      }
+                      placeholder="Air your dissatisfaction"
+                      rows={3}
+                    />
+                  </label>
+                  <button disabled={loading} onClick={handleDisputeSubmit}>
+                    Submit Dispute
+                  </button>
+                  <button onClick={() => setShowModal(!showModal)}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

@@ -9,9 +9,13 @@ import { useSelector } from "react-redux";
 import {
   deleteMemberRequest,
   editMemberRequest,
+  remove_dispute,
+  setAlertType,
   setEditsForRequestPage,
+  updateEventForm,
 } from "../../../redux/slices/eventSlice";
 import { setCategoryName } from "../../../redux/slices/eventSlice";
+import { log_Notification } from "../../../redux/slices/notificationsSlice";
 
 const Request_Description = ({
   handleFundDeposit,
@@ -21,6 +25,9 @@ const Request_Description = ({
   error,
   eventId,
   dispatch,
+  fullEventDetails,
+  showModal,
+  setShowModal,
   ...item
 }: any) => {
   const [isexpand, setIsExpand] = useState(false);
@@ -78,7 +85,8 @@ const Request_Description = ({
         </h3>
       </div>
       {isexpand && (
-        <div className={style.description_body}>
+        <div className={style.description_body} id={item?._id}>
+          <h2>{item?.disputes?.length} dispute(s)</h2>
           <div style={{ gridTemplateColumns: "1fr 3fr", width: "100%" }}>
             <h6>{moment(new Date(item?.date)).format("DD/MM/YY mm:ss a")}</h6>
             <h6
@@ -141,6 +149,16 @@ const Request_Description = ({
                       amount: editRequestAmount,
                     };
                     dispatch(editMemberRequest({ data }));
+                    dispatch(
+                      log_Notification({
+                        message: `${data?.name} has updated his request amount to NGN${data.amount} in your event ${fullEventDetails.eventName}. Click here to observe changes and dispute if necessary`,
+                        userId: user.user._id,
+                        link: `/events/backend_category/${eventId}/activity_room`,
+                        eventId,
+                        type: "request edit",
+                        frontEndObjectId: item._id,
+                      })
+                    );
                   }}
                   disabled={
                     item?.description === editRequestDescription &&
@@ -187,6 +205,51 @@ const Request_Description = ({
                 </button>
               )}
             </div>
+          )}
+          {user?.user?._id !== item?.userId && (
+            <>
+              {!item?.disputes?.includes(user?.user._id) && (
+                <button
+                  onClick={() => {
+                    dispatch(setAlertType("request dispute"));
+                    setShowModal(!showModal);
+                    dispatch(
+                      updateEventForm({ name: "requestId", value: item?._id })
+                    );
+                    dispatch(
+                      updateEventForm({
+                        name: "requestOwnerId",
+                        value: item?.userId,
+                      })
+                    );
+                  }}
+                  className={style.btn_add}
+                >
+                  Dispute This Request
+                </button>
+              )}
+              {item.disputes.includes(user?.user._id) && (
+                <button
+                  className={style.btn_add}
+                  style={{
+                    width: "100%",
+                    backgroundColor: "rgb(49, 25, 10)",
+                    color: "rgb(125, 125, 125)",
+                  }}
+                  onClick={() => {
+                    const data = {
+                      requestId: item?._id,
+                      requestOwnerId: item?.userId,
+                      dispute_complainerId: user?.user._id,
+                      eventId,
+                    };
+                    dispatch(remove_dispute(data));
+                  }}
+                >
+                  Remove dispute
+                </button>
+              )}
+            </>
           )}
         </div>
       )}

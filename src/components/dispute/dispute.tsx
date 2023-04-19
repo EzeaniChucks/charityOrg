@@ -94,6 +94,13 @@ const DisputeForm = () => {
   const handleShowModal = () => {
     return setShowModal(!showModal);
   };
+  const getDateCountDown = (date: any) => {
+    const dateVar = Math.ceil(
+      (Date.parse(date) - Date.now()) / 1000 / 60 / 60 / 24
+    );
+    if (dateVar >= 0) return dateVar;
+    else return 0;
+  };
 
   return (
     <div className={style2.mainField}>
@@ -155,11 +162,16 @@ const DisputeForm = () => {
           NGN {totalMemberRequestsAmount}
         </h2>
         <div className={style.deadlines}>
-          <h4>Completion Deadline</h4>
+          <div>
+            <h4>Completion Deadline</h4>
+            <h4>
+              {moment(new Date(fullEventDetails.completionDeadline)).format(
+                "DD/MM mm:ss a"
+              )}
+            </h4>
+          </div>
           <h4>
-            {moment(new Date(fullEventDetails.completionDeadline)).format(
-              "DD/MM mm:ss a"
-            )}
+            {getDateCountDown(fullEventDetails.completionDeadline)} days left
           </h4>
         </div>
       </div>

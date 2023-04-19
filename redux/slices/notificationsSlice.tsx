@@ -68,9 +68,10 @@ const notificationsSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    ///Notif Logger
+    ///Notif Logger/Creator
     builder.addCase(log_Notification.pending, (state: any) => {
       state.loading = true;
+      state.notifLogStatus = "";
     });
     builder.addCase(log_Notification.fulfilled, (state: any, { payload }) => {
       state.loading = false;
@@ -83,7 +84,7 @@ const notificationsSlice = createSlice({
         msg: "Not able to get event datails. Please try again",
         code: payload,
       };
-      state.notifLogStatus = "success";
+      state.notifLogStatus = "";
     });
 
     ///Notif Getter

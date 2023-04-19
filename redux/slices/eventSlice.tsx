@@ -23,12 +23,16 @@ interface Obj {
   loading: Boolean;
   error: { type: String; msg: String; code: String };
   depositAmount: String;
+  requestId: String;
+  requestOwnerId: String;
   categoryDesc: String;
   requestAmount: String | Number;
   requestDescription: String;
   editRequestAmount: String;
   editRequestDescription: String;
+  disputeDescription: String;
   hasEditCompleted: Boolean;
+  hasDisputeAddedOrRemoved: Boolean;
   memberRequestList: any;
   totalMemberRequestsAmount: String | Number;
   creationStatus: Boolean;
@@ -36,6 +40,8 @@ interface Obj {
   createEventStep?: String;
   joineventNotification: String;
   tabState: String;
+  tabStateAlertType: String;
+  disputeCalc: { disputes: String; requestWithDisputes: String };
 }
 
 export const createEvent = createAsyncThunk(
@@ -196,6 +202,38 @@ export const uploadMemberRequest = createAsyncThunk(
     }
   }
 );
+export const create_dispute = createAsyncThunk(
+  "event/create_dispute",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.post(
+        `${conString}/add_dispute`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
+export const remove_dispute = createAsyncThunk(
+  "event/remove_dispute",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.put(
+        `${conString}/remove_dispute`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
 
 const initialState: Obj = {
   event: null,
@@ -216,12 +254,16 @@ const initialState: Obj = {
   depositAmount: "",
   categoryDesc: "",
   requestAmount: "" || 0,
+  requestId: "",
+  requestOwnerId: "",
   requestDescription: "",
   editRequestAmount: "",
   editRequestDescription: "",
   memberRequestList: [],
   totalMemberRequestsAmount: 0,
   hasEditCompleted: false,
+  hasDisputeAddedOrRemoved: false,
+  disputeDescription: "",
   loading: false,
   error: { type: "", msg: "", code: "" },
   creationStatus: false,
@@ -229,6 +271,8 @@ const initialState: Obj = {
   createEventStep: "step1",
   joineventNotification: "",
   tabState: "deposit",
+  tabStateAlertType: "",
+  disputeCalc: { disputes: "", requestWithDisputes: "" },
 };
 
 const eventSlice = createSlice({
@@ -273,12 +317,15 @@ const eventSlice = createSlice({
       state.editRequestAmount = payload.requestAmount;
       state.editRequestDescription = payload.requestDescription;
     },
+    setAlertType: (state: any, { payload }) => {
+      state.tabStateAlertType = payload;
+    },
     logError: (state, { payload }) => {
       state.error = payload;
     },
   },
   extraReducers: (builder) => {
-    ///CREATE EVENT
+    //CREATE EVENT
     builder.addCase(createEvent.pending, (state: any) => {
       state.loading = true;
       state.creationStatus = false;
@@ -500,6 +547,46 @@ const eventSlice = createSlice({
         };
       }
     );
+
+    //CREATE DISPUTE
+    builder.addCase(create_dispute.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(create_dispute.fulfilled, (state: any, { payload }) => {
+      state.loading = false;
+      state.hasDisputeAddedOrRemoved = payload?.msg;
+    });
+    builder.addCase(
+      create_dispute.rejected,
+      (state: any, { payload }: { payload: any }) => {
+        state.loading = false;
+        state.error = {
+          type: "server_error",
+          msg: "Not able to proceed with event deposit. Please try again",
+          code: payload,
+        };
+      }
+    );
+
+    //REMOVE DISPUTE
+    builder.addCase(remove_dispute.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(remove_dispute.fulfilled, (state: any, { payload }) => {
+      state.loading = false;
+      state.hasDisputeAddedOrRemoved = payload?.msg;
+    });
+    builder.addCase(
+      remove_dispute.rejected,
+      (state: any, { payload }: { payload: any }) => {
+        state.loading = false;
+        state.error = {
+          type: "server_error",
+          msg: "Not able to proceed with event deposit. Please try again",
+          code: payload,
+        };
+      }
+    );
   },
 });
 
@@ -514,5 +601,6 @@ export const {
   setTabState,
   setEditsForRequestPage,
   logError,
+  setAlertType,
 } = eventSlice.actions;
 export default eventSlice.reducer;

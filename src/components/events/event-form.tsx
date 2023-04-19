@@ -231,6 +231,7 @@ const Event_Form = () => {
                   selected={new Date(depositDeadline)}
                   dateFormat="dd/MM/yyyy"
                   onChange={(date: Date) => {
+                    console.log(date);
                     dispatch(
                       updateEventForm({
                         name: "depositDeadline",

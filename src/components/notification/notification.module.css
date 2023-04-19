@@ -12,6 +12,11 @@
     background-color: rgb(165, 165, 165);
 }
 
+.notification_container>h3{
+    font-family: sans-serif;
+    color: rgb(65, 65, 65);
+    margin-bottom: 10px;
+}
 .notification_container p{
     cursor: pointer;
     font-family: sans-serif;

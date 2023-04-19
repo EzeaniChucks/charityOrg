@@ -88,6 +88,7 @@ const DepositForm = () => {
         userId: user.user._id,
         link: `/events/backend_category/${eventId}/activity_room`,
         eventId,
+        type: "deposit",
       })
     );
     dispatch(resetEventPaymentInfo());
@@ -103,6 +104,13 @@ const DepositForm = () => {
       );
     }
     return setShowModal(!showModal);
+  };
+  const getDateCountDown = (date: any) => {
+    const dateVar = Math.ceil(
+      (Date.parse(date) - Date.now()) / 1000 / 60 / 60 / 24
+    );
+    if (dateVar >= 0) return dateVar;
+    else return 0;
   };
   return (
     <div className={style2.mainField}>
@@ -126,19 +134,29 @@ const DepositForm = () => {
           NGN {fullEventDetails.totalEventAmount}
         </h2>
         <div className={style.deadlines}>
-          <h4>Deposit Deadline</h4>
+          <div>
+            <h4>Deposit Deadline</h4>
+            <h4>
+              {moment(new Date(fullEventDetails.depositDeadline)).format(
+                "DD/MM mm:ss a"
+              )}
+            </h4>
+          </div>
           <h4>
-            {moment(new Date(fullEventDetails.depositDeadline)).format(
-              "DD/MM mm:ss a"
-            )}
+            {getDateCountDown(fullEventDetails.depositDeadline)} days left
           </h4>
         </div>
         <div className={style.deadlines}>
-          <h4>Completion Deadline</h4>
+          <div>
+            <h4>Completion Deadline</h4>
+            <h4>
+              {moment(new Date(fullEventDetails.completionDeadline)).format(
+                "DD/MM mm:ss a"
+              )}
+            </h4>
+          </div>
           <h4>
-            {moment(new Date(fullEventDetails.completionDeadline)).format(
-              "DD/MM mm:ss a"
-            )}
+            {getDateCountDown(fullEventDetails.completionDeadline)} days left
           </h4>
         </div>
         <button className={style.btn_end}>End Deposit Stage</button>

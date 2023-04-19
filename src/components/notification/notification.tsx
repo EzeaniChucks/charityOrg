@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { conStringFrontEnd } from "@/utils/conString";
 import style2 from "../../pages/events/[eventCategory]/[eventId]/activity_room.module.css";
 import style from "./notification.module.css";
+import { setTabState } from "../../../redux/slices/eventSlice";
 
 const Notification = () => {
   const { notifications, notifLogStatus } = useSelector(
@@ -27,6 +28,7 @@ const Notification = () => {
 
   return (
     <div className={style.notification_container}>
+      <h3>Notifications</h3>
       {notifications.map((item: any) => {
         return (
           <div key={item._id}>
@@ -34,6 +36,9 @@ const Notification = () => {
               onClick={() => {
                 push(`${item?.link}`);
                 dispatch(handleNotifModal());
+                if (item?.type === "request edit") {
+                  dispatch(setTabState("request"));
+                }
                 dispatch(
                   message_checked_status({
                     messageId: item._id,
