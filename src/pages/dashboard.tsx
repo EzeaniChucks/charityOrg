@@ -90,8 +90,8 @@ const Dashboard = () => {
       changeRoute();
     }
     if (user) {
-      dispatch(getWalletBalance(user.user._id));
-      dispatch(getLatestTransactions(user.user._id));
+      dispatch(getWalletBalance(user?.user?._id));
+      dispatch(getLatestTransactions(user?.user?._id));
     }
   }, [user, topupStatus]);
 
