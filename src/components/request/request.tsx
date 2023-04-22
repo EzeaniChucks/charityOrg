@@ -22,6 +22,7 @@ import { setUser } from "../../../redux/slices/authSlice";
 import style2 from "../../pages/events/[eventCategory]/[eventId]/activity_room.module.css";
 import style from "../deposit/deposit.module.css";
 import Request_Description from "./request_description";
+import { log_Notification } from "../../../redux/slices/notificationsSlice";
 
 const RequestForm = () => {
   const {
@@ -94,7 +95,6 @@ const RequestForm = () => {
     };
 
     dispatch(uploadMemberRequest(finalObj));
-    // dispatch(resetEventPaymentInfo());
     setShowModal(!showModal);
   };
   const handleShowModal = () => {

@@ -3,11 +3,14 @@ import { RootState } from "../store";
 import axios from "axios";
 import { ParsedUrlQuery } from "querystring";
 import { conString } from "@/utils/conString";
+import { log_Notification } from "./notificationsSlice";
 
 interface Obj {
   event?: any;
   allEvents: any;
   eventCreator: any;
+  eventMembers: any;
+  eventObservers: any;
   eventName: String;
   eventDate: String;
   fullEventDetails: any;
@@ -91,6 +94,22 @@ export const getAllEvents = createAsyncThunk(
     }
   }
 );
+export const joinEventsAsObserver = createAsyncThunk(
+  "event/joinEventsAsObserver",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.post(
+        `${conString}/join_event_as_observer`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
 export const joinEvents = createAsyncThunk(
   "event/joinEvents",
   async (prop: any, thunk) => {
@@ -157,7 +176,6 @@ export const editMemberRequest = createAsyncThunk(
 export const deleteMemberRequest = createAsyncThunk(
   "event/deleteMemberRequest",
   async (prop: any, thunk) => {
-    console.log(prop);
     try {
       const { data }: { data: any } = await axios.delete(
         `${conString}/delete_member_request`,
@@ -186,13 +204,39 @@ export const getMemberRequestList = createAsyncThunk(
     }
   }
 );
+export const getAllEventMembersAndObservers = createAsyncThunk(
+  "event/getAllEventMembersAndObservers",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.get(
+        `${conString}/get_members_and_obervers/${prop}`
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
 export const uploadMemberRequest = createAsyncThunk(
   "event/uploadMemberRequest",
-  async (prop: any, thunk) => {
+  async (prop: any, thunk: any) => {
     try {
       const { data }: { data: any } = await axios.post(
         `${conString}/upload_member_request`,
         prop
+      );
+      const eventState = thunk.getState().event;
+      const userState = thunk.getState().user.user.user;
+      thunk.dispatch(
+        log_Notification({
+          message: `${userState?.firstName} ${userState?.lastName} has reqested ${eventState.requestAmount}NGN from event, ${eventState?.fullEventDetails?.eventName}`,
+          userId: userState._id,
+          link: `/events/backend_category/${eventState.fullEventDetails.eventId}/activity_room`,
+          eventId: eventState.fullEventDetails.eventId,
+          type: "request",
+        })
       );
       return data;
     } catch (err: any) {
@@ -239,6 +283,8 @@ const initialState: Obj = {
   event: null,
   allEvents: [],
   eventCreator: null,
+  eventMembers: [],
+  eventObservers: [],
   eventName: "",
   eventDate: Date(),
   fullEventDetails: [],
@@ -405,6 +451,31 @@ const eventSlice = createSlice({
       }
     );
 
+    //Join Event As Observer
+    builder.addCase(joinEventsAsObserver.pending, (state: any) => {
+      state.loading = true;
+      state.joineventNotification = "";
+    });
+    builder.addCase(
+      joinEventsAsObserver.fulfilled,
+      (state: any, { payload }) => {
+        state.loading = false;
+        state.joineventNotification = payload.msg;
+      }
+    );
+    builder.addCase(
+      joinEventsAsObserver.rejected,
+      (state: any, { payload }: { payload: any }) => {
+        state.loading = false;
+        state.joineventNotification = payload;
+        state.error = {
+          type: "server_error",
+          msg: "Not able to join event. Please try again",
+          code: payload,
+        };
+      }
+    );
+
     //Get Full Event Object with necessary details
     builder.addCase(getEventDetail.pending, (state: any) => {
       state.loading = true;
@@ -480,6 +551,30 @@ const eventSlice = createSlice({
     );
     builder.addCase(
       getMemberRequestList.rejected,
+      (state: any, { payload }: { payload: any }) => {
+        state.loading = false;
+        state.error = {
+          type: "server_error",
+          msg: "Not able to proceed with amount request. Please try again",
+          code: payload,
+        };
+      }
+    );
+
+    //GET All Members And Observers
+    builder.addCase(getAllEventMembersAndObservers.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(
+      getAllEventMembersAndObservers.fulfilled,
+      (state: any, { payload }) => {
+        state.loading = false;
+        state.eventMembers = payload.members;
+        state.eventObservers = payload.observers;
+      }
+    );
+    builder.addCase(
+      getAllEventMembersAndObservers.rejected,
       (state: any, { payload }: { payload: any }) => {
         state.loading = false;
         state.error = {

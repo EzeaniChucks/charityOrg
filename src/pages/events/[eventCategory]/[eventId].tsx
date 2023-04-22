@@ -16,6 +16,7 @@ import {
   fetchEventCreatorDetails,
   getAllEvents,
   joinEvents,
+  joinEventsAsObserver,
   resetCreator,
 } from "../../../../redux/slices/eventSlice";
 import { AppDispatch } from "../../../../redux/store";
@@ -62,11 +63,15 @@ const SingleEvent = () => {
     }
   };
 
-  const isEventMember = () => {
+  const isEventMemberOrObserver = () => {
     const memberExists = singleEvent?.members?.find((item: any) => {
       return item?.userId === user?.user?._id;
     });
-    if (memberExists) return true;
+    const observerExists = singleEvent?.observers?.find((item: any) => {
+      return item?.userId === user?.user?._id;
+    });
+
+    if (memberExists || observerExists) return true;
     else return false;
   };
 
@@ -89,7 +94,7 @@ const SingleEvent = () => {
   useEffect(() => {
     if (isReady) {
       setSingleEvent(generateSingleEvent());
-      isEventMember();
+      isEventMemberOrObserver();
     }
   }, [isReady, allEvents]);
 
@@ -120,7 +125,7 @@ const SingleEvent = () => {
                   alt={singleEvent?.participant3}
                 />
                 <h5>
-                  +{singleEvent?.part_number}{" "}
+                  {singleEvent?.members?.length}{" "}
                   {singleEvent?.eventCategory === "upcoming_event"
                     ? "going"
                     : "participants"}
@@ -186,7 +191,7 @@ const SingleEvent = () => {
                 <h5 ref={linkcopyref}></h5>
               </div>
             </div>
-            {isEventMember() && (
+            {isEventMemberOrObserver() && (
               <button
                 className={style.btn}
                 onClick={() =>
@@ -196,7 +201,7 @@ const SingleEvent = () => {
                 Open Event
               </button>
             )}
-            {!isEventMember() && (
+            {!isEventMemberOrObserver() && (
               <button
                 className={style.btn}
                 onClick={() => {
@@ -204,7 +209,20 @@ const SingleEvent = () => {
                 }}
                 disabled={loading}
               >
-                Join Event
+                Join Event As Member
+              </button>
+            )}
+            {!isEventMemberOrObserver() && (
+              <button
+                className={style.btn}
+                onClick={() => {
+                  dispatch(
+                    joinEventsAsObserver({ eventId, userId: user?.user._id })
+                  );
+                }}
+                disabled={loading}
+              >
+                Join As Observer
               </button>
             )}
           </div>

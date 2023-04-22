@@ -1,0 +1,42 @@
+.chat_container{
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 2%;
+    width: 100%;
+}
+.chatroomDiv{
+    place-self: center;
+    width: 100%;
+}
+.chatroom{
+    height: 55vh;
+    padding: 20px;
+    background-color: rgb(92, 92, 92, 0.5);
+    border-radius: 10px 10px 0 0px;
+}
+.postChat{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: flec-start;
+}
+
+.postChat>textarea{
+    padding: 10px;
+    width: 100%;
+    font-family: sans-serif;
+    font-size: 1rem;
+    background-color: rgb(77, 77, 77, 0.5);
+    outline: none;
+    border: none;
+    color: rgb(182, 181, 181);
+}
+
+.postChat>button{
+    width: 100%;
+    cursor: pointer;
+    padding: 5px;
+    outline: none;
+    border: none;
+    background-color: grey;
+}

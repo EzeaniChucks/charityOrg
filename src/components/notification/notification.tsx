@@ -36,7 +36,7 @@ const Notification = () => {
               onClick={() => {
                 push(`${item?.link}`);
                 dispatch(handleNotifModal());
-                if (item?.type === "request edit") {
+                if (item?.type?.includes("request")) {
                   dispatch(setTabState("request"));
                 }
                 dispatch(

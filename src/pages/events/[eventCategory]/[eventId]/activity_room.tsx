@@ -33,6 +33,10 @@ import { conString } from "@/utils/conString";
 import { useRouter } from "next/router";
 import style from "./activity_room.module.css";
 import styles2 from "../../../../components/auth/auth.module.css";
+import { checkUser } from "@/utils/localstorage";
+import { setUser } from "../../../../../redux/slices/authSlice";
+
+const socket = io(conString, { transports: ["websocket"] });
 
 const ActivityRoom = () => {
   const { tabState, fullEventDetails } = useSelector(
@@ -44,10 +48,18 @@ const ActivityRoom = () => {
   const { user } = useSelector((store: any) => store.user);
   const [lowerTab, setLowerTab] = useState<String>("0");
   const dispatch = useDispatch<AppDispatch>();
+  const [arrtest, setArrTest] = useState<any>([]);
 
   const { push } = useRouter();
   const { eventId } = useRouter().query;
 
+  const testSocket = () => {
+    // socket.emit<any>("join_room", { username: user?.user?.firstName, eventId });
+    // socket.on("response", (data) => {
+    //   setArrTest([...arrtest, data]);
+    // });
+  };
+  // console.log(arrtest);
   useEffect(() => {
     const links = document.querySelectorAll(`.${style.link}`);
     links.forEach((item, i) => {
@@ -57,7 +69,6 @@ const ActivityRoom = () => {
       }
     });
     const uppertabs = document.querySelector(`.${style.section_logos}`);
-    // console.log(uppertabs?.childNodes);
     uppertabs?.childNodes.forEach((item: any, i) => {
       item?.classList.remove(`${style.activeUpperTab}`);
       if (tabState === "deposit" && i === 0) {
@@ -79,7 +90,10 @@ const ActivityRoom = () => {
     if (localStorage?.getItem("charityOrgTabState")) {
       dispatch(setTabState(localStorage.getItem("charityOrgTabState")));
     }
+    let userValue = checkUser();
+    if (userValue) dispatch(setUser(userValue));
   }, []);
+
   useEffect(() => {
     if (user) {
       dispatch(get_Notification(user?.user?._id));
@@ -100,13 +114,7 @@ const ActivityRoom = () => {
     });
     return number;
   };
-  const testSocket = () => {
-    // const socket = io(conString, { transports: ["websocket"] });
-    // socket.emit<any>(eventId, { post: "Message from frontend" });
-    // socket.on("response", (data) => {
-    //   console.log(data);
-    // });
-  };
+
   const setLowerTabState = (state: String) => {
     setLowerTab((prevState) => {
       prevState = state;
@@ -124,14 +132,20 @@ const ActivityRoom = () => {
       <main className={styles2.container}>
         <div className={style.content}>
           <div className={style.heading}>
-            <FaList />
             <h3>{fullEventDetails?.eventName}</h3>
+            <label>
+              Change member status
+              <select>
+                <option>Observer</option>
+                <option>Depositor</option>
+              </select>
+            </label>
           </div>
           <div className={style.section_logos}>
             <div
               onClick={() => {
-                dispatch(setTabState("deposit"));
                 testSocket();
+                dispatch(setTabState("deposit"));
               }}
             >
               <FaPiggyBank />
@@ -151,16 +165,18 @@ const ActivityRoom = () => {
             </div>
           </div>
           <div className={style.allEventsDirector}>
-            <div>
+            <div onClick={() => push("/events")}>
               <FaArrowAltCircleLeft />
               All Events
             </div>
-            <AiOutlineEllipsis />
+            <AiOutlineEllipsis onClick={testSocket} />
           </div>
           {tabState === "deposit" && <DepositForm />}
           {tabState === "request" && <RequestForm />}
           {tabState === "dispute" && <DisputeForm />}
-          {tabState === "chat" && <ChatRoom />}
+          {tabState === "chat" && (
+            <ChatRoom socket={socket} user={user} eventId={eventId} />
+          )}
         </div>
         {notifModalIsOpen && (
           <div className={style.notification_modal}>
