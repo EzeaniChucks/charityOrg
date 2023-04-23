@@ -2,27 +2,16 @@ import { useEffect } from "react";
 import { depositor_category_arrays } from "@/utils/arrays";
 import { RxPerson } from "react-icons/rx";
 import { FaArrowAltCircleDown, FaArrowAltCircleUp } from "react-icons/fa";
-import { useState, useRef } from "react";
+import { useState, useCallback } from "react";
 import style from "../deposit/deposit.module.css";
 import moment from "moment";
 import { useSelector } from "react-redux";
-import {
-  create_dispute,
-  deleteMemberRequest,
-  editMemberRequest,
-  remove_dispute,
-  setAlertType,
-  setEditsForRequestPage,
-  updateEventForm,
-} from "../../../redux/slices/eventSlice";
-import { setCategoryName } from "../../../redux/slices/eventSlice";
 import { log_Notification } from "../../../redux/slices/notificationsSlice";
 
 const Dispute_Form_Description = ({
   handleFundDeposit,
   handleChange,
   handleShowModal,
-  getMemberRequestList,
   error,
   eventId,
   dispatch,
@@ -41,17 +30,20 @@ const Dispute_Form_Description = ({
     return setIsExpand(!isexpand);
   };
 
+  //   const memberRequestListCallback = useCallback(() => {
+  //     return getMemberRequestList(eventId);
+  //   }, []);
   useEffect(() => {
-    if (hasEditCompleted) {
-      setIsEdit(false);
-      dispatch(getMemberRequestList(eventId));
-    }
+    // if (hasEditCompleted) {
+    //   setIsEdit(false);
+    //   dispatch(memberRequestListCallback());
+    // }
     if (item?.disputes?.includes(user.user._id)) {
       if (document?.querySelector<any>(`.dispute-tick${item._id}`)) {
         document.querySelector<any>(`.dispute-tick${item._id}`).checked = true;
       }
     }
-  }, [hasEditCompleted]);
+  }, [hasEditCompleted, dispatch, eventId]);
 
   return (
     <div className={style.each_description}>
@@ -62,10 +54,11 @@ const Dispute_Form_Description = ({
       <h5 style={{ margin: "13px 6px 0 6px", color: "rgb(50, 100, 150)" }}>
         List of affected requests
       </h5>
-      {item.disputedRequests.map((indivReq: any) => {
+      {item?.disputedRequests.map((indivReq: any) => {
         return (
-          <>
+          <div key={indivReq._id}>
             <div
+              key={indivReq._id}
               style={{
                 gridTemplateColumns:
                   eventPageName === "disputes"
@@ -133,7 +126,7 @@ const Dispute_Form_Description = ({
                 </div>
               </div>
             )}
-          </>
+          </div>
         );
       })}
       <h5 style={{ margin: "13px 6px 0 6px", color: "rgb(50, 100, 150)" }}>

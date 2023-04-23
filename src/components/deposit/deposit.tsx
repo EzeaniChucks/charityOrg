@@ -46,7 +46,7 @@ const DepositForm = () => {
       let userValue = checkUser();
       if (userValue) dispatch(setUser(userValue));
     }
-  }, [isReady, eventId]);
+  }, [isReady, eventId, dispatch]);
 
   useEffect(() => {
     if (error.type) {
@@ -55,7 +55,7 @@ const DepositForm = () => {
       }, 5000);
       return () => clearTimeout(timeout);
     }
-  }, [error]);
+  }, [error, dispatch]);
 
   const handleChange: ReactEventHandler = (
     e: React.ChangeEvent<HTMLInputElement>

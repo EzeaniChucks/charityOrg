@@ -33,12 +33,12 @@ const ChatRoom = ({
       setMessagesSent("");
     }
   };
-  console.log(messages_received);
+  // console.log(messages_received);
   useEffect(() => {
     socket.emit("join_room", { username: user?.user?.firstName, eventId });
     socket.on("receive_message", (data: any) => {
-      setMessagesReceived([
-        ...messages_received,
+      setMessagesReceived((prevState: any) => [
+        ...prevState,
         {
           message: data.message,
           username: data.username,
@@ -47,7 +47,7 @@ const ChatRoom = ({
       ]);
     });
     return () => socket.off("receive_message");
-  }, [socket]);
+  }, [socket, eventId, user?.user?.firstName]);
 
   return (
     <div className={style.chat_container}>

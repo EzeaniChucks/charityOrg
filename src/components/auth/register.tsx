@@ -11,7 +11,7 @@ import {
   register,
   updateFormValues,
 } from "../../../redux/slices/authSlice";
-import { useRouter } from "next/router";
+import Router from "next/router";
 
 type Props = {
   isLogin: Boolean;
@@ -55,7 +55,7 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
   } = useSelector((store: any) => store.user);
   const [tabStatus, setTabStatus] = useState("step1");
   const { error } = useSelector((store: any) => store?.user);
-  const { push } = useRouter();
+  const { push } = Router;
   const dispatch = useDispatch<AppDispatch>();
 
   const handleChange: ReactEventHandler = (
@@ -140,7 +140,7 @@ const Register = ({ isLogin, setIsLogin }: Props) => {
     if (afterRegistration) {
       push("/verify_notify");
     }
-  }, [afterRegistration]);
+  }, [afterRegistration, push]);
 
   return (
     <div className={styles2.formContainer}>

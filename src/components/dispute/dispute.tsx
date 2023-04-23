@@ -65,7 +65,7 @@ const DisputeForm = () => {
       let userValue = checkUser();
       if (userValue) dispatch(setUser(userValue));
     }
-  }, [isReady]);
+  }, [isReady, dispatch]);
 
   useEffect(() => {
     dispatch(
@@ -74,13 +74,13 @@ const DisputeForm = () => {
         value: fullEventDetails.disputeForms,
       })
     );
-  }, [fullEventDetails]);
+  }, [fullEventDetails, dispatch]);
 
   useEffect(() => {
     if (eventId) {
       dispatch(getMemberRequestList(eventId));
     }
-  }, [eventId, hasDisputeAddedOrRemoved]);
+  }, [eventId, hasDisputeAddedOrRemoved, dispatch]);
 
   useEffect(() => {
     if (error.type) {
@@ -89,7 +89,7 @@ const DisputeForm = () => {
       }, 5000);
       return () => clearTimeout(timeout);
     }
-  }, [error]);
+  }, [error, dispatch]);
 
   const handleChange: ReactEventHandler = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -170,6 +170,7 @@ const DisputeForm = () => {
               {eventObservers.map((eachObserver: any) => {
                 return (
                   <p
+                    key={eachObserver?.userId}
                     style={{
                       display: "flex",
                       alignItems: "center",

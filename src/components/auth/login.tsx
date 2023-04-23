@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { ReactEventHandler } from "react";
-import { useRouter } from "next/router";
+import Router from "next/router";
 import { useEffect } from "react";
 import {
   login,
@@ -19,7 +19,7 @@ type Props = {
 
 const Login = ({ isLogin, setIsLogin }: Props) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { push } = useRouter();
+  const { push } = Router;
   const { error, password, email, user, loading } = useSelector(
     (store: any) => store.user
   );
@@ -56,7 +56,7 @@ const Login = ({ isLogin, setIsLogin }: Props) => {
       let userValue = checkUser();
       if (userValue) dispatch(setUser(userValue));
     }
-  }, [user]);
+  }, [user, push, dispatch]);
 
   return (
     <div className={styles2.formContainer}>
