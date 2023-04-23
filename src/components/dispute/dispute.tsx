@@ -1,5 +1,14 @@
-import { FaList, FaMicrosoft, FaTimesCircle } from "react-icons/fa";
-import { IoIosArrowDropdown } from "react-icons/io";
+import {
+  FaArrowRight,
+  FaList,
+  FaMicrosoft,
+  FaTimesCircle,
+} from "react-icons/fa";
+import {
+  IoIosArrowDropdown,
+  IoMdArrowDropdown,
+  IoMdArrowDropup,
+} from "react-icons/io";
 import Deposit_Description from "../deposit/deposit_description";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
@@ -17,10 +26,12 @@ import {
 import moment from "moment";
 import { checkUser } from "@/utils/localstorage";
 import { setUser } from "../../../redux/slices/authSlice";
-import style2 from "../../pages/events/[eventCategory]/[eventId]/activity_room.module.css";
-import style from "../deposit/deposit.module.css";
 import Request_Description from "../request/request_description";
 import SubmitDispute from "../appointJudges/submitDispute";
+import SubmittedDisputeForms from "./submittedDisputeForms";
+import style2 from "../../pages/events/[eventCategory]/[eventId]/activity_room.module.css";
+import style from "../deposit/deposit.module.css";
+import { CgArrowLongRightL } from "react-icons/cg";
 
 const DisputeForm = () => {
   const {
@@ -31,6 +42,7 @@ const DisputeForm = () => {
     totalMemberRequestsAmount,
     requestAmount,
     requestDescription,
+    disputeForms,
     error,
     loading,
     hasDisputeAddedOrRemoved,
@@ -44,6 +56,7 @@ const DisputeForm = () => {
   const { isReady } = useRouter();
   const { eventId } = useRouter().query;
 
+  const [showNominations, setShowNominations] = useState(false);
   // console.log(isReady, eventId);
   useEffect(() => {
     if (isReady) {
@@ -55,10 +68,19 @@ const DisputeForm = () => {
   }, [isReady]);
 
   useEffect(() => {
+    dispatch(
+      updateEventForm({
+        name: "disputeForms",
+        value: fullEventDetails.disputeForms,
+      })
+    );
+  }, [fullEventDetails]);
+
+  useEffect(() => {
     if (eventId) {
       dispatch(getMemberRequestList(eventId));
     }
-  }, [eventId]);
+  }, [eventId, hasDisputeAddedOrRemoved]);
 
   useEffect(() => {
     if (error.type) {
@@ -69,40 +91,13 @@ const DisputeForm = () => {
     }
   }, [error]);
 
-  useEffect(() => {
-    if (eventId) {
-      dispatch(getMemberRequestList(eventId));
-    }
-  }, [eventId, hasDisputeAddedOrRemoved]);
-
   const handleChange: ReactEventHandler = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { name, value } = e.target;
     dispatch(updateEventForm({ name, value }));
   };
-  const handleRequestSubmission = () => {
-    if (!requestAmount || !requestDescription) {
-      return dispatch(
-        logError({
-          type: "deposit_form_error",
-          msg: "Amount can't be zero and request description can't be empty",
-        })
-      );
-    }
-    const finalObj = {
-      userId: user?.user._id,
-      eventId,
-      name: `${user?.user.firstName} ${user?.user.lastName}`,
-      description: requestDescription,
-      amount: requestAmount,
-      date: Date.now(),
-    };
 
-    dispatch(uploadMemberRequest(finalObj));
-    // dispatch(resetEventPaymentInfo());
-    setShowModal(!showModal);
-  };
   const handleShowModal = () => {
     return setShowModal(!showModal);
   };
@@ -133,9 +128,64 @@ const DisputeForm = () => {
   };
   // console.log(memberRequestList);
   return (
-    <div className={style2.mainField}>
-      <div className={style.add_new_category}>
+    <div className={style2.mainField} style={{ paddingBottom: "100px" }}>
+      <div
+        className={style.add_new_category}
+        style={{ flexDirection: "row", justifyContent: "space-between" }}
+      >
         <h3>Disputes</h3>
+        <h5
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            cursor: "pointer",
+            position: "relative",
+          }}
+        >
+          <span
+            style={{ display: "flex", alignItems: "center" }}
+            onClick={() => setShowNominations(!showNominations)}
+          >
+            Nominated Judges List{" "}
+            {!showNominations ? (
+              <IoMdArrowDropdown style={{ fontSize: "1.3rem" }} />
+            ) : (
+              <IoMdArrowDropup style={{ fontSize: "1.3rem" }} />
+            )}
+          </span>
+          {showNominations && (
+            <span
+              style={{
+                position: "absolute",
+                bottom: "-100px",
+                right: "0",
+                color: "rgb(20, 150, 50)",
+                background: "rgb(20, 20, 60,0.8)",
+                padding: "10px",
+                minHeight: "100px",
+                width: "100%",
+              }}
+            >
+              {eventObservers.map((eachObserver: any) => {
+                return (
+                  <p
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                    }}
+                  >
+                    {eachObserver.name || "No name yet"} <FaArrowRight />{" "}
+                    <span style={{ color: "red" }}>
+                      {eachObserver.nominations || 0}
+                    </span>
+                  </p>
+                );
+              })}
+            </span>
+          )}
+        </h5>
       </div>
       <div className={style.total_deposit_board}>
         <div className={style.currency}>
@@ -231,7 +281,6 @@ const DisputeForm = () => {
               <Request_Description
                 key={item._id}
                 {...item}
-                handleRequestSubmission={handleRequestSubmission}
                 handleChange={handleChange}
                 handleShowModal={handleShowModal}
                 getMemberRequestList={getMemberRequestList}
@@ -269,14 +318,21 @@ const DisputeForm = () => {
               disputes have been settled
             </h5>
             <div>
-              <button onClick={handleRequestSubmission} disabled={loading}>
-                Proceed?
-              </button>
+              <button disabled={loading}>Proceed?</button>
               <button>Reject</button>
             </div>
           </div>
         </div>
       )}
+      <div>
+        <SubmittedDisputeForms
+          disputeForms={disputeForms}
+          error={error}
+          isReady={isReady}
+          dispatch={dispatch}
+          eventId={eventId}
+        />
+      </div>
       <SubmitDispute
         memberRequestList={memberRequestList}
         eventId={eventId}

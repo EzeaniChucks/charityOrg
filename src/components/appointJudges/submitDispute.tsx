@@ -1,10 +1,11 @@
-import { FaTimesCircle } from "react-icons/fa";
+import { FaCopy, FaShareAltSquare, FaTimesCircle } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../../redux/store";
 import {
   createEvent,
   getAllEventMembersAndObservers,
   handleEventModule,
+  log_dispute_form,
   resetEvent,
   switchStep,
   updateEventForm,
@@ -13,11 +14,12 @@ import DatePicker from "react-datepicker";
 import { timezone } from "@/utils/arrays";
 import moment from "moment";
 import { logError } from "../../../redux/slices/authSlice";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { CgMathEqual } from "react-icons/cg";
 import style from "../events/events.module.css";
 import styles2 from "../auth/auth.module.css";
+import style3 from "../../components/events/singleEvent.module.css";
 import Request_Description from "../request/request_description";
 
 const SubmitDispute = ({
@@ -27,18 +29,9 @@ const SubmitDispute = ({
   eventObservers,
 }: any) => {
   const {
-    event,
-    eventName,
-    eventDate,
-    timeZone,
-    hostStatus,
-    currency,
+    disputeFormDescription,
+    disputeFormJudge,
     eventDescription,
-    depositDeadline,
-    completionDeadline,
-    eventImageName,
-    eventImagePath,
-    invitationEmails,
     showEventForm,
     loading,
     creationStatus,
@@ -47,88 +40,32 @@ const SubmitDispute = ({
   const [imagefile, setImagefile] = useState<any>({ name: "", file: {} });
 
   const dispatch = useDispatch<AppDispatch>();
-  const { push } = useRouter();
+  const { push, asPath } = useRouter();
+  const linkcopyref = useRef<any>(null);
 
   const handleChange = (e: React.ChangeEvent<any>) => {
-    const { name, value, files } = e.target;
-    if (files?.length > 0) {
-      const imgObj = files[0];
-      const imgPath = URL.createObjectURL(imgObj);
-      const imgName = `${Date.now()}${imgObj.name}`;
-      setImagefile({ name: imgName, file: imgObj });
-      // dispatch(updateEventForm({ name: "eventImageName", value: imgName }));
-      return dispatch(
-        updateEventForm({ name: "eventImagePath", value: imgPath })
-      );
-    }
+    const { name, value } = e.target;
     dispatch(updateEventForm({ name, value }));
   };
 
-  const handleNext = () => {
-    if (!eventName) {
-      return dispatch(
-        logError({ type: "eventName", msg: "fill name of event" })
-      );
-    } else if (eventName) {
-      dispatch(logError({ type: "", msg: "" }));
-    }
-    if (!eventDescription) {
-      return dispatch(
-        logError({
-          type: "eventDescription",
-          msg: "A description is compulsory",
-        })
-      );
-    } else if (eventDescription) {
-      dispatch(
-        logError({
-          type: "",
-          msg: "",
-        })
-      );
-    }
-    const depDate = new Date(depositDeadline).getTime();
-    const compDate = new Date(completionDeadline).getTime();
-    if (depDate > compDate) {
-      return dispatch(
-        logError({
-          type: "completionDeadline",
-          msg: "completion deadline should be after deposit deadline",
-        })
-      );
+  const handleDisputeFormPublish = () => {
+    if (
+      !disputeFormDescription ||
+      Object.keys(disputeFormJudge).length === 0 ||
+      disputed_Events().length === 0
+    ) {
+      console.log("All up all fields");
+      return;
     }
 
-    dispatch(switchStep("step2"));
-  };
-
-  const handleCreate = () => {
-    const finalObj = {
-      creatorId: user.user._id,
-      eventName,
-      eventDate,
-      timeZone,
-      hostStatus,
-      currency,
-      eventDescription,
-      depositDeadline,
-      completionDeadline,
-      eventImageName,
-      invitationEmails,
+    const data = {
+      disputeLogger: user?.user?._id,
+      description: disputeFormDescription,
+      appointedJudge: disputeFormJudge,
+      disputedRequests: disputed_Events(),
+      eventId,
     };
-    const { name, file } = imagefile;
-    const imageData = new FormData();
-    const json = JSON.stringify(finalObj);
-    const blob = new Blob([json], { type: "application/json" });
-    imageData.append("document", blob, "finalObj");
-
-    if (eventImagePath) {
-      imageData.append("image", file, name);
-      dispatch(createEvent(imageData));
-      // return dispatch(uploadEventImage(imageData));
-      return dispatch(handleEventModule(showEventForm));
-    }
-    dispatch(createEvent(imageData));
-    dispatch(handleEventModule(showEventForm));
+    dispatch(log_dispute_form(data));
   };
   const handleformcontdisplay = () => {
     if (!showEventForm) return style.eventformcontainer;
@@ -178,29 +115,83 @@ const SubmitDispute = ({
             <label>
               What do you have against these requests?{" "}
               <textarea
-                value={eventDescription}
-                name={"eventDescription"}
+                value={disputeFormDescription}
+                name={"disputeFormDescription"}
                 rows={3}
                 placeholder="Present your case to an event judge"
                 onChange={handleChange}
               />
             </label>
-            <h5>
-              Nominate a judge from the following list of event observers
-              <span style={{ fontSize: "0.6rem" }}>
-                {" "}
-                (Judges with highest nominations will settle entire disputes for
-                this event)
-              </span>
-            </h5>
-            <select>
-              {eventMembers?.map((item: any) => {
-                return <option key={item._id}>{item.userId}</option>;
-              })}
-            </select>
+            {eventObservers.length > 0 && (
+              <>
+                <h5>
+                  Nominate a judge from the following list of event observers
+                  <span style={{ fontSize: "0.6rem" }}>
+                    {" "}
+                    (Judges with highest nominations will settle entire disputes
+                    for this event)
+                  </span>
+                </h5>
+                <div>
+                  {eventObservers?.map((item: any) => {
+                    return (
+                      <p
+                        style={{ cursor: "pointer" }}
+                        key={item?._id}
+                        onClick={() => {
+                          return dispatch(
+                            updateEventForm({
+                              name: "disputeFormJudge",
+                              value: { userId: item?.userId, name: item?.name },
+                            })
+                          );
+                        }}
+                      >
+                        {item?.name ? item.name : "Yet to be named"}
+                      </p>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+            {eventObservers.length === 0 && (
+              <>
+                <h5>
+                  No observer is present in this event. But you can share the
+                  link to invite someone to join event as an observer
+                </h5>
+                <div className={style3.shareEvent}>
+                  <h4>
+                    <FaShareAltSquare /> INVITE FRIENDS TO THIS EVENT
+                  </h4>
+                  <div
+                    onClick={() => {
+                      navigator.clipboard.writeText(
+                        `https://charityorg.vercel.app${asPath}`
+                      );
+                      if (linkcopyref.current)
+                        linkcopyref.current.textContent = "Link copied";
+                      setTimeout(() => {
+                        linkcopyref.current.textContent = "";
+                      }, 2000);
+                    }}
+                  >
+                    <h4>Copy Link</h4>
+                    <FaCopy />
+                    <h5 ref={linkcopyref}></h5>
+                  </div>
+                </div>
+              </>
+            )}
             {error.type === "eventDescription" && <h6>{error.msg}</h6>}
             {error.type !== "" && <h6>{"An error occured"}</h6>}
-            <button className={styles2.btn} onClick={handleNext}>
+            <button
+              className={styles2.btn}
+              onClick={() => {
+                handleDisputeFormPublish();
+                dispatch(handleEventModule());
+              }}
+            >
               PUBLISH
             </button>
           </div>

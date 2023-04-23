@@ -124,7 +124,7 @@ const ActivityRoom = () => {
   return (
     <>
       <Head>
-        <title>Charity Org: {fullEventDetails?.eventName}</title>
+        <title>Charity Org {/*{fullEventDetails?.eventName}*/}</title>
         <meta name="description" content="Event activity room" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/charityApp.png" />

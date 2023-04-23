@@ -34,6 +34,9 @@ interface Obj {
   editRequestAmount: String;
   editRequestDescription: String;
   disputeDescription: String;
+  disputeFormDescription: String;
+  disputeFormJudge: { userId: String; name: String };
+  disputeForms: any;
   hasEditCompleted: Boolean;
   hasDisputeAddedOrRemoved: Boolean;
   memberRequestList: any;
@@ -278,6 +281,22 @@ export const remove_dispute = createAsyncThunk(
     }
   }
 );
+export const log_dispute_form = createAsyncThunk(
+  "event/log_dispute_form",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.post(
+        `${conString}/log_dispute_form`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
 
 const initialState: Obj = {
   event: null,
@@ -310,6 +329,9 @@ const initialState: Obj = {
   hasEditCompleted: false,
   hasDisputeAddedOrRemoved: false,
   disputeDescription: "",
+  disputeFormDescription: "",
+  disputeFormJudge: { userId: "", name: "" },
+  disputeForms: [],
   loading: false,
   error: { type: "", msg: "", code: "" },
   creationStatus: false,
@@ -666,6 +688,26 @@ const eventSlice = createSlice({
     });
     builder.addCase(
       remove_dispute.rejected,
+      (state: any, { payload }: { payload: any }) => {
+        state.loading = false;
+        state.error = {
+          type: "server_error",
+          msg: "Not able to proceed with event deposit. Please try again",
+          code: payload,
+        };
+      }
+    );
+
+    //Create Dispute Form
+    builder.addCase(log_dispute_form.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(log_dispute_form.fulfilled, (state: any, { payload }) => {
+      state.loading = false;
+      state.disputeForms = payload.disputeForms;
+    });
+    builder.addCase(
+      log_dispute_form.rejected,
       (state: any, { payload }: { payload: any }) => {
         state.loading = false;
         state.error = {

@@ -47,8 +47,8 @@ const Request_Description = ({
       dispatch(getMemberRequestList(eventId));
     }
     if (item?.disputes?.includes(user.user._id)) {
-      if (document?.querySelector<any>("#dispute-tick")) {
-        document.querySelector<any>("#dispute-tick").checked = true;
+      if (document?.querySelector<any>(`.dispute-tick${item._id}`)) {
+        document.querySelector<any>(`.dispute-tick${item._id}`).checked = true;
       }
     }
   }, [hasEditCompleted]);
@@ -70,7 +70,7 @@ const Request_Description = ({
               <input
                 style={{ padding: "5px", borderRadius: "5px" }}
                 type="checkbox"
-                id={"dispute-tick"}
+                className={`dispute-tick${item._id}`}
                 onChange={(e) => {
                   if (item?.disputes?.includes(user.user._id)) {
                     const data = {
@@ -79,6 +79,7 @@ const Request_Description = ({
                       dispute_complainerId: user?.user._id,
                       eventId,
                     };
+                    e.target.checked = false;
                     dispatch(remove_dispute(data));
                   } else {
                     const data = {
@@ -88,6 +89,7 @@ const Request_Description = ({
                       eventId,
                       description: "dispute stage disputation",
                     };
+                    e.target.checked = true;
                     dispatch(create_dispute(data));
                   }
                   console.log(e.target.checked);

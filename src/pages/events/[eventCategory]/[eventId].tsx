@@ -201,23 +201,35 @@ const SingleEvent = () => {
                 Open Event
               </button>
             )}
+
             {!isEventMemberOrObserver() && (
               <button
                 className={style.btn}
                 onClick={() => {
-                  dispatch(joinEvents({ eventId, userId: user?.user._id }));
+                  dispatch(
+                    joinEvents({
+                      eventId,
+                      userId: user?.user._id,
+                      name: `${user?.user?.firstName} ${user?.user?.lastName}`,
+                    })
+                  );
                 }}
                 disabled={loading}
               >
                 Join Event As Member
               </button>
             )}
+
             {!isEventMemberOrObserver() && (
               <button
                 className={style.btn}
                 onClick={() => {
                   dispatch(
-                    joinEventsAsObserver({ eventId, userId: user?.user._id })
+                    joinEventsAsObserver({
+                      eventId,
+                      userId: user?.user._id,
+                      name: `${user?.user?.firstName} ${user?.user?.lastName}`,
+                    })
                   );
                 }}
                 disabled={loading}
