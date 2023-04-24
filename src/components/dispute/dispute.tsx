@@ -117,7 +117,7 @@ const DisputeForm = () => {
     });
     return number;
   };
-  const calcDisputes = () => {
+  const calcAllDisputes = () => {
     let number = 0;
     memberRequestList?.map((item: any) => {
       if (item?.disputes.length > 0) {
@@ -126,7 +126,16 @@ const DisputeForm = () => {
     });
     return number;
   };
-  // console.log(memberRequestList);
+  const calcOwnDisputes = () => {
+    let number = 0;
+    memberRequestList?.map((item: any) => {
+      if (item?.disputes.includes(user?.user?._id)) {
+        return number++;
+      }
+    });
+    return number;
+  };
+  // console.log(calcOwnDisputes());
   return (
     <div className={style2.mainField} style={{ paddingBottom: "100px" }}>
       <div
@@ -251,13 +260,13 @@ const DisputeForm = () => {
         >
           You lodged{" "}
           <span style={{ color: "rgb(200, 100, 100)" }}>
-            {calcDisputes()} disputes
+            {calcOwnDisputes()} dispute(s)
           </span>{" "}
           (out of the{" "}
           <span style={{ color: "rgb(200, 100, 100)" }}>
-            {calcRequestWithDispute()} available
+            {calcAllDisputes()} available
           </span>{" "}
-          disputes on all requests).
+          dispute(s) on all requests).
         </h5>
         <h6
           style={{
@@ -294,7 +303,7 @@ const DisputeForm = () => {
             );
           })}
           <div>
-            {calcDisputes() > 0 && (
+            {calcOwnDisputes() > 0 && (
               <button
                 className={style.btn_add}
                 style={{ width: "100%", backgroundColor: "rgb(120, 50, 50)" }}

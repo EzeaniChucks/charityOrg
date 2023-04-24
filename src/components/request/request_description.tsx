@@ -34,8 +34,12 @@ const Request_Description = ({
 }: any) => {
   const [isexpand, setIsExpand] = useState(false);
   const [isedit, setIsEdit] = useState(false);
-  const { editRequestAmount, editRequestDescription, hasEditCompleted } =
-    useSelector((store: any) => store.event);
+  const {
+    editRequestAmount,
+    editRequestDescription,
+    hasEditCompleted,
+    loading,
+  } = useSelector((store: any) => store.event);
   const { user } = useSelector((store: any) => store.user);
   const expandDropDown = () => {
     return setIsExpand(!isexpand);
@@ -92,8 +96,9 @@ const Request_Description = ({
                     e.target.checked = true;
                     dispatch(create_dispute(data));
                   }
-                  console.log(e.target.checked);
+                  // console.log(e.target.checked);
                 }}
+                disabled={loading}
               />
             )}
             {item?.userId === user?.user?._id && <div></div>}{" "}
