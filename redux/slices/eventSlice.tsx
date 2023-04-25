@@ -12,6 +12,7 @@ interface Obj {
   eventMembers: any;
   eventObservers: any;
   eventName: String;
+  eventPrivacy: String;
   eventDate: String;
   fullEventDetails: any;
   timeZone: String;
@@ -305,11 +306,12 @@ const initialState: Obj = {
   eventMembers: [],
   eventObservers: [],
   eventName: "",
+  eventPrivacy: "Public",
   eventDate: Date(),
   fullEventDetails: [],
   timeZone: "Etc/GMT-12 (GMT-12:00)",
   hostStatus: "Depositor",
-  currency: "Euro",
+  currency: "NGN",
   eventDescription: "",
   depositDeadline: Date(),
   completionDeadline: Date(),

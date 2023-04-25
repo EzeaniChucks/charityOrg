@@ -24,7 +24,7 @@ export const dashbord_item = [
     id: 3,
     name: "My Events",
     logo: FaWallet,
-    link: "",
+    link: "/events/my_events",
   },
   {
     id: 2,

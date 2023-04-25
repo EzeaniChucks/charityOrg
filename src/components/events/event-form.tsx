@@ -18,12 +18,13 @@ import { useRouter } from "next/router";
 import { CgMathEqual } from "react-icons/cg";
 import style from "../events/events.module.css";
 import styles2 from "../auth/auth.module.css";
+import { currency_array } from "@/utils/fundsArrays";
 
 const Event_Form = () => {
   const {
     event,
     eventName,
-    eventDate,
+    eventPrivacy,
     timeZone,
     hostStatus,
     currency,
@@ -102,7 +103,7 @@ const Event_Form = () => {
     const finalObj = {
       creatorId: user.user._id,
       eventName,
-      eventDate,
+      eventPrivacy,
       timeZone,
       hostStatus,
       currency,
@@ -175,16 +176,16 @@ const Event_Form = () => {
                 />
               </label>
               {error.type === "eventName" && <h6>{error.msg}</h6>}
-              <label>
+              {/* <label>
                 Event Date:{" "}
                 <DatePicker
                   placeholderText="day/month/year e.g 01/01/2000"
-                  selected={new Date(eventDate)}
+                  selected={new Date(eventPrivacy)}
                   dateFormat="dd/MM/yyyy"
                   onChange={(date: Date) => {
                     dispatch(
                       updateEventForm({
-                        name: "eventDate",
+                        name: "eventPrivacy",
                         value: moment(date).format(),
                       })
                     );
@@ -193,8 +194,8 @@ const Event_Form = () => {
                   scrollableYearDropdown
                   minDate={new Date()}
                 />
-              </label>
-              {error.type === "eventDate" && <h6>{error.msg}</h6>}
+              </label> */}
+              {error.type === "eventPrivacy" && <h6>{error.msg}</h6>}
               <label>
                 Time Zone :{" "}
                 <select
@@ -223,15 +224,31 @@ const Event_Form = () => {
               </label>
               {error.type === "hostStatus" && <h6>{error.msg}</h6>}
               <label>
+                Event Privacy:{" "}
+                <select
+                  value={eventPrivacy}
+                  name={"eventPrivacy"}
+                  onChange={handleChange}
+                >
+                  <option>Public</option>
+                  <option>Private</option>
+                </select>
+              </label>
+              {error.type === "hostStatus" && <h6>{error.msg}</h6>}
+              <label>
                 Currency :{" "}
                 <select
                   value={currency}
                   name={"currency"}
                   onChange={handleChange}
                 >
-                  <option>USD</option>
-                  <option>Euro</option>
-                  <option>Naira</option>
+                  {currency_array.map((item) => {
+                    return (
+                      <option key={Object.keys(item)[0]}>
+                        {Object.values(item)[0]}
+                      </option>
+                    );
+                  })}
                 </select>
               </label>
               {error.type === "currency" && <h6>{error.msg}</h6>}

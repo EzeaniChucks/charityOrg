@@ -75,6 +75,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (isReady && query.transaction_id) {
+      console.log(" payment response called");
       dispatch(
         paymentResponse({
           transaction_id: query.transaction_id,

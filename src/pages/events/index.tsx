@@ -38,6 +38,15 @@ const Events = () => {
     dispatch(getAllEvents());
   }, []);
 
+  const publicEvents = () => {
+    if (allEvents.length > 0) {
+      return allEvents.filter((event: any) => {
+        return event.eventPrivacy !== "Private";
+      });
+    } else {
+      return [];
+    }
+  };
   return (
     <main className={styles2.container}>
       <div className={style.section}>
@@ -46,7 +55,12 @@ const Events = () => {
           <div className={style.headboard}>
             <div className={style.upper_headboard}>
               <FaList />
-              <h3>Lagos, Nigeria</h3>
+              <div>
+                <h3>All Events</h3>
+                <h6 onClick={() => push("/events/my_events")}>
+                  My personal events
+                </h6>
+              </div>
               <IoIosNotifications />
             </div>
             <div className={style.lower_headboard}>
@@ -118,7 +132,7 @@ const Events = () => {
               <p>{"See all ->"}</p>
             </div>
             <div className={style.cardcontainer}>
-              {allEvents.map((item: any) => {
+              {publicEvents()?.map((item: any) => {
                 return (
                   <div
                     onClick={() =>
