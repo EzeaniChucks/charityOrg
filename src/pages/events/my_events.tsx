@@ -31,7 +31,7 @@ import {
   handleNotifModal,
 } from "../../../redux/slices/notificationsSlice";
 
-const myEvents = () => {
+const MyEvents = () => {
   const { user } = useSelector((store: any) => store.user);
   const { allEvents } = useSelector((store: any) => store.event);
   const { notifLogStatus, notifModalIsOpen, notifications } = useSelector(
@@ -112,7 +112,7 @@ const myEvents = () => {
           </div>
           <div className={style.eventcontainer}>
             <div className={style.heading}>
-              <h3>My Events List</h3>
+              <h3>My Event List</h3>
             </div>
             <div className={style.cardcontainer_sans_inline}>
               {PersonalEvents().length === 0 && (
@@ -208,4 +208,4 @@ const myEvents = () => {
   );
 };
 
-export default myEvents;
+export default MyEvents;
