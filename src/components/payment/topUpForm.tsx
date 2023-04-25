@@ -110,7 +110,7 @@ const TopUpForm = () => {
             {error.type === "currency" && <h6>{error.msg}</h6>}
 
             {error.type === "amount" && <h6>{error.msg}</h6>}
-            {error.type !== "" && <h6>{"An error occured"}</h6>}
+            {/* {error.type !== "" && <h6>{"An error occured"}</h6>} */}
             <FlutterWaveButton className={styles2.btn} {...config} />
           </div>
         </div>
