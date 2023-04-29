@@ -78,7 +78,7 @@ const SubmitDispute = ({
 
   const disputed_Events = () => {
     return memberRequestList?.filter((item: any) => {
-      return item?.disputes?.includes(user.user._id);
+      return item?.disputes?.includes(user?.user?._id);
     });
   };
   //   console.log(disputed_Events(), memberRequestList);

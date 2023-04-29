@@ -19,6 +19,7 @@ import {
   getWalletBalance,
   getLatestTransactions,
   paymentResponse,
+  handleFillAccountsModule,
 } from "../../redux/slices/walletSlice";
 import TopUpForm from "@/components/payment/topUpForm";
 import { handleTopUpModule } from "../../redux/slices/walletSlice";
@@ -35,7 +36,8 @@ import Example from "@/components/charts/PieChart";
 import styles2 from "../components/auth/auth.module.css";
 import styles1 from "../styles/dashboard.module.css";
 import Doughnut from "@/components/charts/Doughnut";
-import { FaDatabase } from "react-icons/fa";
+import { FaChartBar, FaDatabase } from "react-icons/fa";
+import Accounts from "@/components/accounts/accounts";
 
 const Dashboard = () => {
   const { user } = useSelector((store: any) => store.user);
@@ -75,7 +77,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (isReady && query.transaction_id) {
-      console.log(" payment response called");
       dispatch(
         paymentResponse({
           transaction_id: query.transaction_id,
@@ -193,6 +194,10 @@ const Dashboard = () => {
                       </div>
                     );
                   })}
+                  <div onClick={() => dispatch(handleFillAccountsModule())}>
+                    <FaChartBar />
+                    <h5>Account Details</h5>
+                  </div>
                   <hr />
                   <div onClick={() => push("")}>
                     <AiOutlineSetting />
@@ -326,6 +331,7 @@ const Dashboard = () => {
             </div>
           </div>
           <TopUpForm />
+          <Accounts />
           <div className={styles2.particles}>
             <ParticlesComp />
           </div>

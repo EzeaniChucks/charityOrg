@@ -50,7 +50,7 @@ const Request_Description = ({
       setIsEdit(false);
       dispatch(getMemberRequestList(eventId));
     }
-    if (item?.disputes?.includes(user.user._id)) {
+    if (item?.disputes?.includes(user?.user?._id)) {
       if (document?.querySelector<any>(`.dispute-tick${item._id}`)) {
         document.querySelector<any>(`.dispute-tick${item._id}`).checked = true;
       }

@@ -1,10 +1,4 @@
-import {
-  FaDashcube,
-  FaFileInvoice,
-  FaWallet,
-  FaChartBar,
-  FaDatabase,
-} from "react-icons/fa";
+import { FaDashcube, FaFileInvoice, FaWallet } from "react-icons/fa";
 import {
   RxAvatar,
   RxMobile,
@@ -30,12 +24,6 @@ export const dashbord_item = [
     id: 2,
     name: "Messages",
     logo: FaFileInvoice,
-    link: "",
-  },
-  {
-    id: 4,
-    name: "Reports",
-    logo: FaChartBar,
     link: "",
   },
 ];

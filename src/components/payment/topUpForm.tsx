@@ -27,7 +27,6 @@ const TopUpForm = () => {
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     dispatch(updateWalletTopUpForm({ name, value }));
-    console.log(topup_amount, topup_country, topup_currency);
   };
   const config = {
     public_key,

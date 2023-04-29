@@ -114,6 +114,22 @@ export const joinEventsAsObserver = createAsyncThunk(
     }
   }
 );
+export const leaveEvents = createAsyncThunk(
+  "event/leaveEvents",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.post(
+        `${conString}/leave_event`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
 export const joinEvents = createAsyncThunk(
   "event/joinEvents",
   async (prop: any, thunk) => {
@@ -272,6 +288,22 @@ export const remove_dispute = createAsyncThunk(
     try {
       const { data }: { data: any } = await axios.put(
         `${conString}/remove_dispute`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
+export const remove_all_disputes = createAsyncThunk(
+  "event/remove_all_disputes",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.delete(
+        `${conString}/remove_all_disputes`,
         prop
       );
       return data;
@@ -464,6 +496,27 @@ const eventSlice = createSlice({
     });
     builder.addCase(
       joinEvents.rejected,
+      (state: any, { payload }: { payload: any }) => {
+        state.loading = false;
+        state.joineventNotification = payload;
+        state.error = {
+          type: "server_error",
+          msg: "Not able to join event. Please try again",
+          code: payload,
+        };
+      }
+    );
+    //Leave Event
+    builder.addCase(leaveEvents.pending, (state: any) => {
+      state.loading = true;
+      state.joineventNotification = "";
+    });
+    builder.addCase(leaveEvents.fulfilled, (state: any, { payload }) => {
+      state.loading = false;
+      state.joineventNotification = payload.msg;
+    });
+    builder.addCase(
+      leaveEvents.rejected,
       (state: any, { payload }: { payload: any }) => {
         state.loading = false;
         state.joineventNotification = payload;
@@ -690,6 +743,28 @@ const eventSlice = createSlice({
     });
     builder.addCase(
       remove_dispute.rejected,
+      (state: any, { payload }: { payload: any }) => {
+        state.loading = false;
+        state.error = {
+          type: "server_error",
+          msg: "Not able to proceed with event deposit. Please try again",
+          code: payload,
+        };
+      }
+    );
+    //REMOVE ALL DISPUTES
+    builder.addCase(remove_all_disputes.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(
+      remove_all_disputes.fulfilled,
+      (state: any, { payload }) => {
+        state.loading = false;
+        state.hasDisputeAddedOrRemoved = payload?.msg;
+      }
+    );
+    builder.addCase(
+      remove_all_disputes.rejected,
       (state: any, { payload }: { payload: any }) => {
         state.loading = false;
         state.error = {

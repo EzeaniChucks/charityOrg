@@ -1,52 +1,47 @@
 import Head from "next/head";
 import ParticlesComp from "@/components/ParticlesComp";
-import DepositForm from "@/components/deposit/deposit";
-import RequestForm from "@/components/request/request";
-import DisputeForm from "@/components/dispute/dispute";
-import ChatRoom from "@/components/chat/chat";
-import {
-  FaArrowAltCircleLeft,
-  FaGavel,
-  FaIdCard,
-  FaList,
-  FaMicrosoft,
-  FaPiggyBank,
-} from "react-icons/fa";
-import { HiChatAlt2 } from "react-icons/hi";
 import {
   AiFillCustomerService,
   AiFillDashboard,
   AiFillEnvironment,
-  AiOutlineEllipsis,
 } from "react-icons/ai";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setTabState } from "../../redux/slices/eventSlice";
+import {
+  getAllEventMembersAndObservers,
+  getEventDetail,
+  getMemberRequestList,
+  setAlertType,
+  setTabState,
+  updateEventForm,
+} from "../../../../../redux/slices/eventSlice";
 import { IoIosArrowDropdown, IoIosNotifications } from "react-icons/io";
 import Notification from "@/components/notification/notification";
 import {
   handleNotifModal,
   get_Notification,
-} from "../../redux/slices/notificationsSlice";
-import { AppDispatch } from "../../redux/store";
-import { io } from "socket.io-client";
+} from "../../../../../redux/slices/notificationsSlice";
+import { AppDispatch } from "../../../../../redux/store";
+
 import { conString } from "@/utils/conString";
 import { useRouter } from "next/router";
 import { checkUser } from "@/utils/localstorage";
-import { setUser } from "../../redux/slices/authSlice";
-import style from "./events/[eventCategory]/[eventId]/activity_room.module.css";
-import styles2 from "../components/auth/auth.module.css";
-import style3 from "../components/deposit/deposit.module.css";
+import { setUser } from "../../../../../redux/slices/authSlice";
 import moment from "moment";
-import Deposit_Description from "@/components/deposit/deposit_description";
-import SubmittedDisputeForms from "@/components/dispute/submittedDisputeForms";
+import Payments_Description from "@/components/payment/PaymentsDescription";
+import style from "./activity_room.module.css";
+import styles2 from "../../../../components/auth/auth.module.css";
+import style3 from "../../../../components/deposit/deposit.module.css";
 
-const socket = io(conString, { transports: ["websocket"] });
+// const socket = io(conString, { transports: ["websocket"] });
 
 const Payments_Page = () => {
   const {
     tabState,
     fullEventDetails,
+    eventMembers,
+    eventObservers,
+    memberRequestList,
     totalMemberRequestsAmount,
     disputeForms,
     error,
@@ -61,6 +56,7 @@ const Payments_Page = () => {
 
   const { push, isReady } = useRouter();
   const { eventId } = useRouter().query;
+  const [showModal, setShowModal] = useState<any>(false);
 
   const testSocket = () => {
     // socket.emit<any>("join_room", { username: user?.user?.firstName, eventId });
@@ -69,6 +65,45 @@ const Payments_Page = () => {
     // });
   };
   // console.log(arrtest);
+
+  const handleChange: React.ReactEventHandler = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = e.target;
+    dispatch(updateEventForm({ name, value }));
+  };
+  const handleRequestSubmission = () => {
+    // if (!requestAmount || !requestDescription) {
+    //   return dispatch(
+    //     logError({
+    //       type: "deposit_form_error",
+    //       msg: "Amount can't be zero and request description can't be empty",
+    //     })
+    //   );
+    // }
+    // const finalObj = {
+    //   userId: user?.user._id,
+    //   eventId,
+    //   name: `${user?.user.firstName} ${user?.user.lastName}`,
+    //   description: requestDescription,
+    //   amount: requestAmount,
+    //   date: Date.now(),
+    // };
+
+    setShowModal(!showModal);
+  };
+  const handleShowModal = () => {
+    // if (requestAmount === "" || requestDescription === "") {
+    //   return dispatch(
+    //     logError({
+    //       type: "deposit_form_error",
+    //       msg: "Deposit amount and new category name must be filled",
+    //     })
+    //   );
+    // }
+    setShowModal(!showModal);
+    dispatch(setAlertType("request submit"));
+  };
   useEffect(() => {
     const links = document.querySelectorAll(`.${style.link}`);
     links.forEach((item, i) => {
@@ -109,6 +144,18 @@ const Payments_Page = () => {
     }
   }, [user, notifLogStatus]);
 
+  useEffect(() => {
+    if (eventId) {
+      dispatch(getMemberRequestList(eventId));
+    }
+  }, [eventId]);
+
+  useEffect(() => {
+    if (isReady) {
+      dispatch(getEventDetail(eventId));
+      dispatch(getAllEventMembersAndObservers(eventId));
+    }
+  }, [isReady, dispatch]);
   // useEffect(() => {
   //   if (eventId) {
   //     socket.emit<any>(eventId, { post: "Message from frontend" });
@@ -137,6 +184,25 @@ const Payments_Page = () => {
     if (dateVar >= 0) return dateVar;
     else return 0;
   };
+  const highestNominatedJudge = () => {
+    let obj = { name: "", nominations: 0, userId: "" };
+    let count = 0;
+    eventObservers.map((item: any) => {
+      if (item.nominations > count) {
+        count = item.nominations;
+        return (obj = item);
+      }
+    });
+    return obj;
+  };
+  const eventObserversUserIds = () => {
+    const arr: any = [];
+    eventObservers.map((item: any) => {
+      return arr.push(item.userId);
+    });
+    return arr;
+  };
+  // console.log(memberRequestList);
   return (
     <>
       <Head>
@@ -145,11 +211,15 @@ const Payments_Page = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/charityApp.png" />
       </Head>
-      <main className={styles2.container}>
+      <main className={styles2.container} style={{ paddingTop: "20px" }}>
         <div className={style.content}>
           {/* <DepositForm /> */}
           <div className={style.mainField}>
             <h3>Payments Page</h3>
+            <h4 style={{ marginTop: "30px" }}>
+              Welcome to the dispute/settlement page,{" "}
+              <span>{highestNominatedJudge()?.name}</span>
+            </h4>
             <div className={style3.total_deposit_board}>
               <div className={style3.currency}>
                 <p>Event summary</p>
@@ -179,15 +249,50 @@ const Payments_Page = () => {
                 NGN {totalMemberRequestsAmount}
               </h2>
             </div>
-            <h4>Member requests with dispute descriptions</h4>
-            <div>
-              <SubmittedDisputeForms
-                disputeForms={disputeForms}
-                error={error}
-                isReady={isReady}
-                dispatch={dispatch}
-                eventId={eventId}
-              />
+            <h5>
+              Please observe individual member requests and make appropriate
+              decisions regarding their payout amount
+            </h5>
+            <div className={style.depositors_container}>
+              <div className={style.depositors}>
+                {memberRequestList?.length === 0 && (
+                  <p style={{ textAlign: "center" }}>
+                    No Requests Submitted yet. Fill form above to create first
+                    request
+                  </p>
+                )}
+                {memberRequestList?.map((item: any) => {
+                  return (
+                    <Payments_Description
+                      key={item._id}
+                      {...item}
+                      handleRequestSubmission={handleRequestSubmission}
+                      handleChange={handleChange}
+                      handleShowModal={handleShowModal}
+                      getMemberRequestList={getMemberRequestList}
+                      error={error}
+                      eventId={eventId}
+                      dispatch={dispatch}
+                      fullEventDetails={fullEventDetails}
+                      eventMembers={eventMembers}
+                      eventObservers={eventObservers}
+                      highestNominatedJudge={highestNominatedJudge}
+                      eventObserversUserIds={eventObserversUserIds}
+                      showModal={showModal}
+                      setShowModal={setShowModal}
+                    />
+                  );
+                })}
+              </div>
+              <button
+                className={style3.btn_add}
+                style={{
+                  width: "100%",
+                  backgroundColor: "rgb(50, 200, 100, 0.3)",
+                }}
+              >
+                PAY ALL MEMBERS
+              </button>
             </div>
           </div>
         </div>

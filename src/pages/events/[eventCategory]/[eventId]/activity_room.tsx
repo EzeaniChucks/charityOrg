@@ -20,7 +20,10 @@ import {
 } from "react-icons/ai";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setTabState } from "../../../../../redux/slices/eventSlice";
+import {
+  leaveEvents,
+  setTabState,
+} from "../../../../../redux/slices/eventSlice";
 import { IoIosNotifications } from "react-icons/io";
 import Notification from "@/components/notification/notification";
 import {
@@ -132,7 +135,16 @@ const ActivityRoom = () => {
       <main className={styles2.container}>
         <div className={style.content}>
           <div className={style.heading}>
-            <h3>{fullEventDetails?.eventName}</h3>
+            <div>
+              <h3>{fullEventDetails?.eventName}</h3>
+              <h5
+                onClick={() =>
+                  dispatch(leaveEvents({ eventId, userId: user?.user?._id }))
+                }
+              >
+                Leave event
+              </h5>
+            </div>
             <label>
               Change member status
               <select>

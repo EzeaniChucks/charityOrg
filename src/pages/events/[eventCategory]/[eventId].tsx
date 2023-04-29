@@ -7,6 +7,7 @@ import {
   FaArrowLeft,
   FaCalendar,
   FaCopy,
+  FaShareAlt,
   FaShareAltSquare,
 } from "react-icons/fa";
 import { IoMdRibbon } from "react-icons/io";
@@ -22,17 +23,17 @@ import {
 import { AppDispatch } from "../../../../redux/store";
 import { checkUser, storeUser } from "@/utils/localstorage";
 import { setUser } from "../../../../redux/slices/authSlice";
-import styles2 from "../../../components/auth/auth.module.css";
 import style from "../../../components/events/singleEvent.module.css";
+import styles2 from "../../../components/auth/auth.module.css";
 
 const SingleEvent = () => {
   const { allEvents, eventCreator, loading, joineventNotification } =
     useSelector((store: any) => store.event);
-  const { eventId, eventCategory } = useRouter().query;
-  const { isReady, asPath, push } = useRouter();
+  const { eventId, eventCategory, inviteAs } = useRouter().query;
+  const { isReady, asPath, push, query } = useRouter();
   const linkcopyref = useRef<any>(null);
 
-  // console.log(useRouter().route);
+  // console.log(inviteAs);
 
   const generateSingleEvent = () => {
     if (eventCategory === "upcoming_event") {
@@ -170,27 +171,48 @@ const SingleEvent = () => {
               </h3>
               <p>{singleEvent?.eventDescription}</p>
             </div>
-            <div className={style.shareEvent}>
-              <h4>
-                <FaShareAltSquare /> INVITE FRIENDS TO THIS EVENT
-              </h4>
-              <div
-                onClick={() => {
-                  navigator.clipboard.writeText(
-                    `https://charityorg.vercel.app${asPath}`
-                  );
-                  if (linkcopyref.current)
-                    linkcopyref.current.textContent = "Link copied";
-                  setTimeout(() => {
-                    linkcopyref.current.textContent = "";
-                  }, 2000);
-                }}
-              >
-                <h4>Copy Link</h4>
-                <FaCopy />
-                <h5 ref={linkcopyref}></h5>
+            {isEventMemberOrObserver() && (
+              <div className={style.shareEvent}>
+                <h4>INVITE FRIENDS TO THIS EVENT</h4>
+                <div>
+                  <div>
+                    <h4
+                      onClick={() => {
+                        navigator.clipboard.writeText(
+                          `https://charityorg.vercel.app${asPath}?inviteAs=depositor`
+                        );
+                        if (linkcopyref.current)
+                          linkcopyref.current.textContent =
+                            "Link copied for depositor invite";
+                        setTimeout(() => {
+                          linkcopyref.current.textContent = "";
+                        }, 2000);
+                      }}
+                    >
+                      Invite friends as depositor
+                    </h4>
+                    <h4
+                      onClick={() => {
+                        navigator.clipboard.writeText(
+                          `https://charityorg.vercel.app${asPath}?inviteAs=observer`
+                        );
+                        if (linkcopyref.current)
+                          linkcopyref.current.textContent =
+                            "Link copied for observer invite";
+                        setTimeout(() => {
+                          linkcopyref.current.textContent = "";
+                        }, 2000);
+                      }}
+                    >
+                      Invite friends as observer
+                    </h4>
+                  </div>
+                  {/* <FaCopy /> */}
+                  <FaShareAlt />
+                  <h5 ref={linkcopyref}></h5>
+                </div>
               </div>
-            </div>
+            )}
             {isEventMemberOrObserver() && (
               <button
                 className={style.btn}
@@ -202,25 +224,39 @@ const SingleEvent = () => {
               </button>
             )}
 
-            {!isEventMemberOrObserver() && (
-              <button
-                className={style.btn}
-                onClick={() => {
-                  dispatch(
-                    joinEvents({
-                      eventId,
-                      userId: user?.user._id,
-                      name: `${user?.user?.firstName} ${user?.user?.lastName}`,
-                    })
-                  );
-                }}
-                disabled={loading}
-              >
-                Join Event As Member
-              </button>
-            )}
+            {!isEventMemberOrObserver() &&
+              (inviteAs === "depositor" || !inviteAs) && (
+                <>
+                  <button
+                    className={style.btn}
+                    onClick={() => {
+                      dispatch(
+                        joinEvents({
+                          eventId,
+                          userId: user?.user._id,
+                          name: `${user?.user?.firstName} ${user?.user?.lastName}`,
+                        })
+                      );
+                    }}
+                    disabled={loading}
+                  >
+                    Join Event As Depositor
+                  </button>
+                  <p
+                    style={{
+                      fontSize: "0.9rem",
+                      color: "rgb(30, 200, 50)",
+                      borderBottom: "10px",
+                    }}
+                  >
+                    Note: To join this event as an observer, ask the referrer
+                    who sent you this link to send an observer link, or contact
+                    customer support
+                  </p>
+                </>
+              )}
 
-            {!isEventMemberOrObserver() && (
+            {!isEventMemberOrObserver() && inviteAs === "observer" && (
               <button
                 className={style.btn}
                 onClick={() => {

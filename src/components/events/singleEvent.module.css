@@ -183,6 +183,7 @@
 
 .shareEvent{
     display: flex;
+    width: 100%;
     flex-direction: column;
     gap: 10px;
     align-items: flex-start;
@@ -191,17 +192,33 @@
     display: flex;
     align-items: center;
     gap: 20px;
+    width: 100%;
     margin-left: 20px;
     cursor: pointer;
     color: rgb(109, 197, 182);
 }
-.shareEvent>div:hover{
-    color: rgb(192, 191, 126);
+.shareEvent>div{
+    position: relative;
 }
+
+.shareEvent>div>div{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.shareEvent>div>div>h4{
+    background-color: rgb(25, 30, 97);
+    padding: 5px 10px;
+    color: rgb(224, 224, 224);
+    border-radius: 10px;
+}
+
 .shareEvent>div>h5{
     color: greenyellow;
     padding: 5px;
     background-color: rgb(44, 44, 43);
+    position: absolute;
+    right: 5%;
 }
 .shareEvent>div>svg{
     font-size: 2rem;
