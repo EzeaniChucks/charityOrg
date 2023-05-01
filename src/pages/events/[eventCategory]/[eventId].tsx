@@ -81,7 +81,7 @@ const SingleEvent = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const updateEventsArray = useCallback(() => {
-    return dispatch(getAllEvents());
+    return dispatch(getAllEvents(""));
   }, [allEvents]);
 
   // console.log(eventCreator?._id, user?.user._id);
