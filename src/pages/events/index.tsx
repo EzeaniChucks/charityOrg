@@ -18,6 +18,7 @@ import { useRouter } from "next/router";
 import {
   getAllEvents,
   handleEventModule,
+  updateEventForm,
 } from "../../../redux/slices/eventSlice";
 import { checkUser } from "@/utils/localstorage";
 import { setUser } from "../../../redux/slices/authSlice";
@@ -28,15 +29,23 @@ import style from "../../components/events/events.module.css";
 
 const Events = () => {
   const { user } = useSelector((store: any) => store.user);
-  const { allEvents } = useSelector((store: any) => store.event);
+  const { allEvents, eventSearchValue } = useSelector(
+    (store: any) => store.event
+  );
   const { push } = useRouter();
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     let userValue = checkUser();
     if (userValue) dispatch(setUser(userValue));
-    dispatch(getAllEvents());
+    // return () => {
+    //   dispatch(updateEventForm({ name: "eventSearchValue", value: "" }));
+    // };
   }, []);
+
+  useEffect(() => {
+    dispatch(getAllEvents(eventSearchValue));
+  }, [eventSearchValue]);
 
   const publicEvents = () => {
     if (allEvents.length > 0) {
@@ -47,6 +56,12 @@ const Events = () => {
       return [];
     }
   };
+  const handleEventSearch = (e: any) => {
+    return dispatch(
+      updateEventForm({ name: "eventSearchValue", value: e.target.value })
+    );
+  };
+
   return (
     <main className={styles2.container}>
       <div className={style.section}>
@@ -66,7 +81,12 @@ const Events = () => {
             <div className={style.lower_headboard}>
               <div className={style.searchbar}>
                 <FaSearch />
-                <input type={"text"} placeholder={"Search event"} />
+                <input
+                  type={"text"}
+                  value={eventSearchValue}
+                  onChange={handleEventSearch}
+                  placeholder={"Search event"}
+                />
               </div>
             </div>
             <div className={style.floaters}>

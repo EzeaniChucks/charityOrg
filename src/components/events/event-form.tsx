@@ -255,57 +255,105 @@ const Event_Form = () => {
               <label>
                 Deposit Deadline:{" "}
                 <div className={styles2.depositDeadline}>
-                  <DatePicker
-                    placeholderText="day/month/year e.g 01/01/2000"
-                    selected={new Date(depositDeadline)}
-                    dateFormat="dd/MM/yyyy"
-                    onChange={(date: Date) => {
-                      dispatch(
-                        updateEventForm({
-                          name: "depositDeadline",
-                          value: moment(date).format(),
-                        })
-                      );
-                    }}
-                    showYearDropdown
-                    scrollableYearDropdown
-                    minDate={new Date()}
-                  />
-
-                  <span
-                    onClick={() =>
-                      dispatch(
-                        updateEventForm({
-                          name: "completionDeadline",
-                          value: moment(depositDeadline).format(),
-                        })
-                      )
-                    }
-                  >
-                    equalize dates
-                    <CgMathEqual />
-                  </span>
+                  <div className={styles2.forFullDate}>
+                    <DatePicker
+                      placeholderText="day/month/year e.g 01/01/2000"
+                      selected={new Date(depositDeadline)}
+                      dateFormat="dd/MM/yyyy"
+                      onChange={(date: Date) => {
+                        dispatch(
+                          updateEventForm({
+                            name: "depositDeadline",
+                            value: moment(date).format(),
+                          })
+                        );
+                      }}
+                      showYearDropdown
+                      scrollableYearDropdown
+                      minDate={new Date()}
+                    />
+                  </div>
+                  <div className={styles2.forFullTime}>
+                    Time:
+                    <input
+                      type="time"
+                      onChange={(e) => {
+                        const dateHourset = new Date(depositDeadline).setHours(
+                          Number(e.target.value.slice(0, 2))
+                        );
+                        // console.log(e.target.value.slice(3, 5));
+                        const dateMinutesSet = new Date(dateHourset).setMinutes(
+                          Number(e.target.value.slice(3, 5))
+                        );
+                        dispatch(
+                          updateEventForm({
+                            name: "depositDeadline",
+                            value: moment(new Date(dateMinutesSet)).format(),
+                          })
+                        );
+                      }}
+                    />
+                  </div>
                 </div>
               </label>
+              <span
+                onClick={() =>
+                  dispatch(
+                    updateEventForm({
+                      name: "completionDeadline",
+                      value: moment(depositDeadline).format(),
+                    })
+                  )
+                }
+              >
+                <CgMathEqual />
+                equalize dates
+                <CgMathEqual />
+              </span>
               {error.type === "depositDeadline" && <h6>{error.msg}</h6>}
               <label>
                 Completion Deadline:{" "}
-                <DatePicker
-                  placeholderText="day/month/year e.g 01/01/2000"
-                  selected={new Date(completionDeadline)}
-                  dateFormat="dd/MM/yyyy"
-                  onChange={(date: Date) => {
-                    dispatch(
-                      updateEventForm({
-                        name: "completionDeadline",
-                        value: moment(date).format(),
-                      })
-                    );
-                  }}
-                  showYearDropdown
-                  scrollableYearDropdown
-                  minDate={new Date(depositDeadline)}
-                />
+                <div className={styles2.depositDeadline}>
+                  <div className={styles2.forFullDate}>
+                    <DatePicker
+                      placeholderText="day/month/year e.g 01/01/2000"
+                      selected={new Date(completionDeadline)}
+                      dateFormat="dd/MM/yyyy"
+                      onChange={(date: Date) => {
+                        dispatch(
+                          updateEventForm({
+                            name: "completionDeadline",
+                            value: moment(date).format(),
+                          })
+                        );
+                      }}
+                      showYearDropdown
+                      scrollableYearDropdown
+                      minDate={new Date(depositDeadline)}
+                    />
+                  </div>
+                  <div className={styles2.forFullTime}>
+                    Time:
+                    <input
+                      type="time"
+                      onChange={(e) => {
+                        const dateHourset = new Date(
+                          completionDeadline
+                        ).setHours(Number(e.target.value.slice(0, 2)));
+                        // console.log(e.target.value.slice(3, 5));
+                        const dateMinutesSet = new Date(dateHourset).setMinutes(
+                          Number(e.target.value.slice(3, 5))
+                        );
+                        dispatch(
+                          updateEventForm({
+                            name: "completionDeadline",
+                            value: moment(new Date(dateMinutesSet)).format(),
+                          })
+                        );
+                      }}
+                    />
+                  </div>
+                </div>
               </label>
               {/* <h6 style={{ color: "grey" }}>
                 

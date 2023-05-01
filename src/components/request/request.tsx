@@ -23,6 +23,7 @@ import style2 from "../../pages/events/[eventCategory]/[eventId]/activity_room.m
 import style from "../deposit/deposit.module.css";
 import Request_Description from "./request_description";
 import { log_Notification } from "../../../redux/slices/notificationsSlice";
+import CountDownTime from "../countDownTimer/countdowntimer";
 
 const RequestForm = () => {
   const {
@@ -252,16 +253,9 @@ const RequestForm = () => {
         </h2>
         <div className={style.deadlines}>
           <div>
-            <h4>Completion Deadline</h4>
-            <h4>
-              {moment(new Date(fullEventDetails.completionDeadline)).format(
-                "DD/MM mm:ss a"
-              )}
-            </h4>
+            <h4>Request TimeLimit</h4>
           </div>
-          <h4>
-            {getDateCountDown(fullEventDetails.completionDeadline)} days left
-          </h4>
+          <CountDownTime targetDate={fullEventDetails?.requestTimeLimit} />
         </div>
       </div>
 

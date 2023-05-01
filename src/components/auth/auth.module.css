@@ -213,16 +213,33 @@
 
 .general_details .depositDeadline{
     display: flex;
-    flex-direction: column;
+    justify-content: flex-end;
+    gap: 10px;
     align-items: center;
 }
-.general_details .depositDeadline>span{
+
+.general_details .depositDeadline>div input{
+    min-width: 95px;
+    width: 50%;
+}
+
+.depositDeadline .forFullTime{
     display: flex;
-    gap: 10px;
+    gap: 5px;
+    align-items: center;
+}
+
+.general_details>span{
+    align-self: flex-end;
+    display: flex;
+    margin-right: 20%;
+    color: rgb(83, 83, 187);
+    gap: 5px;
     cursor: pointer;
 }
-.general_details .depositDeadline>span>svg{
-    color: tomato;
+
+.general_details>span>svg{
+    /* color: tomato; */
     align-self: center;
     justify-content: space-between;
     font-size: 1rem;

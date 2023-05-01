@@ -10,6 +10,7 @@ import {
   FaIdCard,
   FaList,
   FaPiggyBank,
+  FaTimesCircle,
 } from "react-icons/fa";
 import { HiChatAlt2 } from "react-icons/hi";
 import {
@@ -21,6 +22,7 @@ import {
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  getSingleEvent,
   leaveEvents,
   setTabState,
 } from "../../../../../redux/slices/eventSlice";
@@ -42,7 +44,7 @@ import { setUser } from "../../../../../redux/slices/authSlice";
 const socket = io(conString, { transports: ["websocket"] });
 
 const ActivityRoom = () => {
-  const { tabState, fullEventDetails } = useSelector(
+  const { tabState, fullEventDetails, singleEvent, loading } = useSelector(
     (store: any) => store.event
   );
   const { notifLogStatus, notifModalIsOpen, notifications } = useSelector(
@@ -50,6 +52,8 @@ const ActivityRoom = () => {
   );
   const { user } = useSelector((store: any) => store.user);
   const [lowerTab, setLowerTab] = useState<String>("0");
+  const [showModal, setShowModal] = useState<any>(false);
+
   const dispatch = useDispatch<AppDispatch>();
   const [arrtest, setArrTest] = useState<any>([]);
 
@@ -63,6 +67,7 @@ const ActivityRoom = () => {
     // });
   };
   // console.log(arrtest);
+
   useEffect(() => {
     const links = document.querySelectorAll(`.${style.link}`);
     links.forEach((item, i) => {
@@ -103,11 +108,37 @@ const ActivityRoom = () => {
     }
   }, [user, notifLogStatus]);
 
-  // useEffect(() => {
-  //   if (eventId) {
-  //     socket.emit<any>(eventId, { post: "Message from frontend" });
-  //   }
-  // }, [eventId]);
+  useEffect(() => {
+    // if (eventId) {
+    //   socket.emit<any>(eventId, { post: "Message from frontend" });
+    // }
+    if (eventId) dispatch(getSingleEvent(eventId));
+  }, [eventId]);
+
+  const isMember = () => {
+    if (singleEvent.length > 0) {
+      let checkMember = false;
+      let checkObserver = false;
+
+      singleEvent[0]?.members?.map((eachMem: any) => {
+        if (eachMem.userId === user?.user?._id) {
+          return (checkMember = true);
+        }
+      });
+      singleEvent[0]?.observers?.map((eachMem: any) => {
+        if (eachMem.userId === user?.user?._id) {
+          return (checkObserver = true);
+        }
+      });
+      if (checkMember || checkObserver) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  };
+
+  // console.log(isMember(), singleEvent);
 
   const uncheckedMessages = () => {
     let number = 0;
@@ -137,13 +168,15 @@ const ActivityRoom = () => {
           <div className={style.heading}>
             <div>
               <h3>{fullEventDetails?.eventName}</h3>
-              <h5
-                onClick={() =>
-                  dispatch(leaveEvents({ eventId, userId: user?.user?._id }))
-                }
-              >
-                Leave event
-              </h5>
+              {isMember() && (
+                <h5
+                  onClick={() => {
+                    setShowModal(!showModal);
+                  }}
+                >
+                  Leave event
+                </h5>
+              )}
             </div>
             <label>
               Change member status
@@ -183,16 +216,51 @@ const ActivityRoom = () => {
             </div>
             <AiOutlineEllipsis onClick={testSocket} />
           </div>
-          {tabState === "deposit" && <DepositForm />}
-          {tabState === "request" && <RequestForm />}
-          {tabState === "dispute" && <DisputeForm />}
-          {tabState === "chat" && (
-            <ChatRoom socket={socket} user={user} eventId={eventId} />
+          {!isMember() && (
+            <div className={style.mainField}>
+              {`Unathorized access. You have either left this event or are never
+              part of it. Go to the event's frontpage and click on the join button`}
+            </div>
+          )}
+          {isMember() && (
+            <>
+              {tabState === "deposit" && <DepositForm />}
+              {tabState === "request" && <RequestForm />}
+              {tabState === "dispute" && <DisputeForm />}
+              {tabState === "chat" && (
+                <ChatRoom socket={socket} user={user} eventId={eventId} />
+              )}
+            </>
           )}
         </div>
         {notifModalIsOpen && (
           <div className={style.notification_modal}>
             <Notification />
+          </div>
+        )}
+        {showModal && (
+          <div className={style.modal}>
+            <FaTimesCircle onClick={() => setShowModal(!showModal)} />
+            <div>
+              <h4>Want to leave event?</h4>
+              <h5>
+                If you have made deposit, your deposit history will remain. But
+                you will no longer get notifications, make requests, lodge
+                disputes or participate in the group chat
+              </h5>
+              <div>
+                <button
+                  onClick={() => {
+                    dispatch(leaveEvents({ eventId, userId: user?.user?._id }));
+                    setShowModal(!showModal);
+                  }}
+                  disabled={loading}
+                >
+                  Proceed?
+                </button>
+                <button>Reject</button>
+              </div>
+            </div>
           </div>
         )}
         <div className={[style.bottom_bar_container].join(" ")}>

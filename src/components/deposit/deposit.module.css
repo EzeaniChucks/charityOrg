@@ -33,19 +33,47 @@
     margin: 7px;
 }
 .total_deposit_board .deadlines{
-    display: flex;
+    /* display: flex;
     justify-content: space-around;
+    align-items: flex-end; */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-content: center;
     align-items: center;
+    gap: 15px;
     font-size: 0.9rem;
     width: 100%;
     margin: 10px 0;
 }
-.total_deposit_board .deadlines>div>h4:nth-of-type(2){
+.total_deposit_board .deadlines>div .deadline_content{
+    display: flex;
+    gap: 10px;
+    width: 150px;
+    align-items: center;
+}
+.total_deposit_board .deadlines>div>div>h4{
     background-color: rgb(180, 180, 180);
     padding: 3px 9px;
     border-radius: 7px;
     font-size: 0.8rem;
     color: rgb(48, 48, 48);
+}
+.total_deposit_board .deadlines>div>div>svg{
+    cursor: pointer;
+    color: rgb(207, 97, 78);
+}
+.total_deposit_board .deadlines .deadlineBtns{
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.cancelBtn{
+    background-color: tomato;
+    border-radius: 50%;
+    padding: 2px;
+    cursor: pointer;
 }
 .total_deposit_board .btn_end{
     padding: 10px 15px;

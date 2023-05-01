@@ -32,6 +32,7 @@ import SubmittedDisputeForms from "./submittedDisputeForms";
 import style2 from "../../pages/events/[eventCategory]/[eventId]/activity_room.module.css";
 import style from "../deposit/deposit.module.css";
 import { CgArrowLongRightL } from "react-icons/cg";
+import CountDownTime from "../countDownTimer/countdowntimer";
 
 const DisputeForm = () => {
   const {
@@ -281,15 +282,10 @@ const DisputeForm = () => {
         </h2>
         <div className={style.deadlines}>
           <div>
-            <h4>Completion Deadline</h4>
-            <h4>
-              {moment(new Date(fullEventDetails.completionDeadline)).format(
-                "DD/MM mm:ss a"
-              )}
-            </h4>
+            <h4>Dispute TimeLimit</h4>
           </div>
           <h4>
-            {getDateCountDown(fullEventDetails.completionDeadline)} days left
+            <CountDownTime targetDate={fullEventDetails?.disputeTimeLimit} />
           </h4>
         </div>
       </div>

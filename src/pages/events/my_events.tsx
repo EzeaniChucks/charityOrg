@@ -18,6 +18,7 @@ import { useRouter } from "next/router";
 import {
   getAllEvents,
   handleEventModule,
+  updateEventForm,
 } from "../../../redux/slices/eventSlice";
 import { checkUser } from "@/utils/localstorage";
 import { setUser } from "../../../redux/slices/authSlice";
@@ -33,7 +34,9 @@ import {
 
 const MyEvents = () => {
   const { user } = useSelector((store: any) => store.user);
-  const { allEvents } = useSelector((store: any) => store.event);
+  const { allEvents, eventSearchValue } = useSelector(
+    (store: any) => store.event
+  );
   const { notifLogStatus, notifModalIsOpen, notifications } = useSelector(
     (store: any) => store.notifications
   );
@@ -43,13 +46,27 @@ const MyEvents = () => {
   useEffect(() => {
     let userValue = checkUser();
     if (userValue) dispatch(setUser(userValue));
-    dispatch(getAllEvents());
   }, []);
+
+  useEffect(() => {
+    dispatch(getAllEvents(eventSearchValue));
+  }, [eventSearchValue]);
+
   useEffect(() => {
     if (user) {
       dispatch(get_Notification(user?.user?._id));
     }
+    // return () => {
+    //   dispatch(updateEventForm({ name: "eventSearchValue", value: "" }));
+    // };
   }, [user, notifLogStatus]);
+
+  const handleEventSearch = (e: any) => {
+    return dispatch(
+      updateEventForm({ name: "eventSearchValue", value: e.target.value })
+    );
+  };
+
   const PersonalEvents = () => {
     if (allEvents.length > 0) {
       const arr: any = [];
@@ -80,9 +97,7 @@ const MyEvents = () => {
               <FaList />
               <div>
                 <h3>My Events</h3>
-                <h6 onClick={() => push("/events/my_events")}>
-                  Go to all events
-                </h6>
+                <h6 onClick={() => push("/events")}>Go to all events</h6>
               </div>
               <IoIosNotifications
                 onClick={() => dispatch(handleNotifModal())}
@@ -96,7 +111,12 @@ const MyEvents = () => {
             <div className={style.lower_headboard}>
               <div className={style.searchbar}>
                 <FaSearch />
-                <input type={"text"} placeholder={"Search personal event"} />
+                <input
+                  type={"text"}
+                  value={eventSearchValue}
+                  onChange={handleEventSearch}
+                  placeholder={"Search personal event"}
+                />
               </div>
             </div>
             <div className={style.floaters}>
@@ -115,7 +135,32 @@ const MyEvents = () => {
               <h3>My Event List</h3>
             </div>
             <div className={style.cardcontainer_sans_inline}>
-              {PersonalEvents().length === 0 && (
+              {PersonalEvents().length === 0 && eventSearchValue && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "0.9rem",
+                    textAlign: "center",
+                    height: "40vh",
+                    padding: "50px",
+                  }}
+                >
+                  <h3>
+                    No event with this name. Use another search term or visit
+                    <span
+                      style={{ cursor: "pointer", color: "rgb(50, 100, 60)" }}
+                      onClick={() => push("/events")}
+                    >
+                      {" "}
+                      main event page
+                    </span>{" "}
+                    to search the event you seek
+                  </h3>
+                </div>
+              )}
+              {PersonalEvents().length === 0 && !eventSearchValue && (
                 <div
                   style={{
                     display: "flex",

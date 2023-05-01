@@ -1,0 +1,40 @@
+.show_counter{
+    padding: 0.5rem;
+}
+.countdown_comp{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 90px;
+    gap: 5px;
+    border-radius: 0.25rem;
+}
+.countdown_danger{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: #b35e5e;
+}
+.expired_notice{
+    text-align: center;
+    margin: 0.5rem;
+    color: tomato;
+}
+.countdown{
+    display: flex;
+    align-items: center;
+    color: rgb(36, 192, 75);
+}
+.countdown>p{
+    margin: 0;
+}
+.countdown>span{
+    font-size: 0.75rem;
+}
+.time{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 5px;
+    color: rgb(177, 218, 177);
+}

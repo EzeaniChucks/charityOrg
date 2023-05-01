@@ -8,7 +8,10 @@ import { log_Notification } from "./notificationsSlice";
 interface Obj {
   event?: any;
   allEvents: any;
+  allEventsAfterSearch: any;
+  singleEvent: any;
   eventCreator: any;
+  eventSearchValue: String;
   eventMembers: any;
   eventObservers: any;
   eventName: String;
@@ -21,11 +24,14 @@ interface Obj {
   eventDescription: String;
   depositDeadline: String;
   completionDeadline: String;
+  requestTimeLimit: String;
+  disputeTimeLimit: String;
   eventImageName?: String;
   eventImagePath?: String;
   invitationEmails?: String[];
   loading: Boolean;
   error: { type: String; msg: String; code: String };
+  success: { type: String; msg: String; code: String };
   depositAmount: String;
   requestId: String;
   requestOwnerId: String;
@@ -83,14 +89,36 @@ export const fetchEventCreatorDetails = createAsyncThunk(
     }
   }
 );
-export const getAllEvents = createAsyncThunk(
-  "event/getAllEvents",
-  async (_, thunk) => {
+export const getSingleEvent = createAsyncThunk(
+  "event/getSingleEvent",
+  async (prop: any, thunk) => {
     try {
       const { data }: { data: any } = await axios.get(
-        `${conString}/get_all_events`
+        `${conString}/get_single_event/${prop}`
       );
       return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
+export const getAllEvents = createAsyncThunk(
+  "event/getAllEvents",
+  async (prop: any, thunk) => {
+    try {
+      if (prop) {
+        const { data }: { data: any } = await axios.get(
+          `${conString}/get_all_events?eventName=${prop}`
+        );
+        return data;
+      } else {
+        const { data }: { data: any } = await axios.get(
+          `${conString}/get_all_events`
+        );
+        return data;
+      }
     } catch (err: any) {
       return (
         thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
@@ -330,13 +358,50 @@ export const log_dispute_form = createAsyncThunk(
     }
   }
 );
+export const resetDepositAndCompletionDeadlines = createAsyncThunk(
+  "event/resetDepositAndCompletionDeadlines",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.post(
+        `${conString}/set_deposit_and_completion_deadlines`,
+        prop
+      );
+
+      thunk.dispatch(getEventDetail(prop.eventId));
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
+export const setEventTimeLimits = createAsyncThunk(
+  "event/setEventTimeLimits",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.post(
+        `${conString}/set_event_timelimit`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
 
 const initialState: Obj = {
   event: null,
   allEvents: [],
+  allEventsAfterSearch: [],
+  singleEvent: [],
   eventCreator: null,
   eventMembers: [],
   eventObservers: [],
+  eventSearchValue: "",
   eventName: "",
   eventPrivacy: "Public",
   eventDate: Date(),
@@ -347,6 +412,8 @@ const initialState: Obj = {
   eventDescription: "",
   depositDeadline: Date(),
   completionDeadline: Date(),
+  requestTimeLimit: String(new Date()),
+  disputeTimeLimit: String(new Date()),
   eventImageName: "",
   eventImagePath: "",
   invitationEmails: [],
@@ -368,6 +435,7 @@ const initialState: Obj = {
   disputeForms: [],
   loading: false,
   error: { type: "", msg: "", code: "" },
+  success: { type: "", msg: "", code: "" },
   creationStatus: false,
   showEventForm: false,
   createEventStep: "step1",
@@ -458,6 +526,23 @@ const eventSlice = createSlice({
       state.error = {
         type: "server_error",
         msg: "please resubmit form again",
+        code: payload,
+      };
+    });
+
+    //Get SINGLE Event
+    builder.addCase(getSingleEvent.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(getSingleEvent.fulfilled, (state: any, { payload }) => {
+      state.loading = false;
+      state.singleEvent = payload.event;
+    });
+    builder.addCase(getSingleEvent.rejected, (state: any, { payload }) => {
+      state.loading = false;
+      state.error = {
+        type: "server_error",
+        msg: "Could not fetch event. Kindly refresh your browser or check your internet connection",
         code: payload,
       };
     });
@@ -790,6 +875,62 @@ const eventSlice = createSlice({
         state.error = {
           type: "server_error",
           msg: "Not able to proceed with event deposit. Please try again",
+          code: payload,
+        };
+      }
+    );
+    //Set Request/Dispute TimeLimits
+    builder.addCase(setEventTimeLimits.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(setEventTimeLimits.fulfilled, (state: any, { payload }) => {
+      state.loading = false;
+      // state.requestTimeLimit = payload.requestTimeLimit;
+      // state.diaputeTimeLimit = payload.diaputeTimeLimit;
+      state.success = {
+        type: "server_success",
+        msg: "Sucessful",
+        code: payload.msg,
+      };
+    });
+    builder.addCase(
+      setEventTimeLimits.rejected,
+      (state: any, { payload }: { payload: any }) => {
+        state.loading = false;
+        state.error = {
+          type: "server_error",
+          msg: "Not able set Event Time Limit. Please try again.",
+          code: payload,
+        };
+      }
+    );
+    //RESET DEPOSIT/COMPLETION DEADLINES
+    builder.addCase(
+      resetDepositAndCompletionDeadlines.pending,
+      (state: any) => {
+        state.loading = true;
+      }
+    );
+    builder.addCase(
+      resetDepositAndCompletionDeadlines.fulfilled,
+      (state: any, { payload }) => {
+        state.loading = false;
+        // state.requestTimeLimit = payload.requestTimeLimit;
+        // state.diaputeTimeLimit = payload.diaputeTimeLimit;
+        state.success = {
+          type: "server_success",
+          msg: "Sucessful",
+          code: payload.msg,
+        };
+      }
+    );
+    builder.addCase(
+      resetDepositAndCompletionDeadlines.rejected,
+      (state: any, { payload }: { payload: any }) => {
+        state.loading = false;
+        state.error = {
+          type: "server_error",
+          msg: "Not able set Event Time Limit. Please try again.",
           code: payload,
         };
       }
