@@ -13,37 +13,41 @@ import {
 } from "react-icons/ai";
 import { HiTrendingDown, HiOutlineTrendingUp } from "react-icons/hi";
 import { middle_matrix_items } from "@/utils/arrays";
-import { logout } from "../../redux/slices/authSlice";
+import { logout, setUser } from "../../redux/slices/authSlice";
 import { AppDispatch } from "../../redux/store";
 import {
   getWalletBalance,
   getLatestTransactions,
   paymentResponse,
   handleFillAccountsModule,
+  updateWalletTopUpForm,
 } from "../../redux/slices/walletSlice";
 import TopUpForm from "@/components/payment/topUpForm";
 import { handleTopUpModule } from "../../redux/slices/walletSlice";
 import moment from "moment";
-import {
-  RxAvatar,
-  RxMobile,
-  RxArrowUp,
-  RxArrowDown,
-  RxCheck,
-} from "react-icons/rx";
+import { RxArrowUp, RxArrowDown } from "react-icons/rx";
 // const Pie = dynamic(() => import("../components/charts/Pie"), { ssr: false });
 import Example from "@/components/charts/PieChart";
-import styles2 from "../components/auth/auth.module.css";
-import styles1 from "../styles/dashboard.module.css";
 import Doughnut from "@/components/charts/Doughnut";
 import { FaChartBar, FaDatabase } from "react-icons/fa";
 import Accounts from "@/components/accounts/accounts";
+import { currency_array } from "@/utils/fundsArrays";
+import styles2 from "../components/auth/auth.module.css";
+import styles1 from "../styles/dashboard.module.css";
+import { CgProfile } from "react-icons/cg";
+import { checkUser } from "@/utils/localstorage";
 
 const Dashboard = () => {
   const { user } = useSelector((store: any) => store.user);
-  const { walletBalance, latestTx, topupStatus } = useSelector(
-    (store: any) => store.wallet
-  );
+  const {
+    walletBalance,
+    latestTx,
+    topupStatus,
+    topup_currency,
+    wallet_currency,
+    walletSummary,
+  } = useSelector((store: any) => store.wallet);
+
   const { push, query, isReady } = useRouter();
   const [showDash, setShowDash] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
@@ -75,12 +79,40 @@ const Dashboard = () => {
     }, {})
   );
 
+  const handleChange = (e: any) => {
+    let { name, value } = e.target;
+    dispatch(updateWalletTopUpForm({ name, value }));
+    // if (name === "topup_amount") {
+    //   let highestAmount = 0;
+    //   // walletChargeRangeArray.map((eachRange: any) => {
+    //   //   let { to, from, percent } = eachRange;
+    //   //   to = Number(to);
+    //   //   from = Number(from);
+    //   //   percent = Number(percent);
+    //   //   value = Number(value);
+    //   //   if (to > highestAmount) {
+    //   //     highestAmount = to;
+    //   //   }
+    //   //   if (value >= from && value <= to) {
+    //   //     setTopUpAmountPlusTax(value + (value * percent) / 100);
+    //   //     setChargePercent(percent);
+    //   //     setChargeAmount((value * percent) / 100);
+    //   //   }
+    //   //   if (value >= highestAmount) {
+    //   //     setTopUpAmountPlusTax(value + (value * percent) / 100);
+    //   //     setChargePercent(percent);
+    //   //     setChargeAmount((value * percent) / 100);
+    //   //   }
+    //   // });
+    // }
+  };
   useEffect(() => {
     if (isReady && query.transaction_id) {
       dispatch(
         paymentResponse({
           transaction_id: query.transaction_id,
           tx_ref: query.tx_ref,
+          chargeAmount: query.chargeAmount,
           description: "Wallet Top-up",
         })
       );
@@ -88,11 +120,22 @@ const Dashboard = () => {
   }, [isReady]);
 
   useEffect(() => {
-    if (!user) {
-      changeRoute();
-    }
     if (user) {
-      dispatch(getWalletBalance(user?.user?._id));
+      dispatch(
+        getWalletBalance({ userId: user?.user?._id, currency: wallet_currency })
+      );
+    } else {
+      let userValue = checkUser();
+      if (userValue) {
+        dispatch(setUser(userValue));
+      } else {
+        changeRoute();
+      }
+    }
+  }, [user, topupStatus, wallet_currency]);
+
+  useEffect(() => {
+    if (user) {
       dispatch(getLatestTransactions(user?.user?._id));
     }
   }, [user, topupStatus]);
@@ -154,6 +197,10 @@ const Dashboard = () => {
                   );
                 })}
                 <hr />
+                <div onClick={() => push(`/user/${user?.user?._id}`)}>
+                  <CgProfile />
+                  <h5>Profile</h5>
+                </div>
                 <div onClick={() => push("")}>
                   <AiOutlineSetting />
                   <h5>Settings</h5>
@@ -199,6 +246,10 @@ const Dashboard = () => {
                     <h5>Account Details</h5>
                   </div>
                   <hr />
+                  <div onClick={() => push(`/user/${user?.user?._id}`)}>
+                    <CgProfile />
+                    <h5>Profile</h5>
+                  </div>
                   <div onClick={() => push("")}>
                     <AiOutlineSetting />
                     <h5>Settings</h5>
@@ -214,8 +265,19 @@ const Dashboard = () => {
                 <div className={styles1.total_balance_card}>
                   <div>
                     <h2>Total Balance</h2>
-                    <h3>
-                      {latestTx[0]?.description?.includes("Top-up") ? "+" : "-"}
+                    <h3
+                      style={{
+                        color:
+                          latestTx[0]?.description?.includes("Top-up") ||
+                          latestTx[0]?.description?.includes("Income")
+                            ? "green"
+                            : "red",
+                      }}
+                    >
+                      {latestTx[0]?.description?.includes("Top-up") ||
+                      latestTx[0]?.description?.includes("Income")
+                        ? "+"
+                        : "-"}
                       {latestTx[0]?.amount} {latestTx[0]?.currency}
                     </h3>
                     <h6>Last Transaction</h6>
@@ -224,36 +286,46 @@ const Dashboard = () => {
                         Top UP
                       </button>
                       <button>WITHDRAWAL</button>
+                      <button>In-app Transfer</button>
+                      <button>Currency conversion</button>
                     </div>
                   </div>
                   <div>
-                    <h2>
-                      {walletBalance}
-                      <span>.00</span> {latestTx[0]?.currency}
-                      {!walletBalance && 0}
-                    </h2>
-                    <h6>WALLET AMOUNT</h6>
+                    <label>
+                      Currency Options
+                      <select
+                        value={wallet_currency}
+                        name={"wallet_currency"}
+                        onChange={handleChange}
+                      >
+                        {currency_array.map((item: any, i) => {
+                          const item_key = Object.keys(item)[0];
+                          return <option key={i}>{`${item[item_key]}`}</option>;
+                        })}
+                      </select>
+                    </label>
+                    <>
+                      <h2>
+                        <>
+                          {walletBalance} {wallet_currency}
+                        </>
+                      </h2>
+                      <h6>WALLET AMOUNT</h6>
+                    </>
                   </div>
                 </div>
                 <div className={styles1.balance_graph_card}>
-                  {/* <div>
-                    <h2>Report</h2>
-                  </div> */}
                   <Example />
-                  {/* <div>
-                    <h2>Graph</h2>
-                    <h6>will be displayed here</h6>
-                  </div> */}
                 </div>
               </div>
               <div className={styles1.middle_matrix}>
-                {middle_matrix_items.map((item) => {
+                {walletSummary.map((item: any) => {
                   return (
                     <div key={item.id} className={styles1.middle_matrix_card}>
                       <h4>{item.type}</h4>
                       <h2>
-                        ${item.amount}
-                        <span>.52</span>
+                        {wallet_currency} {item.amount}
+                        <span>.00</span>
                       </h2>
                       <div
                         style={
@@ -286,7 +358,8 @@ const Dashboard = () => {
                     return (
                       <div key={item._id}>
                         <div>
-                          {item.description === "Wallet Top-up" && (
+                          {(item.description.includes("Top-up") ||
+                            item.description.includes("Income")) && (
                             <RxArrowUp
                               style={{
                                 background: "rgb(11, 100, 140)",
@@ -297,18 +370,20 @@ const Dashboard = () => {
                               }}
                             />
                           )}
-                          {item.description === "Wallet Withdraw" ||
-                            (item.description === "Event Deposit" && (
-                              <RxArrowDown
-                                style={{
-                                  background: "rgb(200, 10, 140)",
-                                  font: "rgb(14, 10, 50)",
-                                  borderRadius: "50%",
-                                  width: "35px",
-                                  height: "35px",
-                                }}
-                              />
-                            ))}
+                          {(item.description === "Wallet Withdraw" ||
+                            item.description.includes("Debit") ||
+                            item.description.includes("Purchase") ||
+                            item.description === "Event Deposit") && (
+                            <RxArrowDown
+                              style={{
+                                background: "rgb(200, 10, 140)",
+                                font: "rgb(14, 10, 50)",
+                                borderRadius: "50%",
+                                width: "35px",
+                                height: "35px",
+                              }}
+                            />
+                          )}
                         </div>
                         <div>
                           <p>{item.description}</p>
@@ -324,7 +399,6 @@ const Dashboard = () => {
                   })}
                 </div>
                 <div className={styles1.month_piechart_card}>
-                  {/* <div> Pie Chart Here</div> */}
                   <Doughnut />
                 </div>
               </div>

@@ -13,7 +13,6 @@ import { timezone } from "@/utils/arrays";
 import moment from "moment";
 import { logError } from "../../../redux/slices/authSlice";
 import { useEffect, useRef, useState } from "react";
-// import { uploadEventImage } from "../../../redux/slices/fileUploadSlice";
 import { useRouter } from "next/router";
 import { CgMathEqual } from "react-icons/cg";
 import style from "../events/events.module.css";
@@ -41,6 +40,10 @@ const Event_Form = () => {
   } = useSelector((store: any) => store.event);
   const { error, user } = useSelector((store: any) => store.user);
   const [imagefile, setImagefile] = useState<any>({ name: "", file: {} });
+  const [timeValues, setTimeValue] = useState<any>({
+    depositTimeValue: "",
+    completionTimeValue: "",
+  });
 
   const dispatch = useDispatch<AppDispatch>();
   const { push } = useRouter();
@@ -277,7 +280,12 @@ const Event_Form = () => {
                     Time:
                     <input
                       type="time"
+                      value={timeValues.depositTimeValue}
                       onChange={(e) => {
+                        setTimeValue({
+                          ...timeValues,
+                          depositTimeValue: e.target.value,
+                        });
                         const dateHourset = new Date(depositDeadline).setHours(
                           Number(e.target.value.slice(0, 2))
                         );
@@ -297,14 +305,26 @@ const Event_Form = () => {
                 </div>
               </label>
               <span
-                onClick={() =>
+                onClick={() => {
+                  setTimeValue({
+                    ...timeValues,
+                    completionTimeValue: timeValues.depositTimeValue,
+                  });
+                  const dateHourset = new Date(depositDeadline).setHours(
+                    Number(timeValues.depositTimeValue.slice(0, 2))
+                  );
+                  // console.log(e.target.value.slice(3, 5));
+                  const dateMinutesSet = new Date(dateHourset).setMinutes(
+                    Number(timeValues.depositTimeValue.slice(3, 5))
+                  );
+                  // console.log(dateMinutesSet);
                   dispatch(
                     updateEventForm({
                       name: "completionDeadline",
-                      value: moment(depositDeadline).format(),
+                      value: moment(new Date(dateMinutesSet)).format(),
                     })
-                  )
-                }
+                  );
+                }}
               >
                 <CgMathEqual />
                 equalize dates
@@ -336,7 +356,12 @@ const Event_Form = () => {
                     Time:
                     <input
                       type="time"
+                      value={timeValues.completionTimeValue}
                       onChange={(e) => {
+                        setTimeValue({
+                          ...timeValues,
+                          completionTimeValue: e.target.value,
+                        });
                         const dateHourset = new Date(
                           completionDeadline
                         ).setHours(Number(e.target.value.slice(0, 2)));
@@ -355,9 +380,6 @@ const Event_Form = () => {
                   </div>
                 </div>
               </label>
-              {/* <h6 style={{ color: "grey" }}>
-                
-              </h6> */}
               {error.type === "completionDeadline" && <h6>{error.msg}</h6>}
               <label>
                 Description :{" "}

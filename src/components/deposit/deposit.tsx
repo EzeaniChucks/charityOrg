@@ -13,8 +13,10 @@ import { useEffect, useState, ReactEventHandler } from "react";
 import { AppDispatch } from "../../../redux/store";
 import {
   acceptEventDeposit,
+  delete_Pledge,
   getEventDetail,
   logError,
+  make_Pledge,
   resetDepositAndCompletionDeadlines,
   resetEventPaymentInfo,
   updateEventForm,
@@ -31,8 +33,9 @@ import {
 import CountDownTimer from "../countDownTimer/countdowntimer";
 import ReactDatePicker from "react-datepicker";
 import styles3 from "../../styles/adminDashboard.module.css";
+import PledgeForm from "../pledge/pledge";
 
-const DepositForm = () => {
+const DepositForm = ({ singleEvent }: any) => {
   const {
     fullEventDetails,
     depositAmount,
@@ -42,6 +45,10 @@ const DepositForm = () => {
     depositDeadline,
     completionDeadline,
     currency,
+    pledgeForms,
+    pledgeDesc,
+    pledgeAmount,
+    pledgeDate,
   } = useSelector((store: any) => store.event);
   const { user } = useSelector((store: any) => store.user);
 
@@ -49,12 +56,15 @@ const DepositForm = () => {
   const [modaltype, setModalType] = useState<any>("deposit_form");
   const [isDepositEdit, setIsDepositEdit] = useState<any>(false);
   const [isCompletionEdit, setIsCompletionEdit] = useState<any>(false);
+  const [timeValues, setTimeValue] = useState<any>({
+    depositTimeValue: "",
+    completionTimeValue: "",
+  });
 
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch: any = useDispatch<AppDispatch>();
   const { isReady } = useRouter();
   const { eventId } = useRouter().query;
 
-  // console.log(fullEventDetails);
   useEffect(() => {
     if (isReady && eventId) {
       dispatch(getEventDetail(eventId));
@@ -128,6 +138,8 @@ const DepositForm = () => {
     if (dateVar >= 0) return dateVar;
     else return 0;
   };
+
+  const handleDateEqualizer = () => {};
   return (
     <div className={style2.mainField}>
       {getDateCountDown(fullEventDetails.depositDeadline) == 0 && (
@@ -181,7 +193,12 @@ const DepositForm = () => {
                       />
                       <input
                         type="time"
+                        value={timeValues.depositTimeValue}
                         onChange={(e) => {
+                          setTimeValue({
+                            ...timeValues,
+                            depositTimeValue: e.target.value,
+                          });
                           const dateHourset = new Date(
                             depositDeadline
                           ).setHours(Number(e.target.value.slice(0, 2)));
@@ -203,6 +220,19 @@ const DepositForm = () => {
                     <button
                       onClick={() => {
                         setIsDepositEdit(!isDepositEdit);
+                        if (
+                          new Date(completionDeadline).getTime() <
+                          new Date(depositDeadline).getTime()
+                        ) {
+                          return dispatch(
+                            resetDepositAndCompletionDeadlines({
+                              depositDeadline,
+                              completionDeadline: depositDeadline,
+                              userId: user?.user._id,
+                              eventId,
+                            })
+                          );
+                        }
                         dispatch(
                           resetDepositAndCompletionDeadlines({
                             depositDeadline,
@@ -229,16 +259,48 @@ const DepositForm = () => {
                       "DD/MM hh:mm a"
                     )}
                   </h4>
-                  <FaEdit
-                    title="edit completion deadline"
-                    onClick={() => setIsDepositEdit(!isDepositEdit)}
-                  />
+                  {singleEvent[0]?.creatorId === user.user._id && (
+                    <FaEdit
+                      title="edit completion deadline"
+                      onClick={() => setIsDepositEdit(!isDepositEdit)}
+                    />
+                  )}
                 </>
               )}
             </div>
           </div>
-          <CountDownTimer targetDate={fullEventDetails?.depositDeadline} />
+          {!fullEventDetails?.depositDeadline && <h6>Fetching date...</h6>}
+          {fullEventDetails?.depositDeadline && (
+            <CountDownTimer targetDate={fullEventDetails?.depositDeadline} />
+          )}
         </div>
+        {isDepositEdit && isCompletionEdit && (
+          <h6
+            className={style.equalizer}
+            onClick={() => {
+              setTimeValue({
+                ...timeValues,
+                completionTimeValue: timeValues.depositTimeValue,
+              });
+              const dateHourset = new Date(depositDeadline).setHours(
+                Number(timeValues.depositTimeValue.slice(0, 2))
+              );
+              // console.log(e.target.value.slice(3, 5));
+              const dateMinutesSet = new Date(dateHourset).setMinutes(
+                Number(timeValues.depositTimeValue.slice(3, 5))
+              );
+              dispatch(
+                updateEventForm({
+                  name: "completionDeadline",
+                  value: moment(new Date(dateMinutesSet)).format(),
+                })
+              );
+            }}
+          >
+            Equalize both dates
+          </h6>
+        )}
+
         <div className={style.deadlines}>
           <div className={styles3.timelimits}>
             <h4>Completion Deadline</h4>
@@ -265,7 +327,12 @@ const DepositForm = () => {
                       />
                       <input
                         type="time"
+                        value={timeValues.completionTimeValue}
                         onChange={(e) => {
+                          setTimeValue({
+                            ...timeValues,
+                            completionTimeValue: e.target.value,
+                          });
                           const dateHourset = new Date(
                             completionDeadline
                           ).setHours(Number(e.target.value.slice(0, 2)));
@@ -299,7 +366,7 @@ const DepositForm = () => {
                       set
                     </button>
                     <FaTimes
-                      onClick={() => setIsDepositEdit(false)}
+                      onClick={() => setIsCompletionEdit(!isCompletionEdit)}
                       className={style.cancelBtn}
                     />
                   </div>
@@ -312,31 +379,41 @@ const DepositForm = () => {
                       new Date(fullEventDetails?.completionDeadline)
                     ).format("DD/MM hh:mm a")}
                   </h4>
-                  <FaEdit
-                    title="edit completion deadline"
-                    onClick={() => setIsCompletionEdit(!isCompletionEdit)}
-                  />
+                  {singleEvent[0]?.creatorId === user.user._id && (
+                    <FaEdit
+                      title="edit completion deadline"
+                      onClick={() => setIsCompletionEdit(!isCompletionEdit)}
+                    />
+                  )}
                 </>
               )}
             </div>
           </div>
-          <CountDownTimer targetDate={fullEventDetails?.completionDeadline} />
+          {!fullEventDetails?.completionDeadline && <h6>Fetching date...</h6>}
+          {fullEventDetails?.completionDeadline && (
+            <CountDownTimer targetDate={fullEventDetails?.completionDeadline} />
+          )}
         </div>
-        <button
-          className={style.btn_end}
-          onClick={() => {
-            dispatch(
-              updateEventForm({ name: "depositDeadline", value: Date() })
-            );
-            dispatch(
-              updateEventForm({ name: "completionDeadline", value: Date() })
-            );
-            setShowModal(!showModal);
-            setModalType("end_deposit_stage");
-          }}
-        >
-          End Deposit Stage
-        </button>
+        {new Date(fullEventDetails?.depositDeadline).getTime() >
+          new Date().getTime() &&
+          singleEvent[0]?.creatorId === user.user._id && (
+            <button
+              className={style.btn_end}
+              onClick={() => {
+                dispatch(
+                  updateEventForm({ name: "depositDeadline", value: Date() })
+                );
+                dispatch(
+                  updateEventForm({ name: "completionDeadline", value: Date() })
+                );
+                setShowModal(!showModal);
+                setModalType("end_deposit_stage");
+              }}
+              disabled={loading}
+            >
+              End Deposit Stage
+            </button>
+          )}
       </div>
       {getDateCountDown(fullEventDetails?.depositDeadline) > 0 && (
         <div className={style.add_new_category}>
@@ -362,18 +439,16 @@ const DepositForm = () => {
               Make Deposit
             </button>
           </div>
-          {error?.type === "server_error" && (
-            <h5 className={style.warning}>{error?.code}</h5>
-          )}
-          {error?.type === "deposit_form_error" && (
-            <h5 className={style.warning}>{error?.msg}</h5>
-          )}
         </div>
       )}
       <div className={style.depositors_container}>
         <div className={style.bar_handle}></div>
         <div className={style.grid_view}>
-          <FaList />
+          Deposit Forms
+          <div>
+            <FaList />
+            <h6>List</h6>
+          </div>
           <div>
             <FaMicrosoft />
             <h6>Grid</h6>
@@ -393,6 +468,95 @@ const DepositForm = () => {
               />
             );
           })}
+        </div>
+      </div>
+      {getDateCountDown(fullEventDetails?.depositDeadline) > 0 && (
+        <div className={style.add_new_category}>
+          <h3>Or Make a Pledge </h3>
+          <h6>
+            (If you cannot make a deposit at the moment, you could fill a form
+            to let your group members know your intentions)
+          </h6>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <input
+                value={pledgeAmount}
+                name="pledgeAmount"
+                type="number"
+                placeholder="Pledge Amount"
+                onChange={handleChange}
+              />
+              <p>{singleEvent[0]?.currency}</p>
+            </div>
+            <input
+              value={pledgeDesc}
+              name="pledgeDesc"
+              type="text"
+              placeholder="Pledge description"
+              onChange={handleChange}
+            />
+            <ReactDatePicker
+              placeholderText="Pledge Date dd/mm/yyyy"
+              selected={new Date(pledgeDate)}
+              dateFormat="dd/MM/yyyy"
+              onChange={(date: Date) => {
+                dispatch(
+                  updateEventForm({
+                    name: "pledgeDate",
+                    value: moment(date).format(),
+                  })
+                );
+              }}
+              showYearDropdown
+              scrollableYearDropdown
+              minDate={new Date()}
+            />
+            <button
+              className={style.btn_add}
+              onClick={() => {
+                handleShowModal();
+                setModalType("make_pledge");
+              }}
+            >
+              Submit Pledge
+            </button>
+          </div>
+        </div>
+      )}
+      <div className={style.depositors_container}>
+        <div className={style.bar_handle}></div>
+        <div className={style.grid_view}>
+          Pledge Form
+          <div>
+            <FaList />
+            <h6>List</h6>
+          </div>
+          <div>
+            <FaMicrosoft />
+            <h6>Grid</h6>
+          </div>
+        </div>
+        <div className={style.depositors}>
+          {pledgeForms.length === 0 && (
+            <h4 style={{ textAlign: "center" }}>
+              No pledge form has been submitted yet
+            </h4>
+          )}
+          {pledgeForms.length > 0 &&
+            pledgeForms?.map((item: any) => {
+              return (
+                <PledgeForm
+                  key={item._id}
+                  {...item}
+                  handleChange={handleChange}
+                  dispatch={dispatch}
+                  handleShowModal={handleShowModal}
+                  eventId={eventId}
+                  error={error}
+                  setModalType={setModalType}
+                />
+              );
+            })}
         </div>
       </div>
       {showModal && (
@@ -437,6 +601,60 @@ const DepositForm = () => {
                   Proceed?
                 </button>
                 <button onClick={() => setShowModal(!showModal)}>Reject</button>
+              </div>
+            </div>
+          )}
+          {modaltype === "make_pledge" && (
+            <div className={style.make_pledge}>
+              <h4>
+                You are about to pledge {pledgeAmount}{" "}
+                {singleEvent[0]?.currency} (to be redeemed on{" "}
+                {moment(pledgeDate).format("MMMM DD, YYYY")}). Is this right?
+              </h4>
+              <div>
+                <button
+                  onClick={() => {
+                    dispatch(
+                      make_Pledge({
+                        userId: user?.user?._id,
+                        eventId,
+                        description: pledgeDesc,
+                        pledgeDateDeadline: pledgeDate,
+                        amount: pledgeAmount,
+                        name: `${user?.user?.firstName} ${user?.user?.lastName}`,
+                      })
+                    );
+                    setShowModal(!showModal);
+                  }}
+                >
+                  Continue
+                </button>
+                <button onClick={() => setShowModal(!showModal)}>
+                  No, Cancel
+                </button>
+              </div>
+            </div>
+          )}
+          {modaltype === "delete_pledge" && (
+            <div className={style.make_pledge}>
+              <h3>Are you sure you want to delete your pledge form?</h3>
+              <h5>
+                This has no serious implications, but do make sure to fill a
+                deposit form before deposit deadline to avoid ejection from the
+                group
+              </h5>
+              <div>
+                <button
+                  onClick={() => {
+                    dispatch(delete_Pledge({ userId: user.user._id, eventId }));
+                    setShowModal(!showModal);
+                  }}
+                >
+                  Continue
+                </button>
+                <button onClick={() => setShowModal(!showModal)}>
+                  No, Cancel
+                </button>
               </div>
             </div>
           )}

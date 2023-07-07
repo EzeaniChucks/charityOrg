@@ -24,6 +24,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   getSingleEvent,
   leaveEvents,
+  logError,
   setTabState,
 } from "../../../../../redux/slices/eventSlice";
 import { IoIosNotifications } from "react-icons/io";
@@ -33,20 +34,27 @@ import {
   handleNotifModal,
 } from "../../../../../redux/slices/notificationsSlice";
 import { AppDispatch } from "../../../../../redux/store";
-import { io } from "socket.io-client";
 import { conString } from "@/utils/conString";
 import { useRouter } from "next/router";
-import style from "./activity_room.module.css";
-import styles2 from "../../../../components/auth/auth.module.css";
 import { checkUser } from "@/utils/localstorage";
 import { setUser } from "../../../../../redux/slices/authSlice";
+import { io } from "socket.io-client";
+import style from "./activity_room.module.css";
+import styles2 from "../../../../components/auth/auth.module.css";
 
-const socket = io(conString, { transports: ["websocket"] });
+const socket = io(`${conString}`, {
+  transports: ["websocket"],
+});
 
 const ActivityRoom = () => {
-  const { tabState, fullEventDetails, singleEvent, loading } = useSelector(
-    (store: any) => store.event
-  );
+  const {
+    tabState,
+    fullEventDetails,
+    singleEvent,
+    joineventNotification,
+    loading,
+    error,
+  } = useSelector((store: any) => store.event);
   const { notifLogStatus, notifModalIsOpen, notifications } = useSelector(
     (store: any) => store.notifications
   );
@@ -109,11 +117,17 @@ const ActivityRoom = () => {
   }, [user, notifLogStatus]);
 
   useEffect(() => {
-    // if (eventId) {
-    //   socket.emit<any>(eventId, { post: "Message from frontend" });
-    // }
     if (eventId) dispatch(getSingleEvent(eventId));
-  }, [eventId]);
+  }, [eventId, joineventNotification]);
+
+  useEffect(() => {
+    if (error.type) {
+      const timeout = setTimeout(() => {
+        dispatch(logError({ type: "", msg: "" }));
+      }, 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [error, dispatch]);
 
   const isMember = () => {
     if (singleEvent.length > 0) {
@@ -121,7 +135,7 @@ const ActivityRoom = () => {
       let checkObserver = false;
 
       singleEvent[0]?.members?.map((eachMem: any) => {
-        if (eachMem.userId === user?.user?._id) {
+        if (eachMem?.userId === user?.user?._id) {
           return (checkMember = true);
         }
       });
@@ -178,13 +192,13 @@ const ActivityRoom = () => {
                 </h5>
               )}
             </div>
-            <label>
+            {/* <label>
               Change member status
               <select>
                 <option>Observer</option>
                 <option>Depositor</option>
               </select>
-            </label>
+            </label> */}
           </div>
           <div className={style.section_logos}>
             <div
@@ -224,7 +238,9 @@ const ActivityRoom = () => {
           )}
           {isMember() && (
             <>
-              {tabState === "deposit" && <DepositForm />}
+              {tabState === "deposit" && (
+                <DepositForm singleEvent={singleEvent} />
+              )}
               {tabState === "request" && <RequestForm />}
               {tabState === "dispute" && <DisputeForm />}
               {tabState === "chat" && (
@@ -306,6 +322,12 @@ const ActivityRoom = () => {
             ></div>
           </div>
         </div>
+        {error?.type === "server_error" && (
+          <h5 className={style.warning}>{error?.code}</h5>
+        )}
+        {error?.type === "deposit_form_error" && (
+          <h5 className={style.warning}>{error?.msg}</h5>
+        )}
         <div className={styles2.particles}>
           <ParticlesComp />
         </div>

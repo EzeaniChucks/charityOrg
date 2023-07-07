@@ -1,22 +1,85 @@
 .chat_container{
-    display: grid;
-    grid-template-columns: 1fr 3fr;
+    align-self: center;
+    justify-self: center;
+    display: flex;
+    justify-content: space-between;
+    /* grid-template-columns: 1fr 3fr; */
+    padding: 20px;
     gap: 2%;
     width: 100%;
+}
+.usersDiv{
+    min-width: 100px;
+}
+.usersDiv>div{
+    display: flex;
+    flex-direction: column;
+    margin-top: 25px;
+    gap: 10px;
+    width: fit-content;
+    font-size: 0.8rem;
+}
+
+.usersDiv>div>div{
+    position: relative;
+    width: fit-content;
+}
+
+.usersDiv>div>div>span{
+    position: absolute;
+    left: -8px;
+    bottom: 0;
+    height: 7px;
+    width: 7px;
+    border-radius: 50%;
+    background-color: var(--color-green);
 }
 .chatroomDiv{
     place-self: center;
     width: 100%;
 }
 .chatroom{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     height: 55vh;
+    overflow: auto;
+    position: relative;
     padding: 20px;
+    font-size: 0.85rem;
+    max-width: 300px;
     background-color: rgb(92, 92, 92, 0.5);
     border-radius: 10px 10px 0 0px;
+}
+.chatroom>p{
+    position: sticky;
+    top: -25px;
+    width: 100%;
+    background-color: rgba(31, 33, 65, 0.7);
+    padding: 10px 20px;
+}
+.chatroom >div{
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 7px;
+    background-color: var(--card-background)
+}
+.chatroom >div p:nth-of-type(1){
+    font-size: 0.7rem;
+    margin-bottom: 2px;
+    color: var(--color-green);
+}
+.chatroom >div p:nth-of-type(3){
+    align-self: flex-end;
+    font-size: 0.7rem;
+    margin-bottom: 2px;
+    color: var(--color-grey);
 }
 .postChat{
     display: flex;
     flex-direction: column;
+    max-width: 300px;
     width: 100%;
     align-items: flec-start;
 }

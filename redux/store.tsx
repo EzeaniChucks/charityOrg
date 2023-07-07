@@ -4,6 +4,8 @@ import eventSlice from "./slices/eventSlice";
 import walletSlice from "./slices/walletSlice";
 import eventsPageSlice from "./slices/eventsPageSlice";
 import notificationsSlice from "./slices/notificationsSlice";
+import adminSettingsSlice from "./slices/adminSettingsSlice";
+import themeSlice from "./slices/themeSlice";
 export const store = configureStore({
   reducer: {
     user: userSlice,
@@ -11,6 +13,8 @@ export const store = configureStore({
     wallet: walletSlice,
     eventPage: eventsPageSlice,
     notifications: notificationsSlice,
+    adminsettings: adminSettingsSlice,
+    theme: themeSlice,
   },
 });
 

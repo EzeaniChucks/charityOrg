@@ -35,6 +35,8 @@ export interface Obj {
   error?: { type: string; msg: string; code?: "" };
   afterRegistration?: string;
   verification_status?: any;
+  userBundleName?: string;
+  userBundlePrice?: string;
 }
 
 const Register = ({ isLogin, setIsLogin }: Props) => {

@@ -20,6 +20,7 @@ import {
   getLatestTransactions,
   paymentResponse,
   handleFillAccountsModule,
+  updateWalletTopUpForm,
 } from "../../redux/slices/walletSlice";
 import TopUpForm from "@/components/payment/topUpForm";
 import { handleTopUpModule } from "../../redux/slices/walletSlice";
@@ -58,22 +59,45 @@ import {
   updateEventForm,
 } from "../../redux/slices/eventSlice";
 import style from "../components/events/events.module.css";
+import { handleNotifModal } from "../../redux/slices/notificationsSlice";
+import ReactDatePicker from "react-datepicker";
+import {
+  addWalletChargeRange,
+  chargeRangeDeletion,
+  fetchChargeRange,
+} from "../../redux/slices/adminSettingsSlice";
+import Subscription from "@/components/subscriptionBundles/Subsription";
+import Bundle from "@/components/subscriptionBundles/Bundle";
 import styles2 from "../components/auth/auth.module.css";
 import styles1 from "../styles/dashboard.module.css";
 import styles3 from "../styles/adminDashboard.module.css";
-import { handleNotifModal } from "../../redux/slices/notificationsSlice";
-import ReactDatePicker from "react-datepicker";
+import { currency_array } from "@/utils/fundsArrays";
+import { CgProfile } from "react-icons/cg";
 
 const AdminDashboard = () => {
   const { user } = useSelector((store: any) => store.user);
-  const { walletBalance, latestTx, topupStatus, loading } = useSelector(
-    (store: any) => store.wallet
+  const {
+    chargeAmount,
+    walletBalance,
+    latestTx,
+    topupStatus,
+    loading,
+    wallet_currency,
+    walletSummary,
+  } = useSelector((store: any) => store.wallet);
+  const { walletChargeRangeArray } = useSelector(
+    (store: any) => store.adminsettings
   );
   const { allEvents, eventSearchValue, disputeTimeLimit, requestTimeLimit } =
     useSelector((store: any) => store.event);
   const { notifModalIsOpen } = useSelector((store: any) => store.notifications);
   const { push, query, isReady } = useRouter();
   const [showDash, setShowDash] = useState(false);
+  const [chargeAmountData, setChargeAmountData] = useState<any>({
+    from: 0,
+    to: 0,
+    percent: 0,
+  });
   const [adminDashboardOptions, setAdminDashboardOptions] =
     useState("account_overview");
   const dispatch = useDispatch<AppDispatch>();
@@ -83,7 +107,9 @@ const AdminDashboard = () => {
   };
 
   const changeRoute = useCallback(() => {
-    return push("/");
+    if (!user) {
+      return push("/");
+    }
   }, []);
 
   const handleEventSearch = (e: any) => {
@@ -93,6 +119,70 @@ const AdminDashboard = () => {
     );
   };
 
+  const handleChargeInput = (e: any) => {
+    const { name, value } = e.target;
+    setChargeAmountData({ ...chargeAmountData, [name]: value });
+  };
+  const sendChargeAmount = () => {
+    let { from, to, percent } = chargeAmountData;
+    from = Number(from);
+    to = Number(to);
+    percent = Number(percent);
+
+    if (!from || !percent) {
+      return;
+    }
+
+    if (from > to && to !== 0) {
+      console.log(`'from's value cannot be greater than 'to'`);
+      return;
+    }
+    let decider = false;
+    let highestTO = 0;
+    let highestFROM = 0;
+    let lowestFROM = Infinity;
+    walletChargeRangeArray.map((eachRange: any) => {
+      if (eachRange.from > highestFROM) {
+        highestFROM = eachRange.from;
+      }
+      if (eachRange.from < lowestFROM) {
+        lowestFROM = eachRange.from;
+      }
+      if (eachRange.to > highestTO) {
+        highestTO = eachRange.to;
+      }
+      if (from >= eachRange.from && to <= eachRange.to) {
+        decider = true;
+      }
+    });
+    // console.log(highestFROM, lowestFROM);
+    if (decider) {
+      console.log("range is already a subset of previously set range");
+      return;
+    }
+    if (
+      (from <= lowestFROM && to >= lowestFROM) ||
+      (from <= highestTO && to >= highestTO) ||
+      (from >= lowestFROM && to <= highestTO)
+      // from <= highestTO ||
+      // to >= lowestFROM ||
+      // to <= highestTO ||
+      // (to <= lowestFROM && from >= highestFROM)
+    ) {
+      console.log(
+        `cannot set range between ${lowestFROM} and ${highestTO} as both ranges have been defined.`
+      );
+      return;
+    }
+    // if (to <= highestTO && from >= lowestFROM) {
+    //   console.log(
+    //     `cannot set range between ${lowestFROM} and ${highestTO} as both ranges have been defined.`
+    //   );
+    // }
+    dispatch(addWalletChargeRange(chargeAmountData));
+    setChargeAmountData({ ...chargeAmountData, to: 0, from: 0, percent: 0 });
+    // console.log(chargeAmountData);
+  };
   const pieData = Object.values(
     latestTx.reduce((total: any, item: any) => {
       const { description, amount } = item;
@@ -112,35 +202,58 @@ const AdminDashboard = () => {
     }, {})
   );
 
+  const handleChange = (e: any) => {
+    let { name, value } = e.target;
+    dispatch(updateWalletTopUpForm({ name, value }));
+  };
+
   useEffect(() => {
     if (isReady && query.transaction_id) {
       dispatch(
         paymentResponse({
           transaction_id: query.transaction_id,
           tx_ref: query.tx_ref,
+          chargeAmount: query.chargeAmount,
           description: "Wallet Top-up",
         })
       );
     }
-    let userValue = checkUser();
-    if (userValue) dispatch(setUser(userValue));
+
     dispatch(getAllEvents(""));
   }, [isReady]);
 
   useEffect(() => {
-    // if (!user) {
-    //   changeRoute();
-    // }
     if (user) {
-      dispatch(getWalletBalance(user?.user?._id));
+      dispatch(
+        getWalletBalance({ userId: user?.user?._id, currency: wallet_currency })
+      );
+    } else {
+      let userValue = checkUser();
+      if (userValue) {
+        dispatch(setUser(userValue));
+      } else {
+        changeRoute();
+      }
+    }
+  }, [user, topupStatus, wallet_currency]);
+
+  useEffect(() => {
+    if (user) {
       dispatch(getLatestTransactions(user?.user?._id));
     }
   }, [user, topupStatus]);
 
-  useEffect(() => {
-    console.log(disputeTimeLimit);
-  }, [disputeTimeLimit, requestTimeLimit]);
+  // useEffect(() => {
+  //   if (user) {
+  //     dispatch(getWalletBalance(user?.user?._id));
+  //     dispatch(getLatestTransactions(user?.user?._id));
+  //   }
+  // }, [user, topupStatus]);
 
+  useEffect(() => {
+    dispatch(fetchChargeRange());
+  }, []);
+  // console.log(walletChargeRangeArray);
   return (
     <>
       <Head>
@@ -192,6 +305,10 @@ const AdminDashboard = () => {
                   <FaChartBar />
                   <h5>Account Overview</h5>
                 </div>
+                <div onClick={() => push(`/user/${user?.user?._id}`)}>
+                  <CgProfile />
+                  <h5>Profile</h5>
+                </div>
                 <div onClick={() => setAdminDashboardOptions("events")}>
                   <FaDashcube />
                   <h5>Manage Events</h5>
@@ -200,8 +317,12 @@ const AdminDashboard = () => {
                   <FaFileInvoice />
                   <h5>Broadcast Messages</h5>
                 </div>
+                <div onClick={() => dispatch(handleFillAccountsModule())}>
+                  <FaChartBar />
+                  <h5>Account Details</h5>
+                </div>
                 <hr />
-                <div onClick={() => push("")}>
+                <div onClick={() => setAdminDashboardOptions("settings")}>
                   <AiOutlineSetting />
                   <h5>Settings</h5>
                 </div>
@@ -235,6 +356,10 @@ const AdminDashboard = () => {
                     <FaChartBar />
                     <h5>Account Overview</h5>
                   </div>
+                  <div onClick={() => push(`/user/${user?.user?._id}`)}>
+                    <CgProfile />
+                    <h5>Profile</h5>
+                  </div>
                   <div onClick={() => setAdminDashboardOptions("events")}>
                     <FaDashcube />
                     <h5>Manage Events</h5>
@@ -249,7 +374,7 @@ const AdminDashboard = () => {
                     <h5>Account Details</h5>
                   </div>
                   <hr />
-                  <div onClick={() => push("")}>
+                  <div onClick={() => setAdminDashboardOptions("settings")}>
                     <AiOutlineSetting />
                     <h5>Settings</h5>
                   </div>
@@ -263,12 +388,22 @@ const AdminDashboard = () => {
             <div className={styles1.content}>
               {adminDashboardOptions === "account_overview" && (
                 <>
+                  \
                   <div className={styles1.top_matrix}>
                     <div className={styles1.total_balance_card}>
                       <div>
                         <h2>Total Balance</h2>
-                        <h3>
-                          {latestTx[0]?.description?.includes("Top-up")
+                        <h3
+                          style={{
+                            color:
+                              latestTx[0]?.description?.includes("Top-up") ||
+                              latestTx[0]?.description?.includes("Income")
+                                ? "green"
+                                : "red",
+                          }}
+                        >
+                          {latestTx[0]?.description?.includes("Top-up") ||
+                          latestTx[0]?.description?.includes("Income")
                             ? "+"
                             : "-"}
                           {latestTx[0]?.amount} {latestTx[0]?.currency}
@@ -279,30 +414,43 @@ const AdminDashboard = () => {
                             Top UP
                           </button>
                           <button>WITHDRAWAL</button>
+                          <button>In-app Transfer</button>
                         </div>
                       </div>
                       <div>
-                        <h2>
-                          {walletBalance}
-                          <span>.00</span> {latestTx[0]?.currency}
-                          {!walletBalance && 0}
-                        </h2>
-                        <h6>WALLET AMOUNT</h6>
+                        <label>
+                          Currency Options
+                          <select
+                            value={wallet_currency}
+                            name={"wallet_currency"}
+                            onChange={handleChange}
+                          >
+                            {currency_array.map((item: any, i) => {
+                              const item_key = Object.keys(item)[0];
+                              return (
+                                <option key={i}>{`${item[item_key]}`}</option>
+                              );
+                            })}
+                          </select>
+                        </label>
+                        <>
+                          <h2>
+                            <>
+                              {walletBalance}
+                              {walletBalance !== 0 && <span>.00</span>}{" "}
+                              {wallet_currency}
+                            </>
+                          </h2>
+                          <h6>WALLET AMOUNT</h6>
+                        </>
                       </div>
                     </div>
                     <div className={styles1.balance_graph_card}>
-                      {/* <div>
-                    <h2>Report</h2>
-                  </div> */}
                       <Example />
-                      {/* <div>
-                    <h2>Graph</h2>
-                    <h6>will be displayed here</h6>
-                  </div> */}
                     </div>
                   </div>
                   <div className={styles1.middle_matrix}>
-                    {middle_matrix_items.map((item) => {
+                    {walletSummary.map((item: any) => {
                       return (
                         <div
                           key={item.id}
@@ -310,8 +458,8 @@ const AdminDashboard = () => {
                         >
                           <h4>{item.type}</h4>
                           <h2>
-                            ${item.amount}
-                            <span>.52</span>
+                            {wallet_currency} {item.amount}
+                            <span>.00</span>
                           </h2>
                           <div
                             style={
@@ -344,7 +492,8 @@ const AdminDashboard = () => {
                         return (
                           <div key={item._id}>
                             <div>
-                              {item.description === "Wallet Top-up" && (
+                              {(item.description.includes("Top-up") ||
+                                item.description.includes("Income")) && (
                                 <RxArrowUp
                                   style={{
                                     background: "rgb(11, 100, 140)",
@@ -355,18 +504,20 @@ const AdminDashboard = () => {
                                   }}
                                 />
                               )}
-                              {item.description === "Wallet Withdraw" ||
-                                (item.description === "Event Deposit" && (
-                                  <RxArrowDown
-                                    style={{
-                                      background: "rgb(200, 10, 140)",
-                                      font: "rgb(14, 10, 50)",
-                                      borderRadius: "50%",
-                                      width: "35px",
-                                      height: "35px",
-                                    }}
-                                  />
-                                ))}
+                              {(item.description === "Wallet Withdraw" ||
+                                item.description.includes("Debit") ||
+                                item.description.includes("Purchase") ||
+                                item.description === "Event Deposit") && (
+                                <RxArrowDown
+                                  style={{
+                                    background: "rgb(200, 10, 140)",
+                                    font: "rgb(14, 10, 50)",
+                                    borderRadius: "50%",
+                                    width: "35px",
+                                    height: "35px",
+                                  }}
+                                />
+                              )}
                             </div>
                             <div>
                               <p>{item.description}</p>
@@ -382,7 +533,6 @@ const AdminDashboard = () => {
                       })}
                     </div>
                     <div className={styles1.month_piechart_card}>
-                      {/* <div> Pie Chart Here</div> */}
                       <Doughnut />
                     </div>
                   </div>
@@ -682,6 +832,134 @@ const AdminDashboard = () => {
                           </div>
                         );
                       })}
+                    </div>
+                  </div>
+                </>
+              )}
+              {adminDashboardOptions === "settings" && (
+                <>
+                  <div className={style.headboard} style={{ color: "grey" }}>
+                    <div
+                      className={style.upper_headboard}
+                      style={{
+                        justifyContent: "center",
+                        position: "relative",
+                        padding: "0 10px",
+                      }}
+                    >
+                      <div>
+                        <h3>Manage Events</h3>
+                      </div>
+                      <IoIosNotifications
+                        style={{ position: "absolute", right: "0" }}
+                        onClick={() => dispatch(handleNotifModal())}
+                      />
+                      {notifModalIsOpen && (
+                        <div className={style.notification_modal}>
+                          <Notification />
+                        </div>
+                      )}
+                    </div>
+                    <div className={style.lower_headboard}>
+                      <div className={style.searchbar}>
+                        <FaSearch />
+                        <input
+                          type={"text"}
+                          value={eventSearchValue}
+                          onChange={handleEventSearch}
+                          placeholder={"Search events by name"}
+                        />
+                      </div>
+                    </div>
+                    <div className={style.floaters}>
+                      {user && (
+                        <div
+                        // onClick={() => dispatch(handleEventModule())}
+                        >
+                          <IoMdFootball /> Create Event
+                        </div>
+                      )}
+                      <div>
+                        Filter Events <IoIosPlanet />
+                      </div>
+                    </div>
+                  </div>
+                  <div className={styles3.settingscontainer}>
+                    <div className={styles3.wallet_fund_range}>
+                      <h4>Wallet fund charges</h4>
+                      {walletChargeRangeArray?.length > 0 &&
+                        walletChargeRangeArray.map((eachRange: any) => {
+                          const { to, from, percent } = eachRange;
+                          return (
+                            <div
+                              className={styles3.available_charge}
+                              key={eachRange._id}
+                            >
+                              <h5>
+                                {from} NGN - {to} NGN = {percent}% charge
+                              </h5>
+                              <button
+                                onClick={() =>
+                                  dispatch(chargeRangeDeletion(eachRange._id))
+                                }
+                              >
+                                delete
+                              </button>
+                            </div>
+                          );
+                        })}
+                      <div className={styles3.range}>
+                        <h4>Add range</h4>
+                        <div>
+                          <div>
+                            from
+                            <span>
+                              <input
+                                type="number"
+                                name="from"
+                                value={chargeAmountData.from}
+                                onChange={handleChargeInput}
+                              />
+                              <h6>NGN</h6>
+                            </span>
+                          </div>
+                          <div>
+                            to
+                            <span>
+                              <input
+                                type="number"
+                                name="to"
+                                value={chargeAmountData.to}
+                                onChange={handleChargeInput}
+                              />
+                              <h6>NGN</h6>
+                            </span>
+                          </div>
+                        </div>
+                        <div>
+                          <div>
+                            charge percentage
+                            <span>
+                              <input
+                                type="number"
+                                name="percent"
+                                value={chargeAmountData.percent}
+                                onChange={handleChargeInput}
+                              />
+                              %
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className={styles3.addrange_submit}>
+                        <button onClick={sendChargeAmount}>Add Range</button>
+                      </div>
+                    </div>
+                    <div className={styles3.subscriptions}>
+                      <Subscription />
+                    </div>
+                    <div className={styles3.bundles}>
+                      <Bundle />
                     </div>
                   </div>
                 </>

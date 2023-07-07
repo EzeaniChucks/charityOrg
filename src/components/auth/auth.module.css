@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: rgb(14, 0, 37);
+    background-color: var(--global-background);
     height: 100%;
     width: 100%;
     position: relative;
@@ -271,19 +271,19 @@
     gap: 5px;
     width: 100%;
     font-size: 0.85rem;
-    color: rgb(156, 156, 156);
+    color: var(--color-grey);
 }
 .formContainer label input{
     border-radius: 10px;
     padding: 5px 10px;
     font-size: 1rem;
     outline: none;
-    border: 1px solid rgb(6, 14, 53);
+    border: 1px solid var(--color-input-border);
     min-width: 215px;
     width: 100%;
-    background-color:rgb(14, 0, 37);
+    background-color: var(--color-input-bkg);
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    color: rgb(212, 133, 133);
+    color: var(--color-input-type1);
     font-weight: 100;
 }
 .formContainer label select{
@@ -291,12 +291,12 @@
     padding: 5px 10px;
     font-size: 1rem;
     outline: none;
-    border: 1px solid rgb(6, 14, 53);
+    border: 1px solid var(--color-input-border);
     min-width: 215px;
     width: 100%;
-    background-color:rgb(14, 0, 37);
+    background-color:var(--color-input-bkg);
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    color: rgb(212, 133, 133);
+    color: var(--color-input-type1);
     font-weight: 100;
 }
 .formContainer label textarea{
@@ -304,12 +304,12 @@
     padding: 5px 10px;
     font-size: 1rem;
     outline: none;
-    border: 1px solid rgb(6, 14, 53);
+    border: 1px solid var(--color-input-border);
     min-width: 215px;
     width: 100%;
-    background-color:rgb(14, 0, 37);
+    background-color:var(--color-input-bkg);
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    color: rgb(212, 133, 133);
+    color: var(--color-input-type1);
     font-weight: 100;
 }
 .formContainer .expiration_input{
@@ -352,7 +352,6 @@
 }
 .formContainer .btn:hover{
     background-color: rgba(6, 88, 62, 0.4);
-    color: rgb(255, 255, 255);
 }
 
 .formContainer .btn:disabled{

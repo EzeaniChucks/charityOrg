@@ -116,7 +116,7 @@ const Payments_Description = ({
               {isedit && Number(item.amount) !== Number(editRequestAmount) && (
                 <textarea
                   rows={3}
-                  placeholder="Describe why you edited requested amount"
+                  placeholder="Describe why you edited this requested amount"
                   style={{ width: "100%" }}
                   // value={editRequestDescription}
                   onChange={handleChange}
@@ -132,8 +132,6 @@ const Payments_Description = ({
           </div>
           {eventObserversUserIds().includes(user?.user?._id) &&
             highestNominatedJudge().userId === user?.user?._id && (
-              // eventPageName !== "disputes" &&
-              // eventPageName !== "disputes submission" &&
               <div style={{ display: "flex" }}>
                 {!isedit && (
                   <button
@@ -168,7 +166,7 @@ const Payments_Description = ({
                       dispatch(editMemberRequest({ data }));
                       dispatch(
                         log_Notification({
-                          message: `${data?.name} has updated his request amount to NGN${data.amount} in your event ${fullEventDetails.eventName}. Click here to observe changes and dispute if necessary`,
+                          message: `Event Judge ${data?.name} has updated the request amount of ${item?.name} to NGN${data.amount} in your event ${fullEventDetails.eventName}. Click here to observe changes and dispute if necessary`,
                           userId: user.user._id,
                           link: `/events/backend_category/${eventId}/activity_room`,
                           eventId,
@@ -186,7 +184,7 @@ const Payments_Description = ({
                     Done
                   </button>
                 )}
-                {!isedit && (
+                {!isedit && item?.disputes?.length > 0 && (
                   <button
                     onClick={() => {
                       dispatch(setAlertType("request dispute"));

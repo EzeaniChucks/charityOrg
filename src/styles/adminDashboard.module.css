@@ -102,3 +102,143 @@
     padding: 5px;
     border-radius: 5px;
 }
+
+.settingscontainer{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    padding: 30px;
+    margin-left: 10px;
+    justify-content: center;
+    min-height: 70vh;
+}
+.wallet_fund_range{
+    display: flex;
+    flex-direction: column;
+    color: var(--color-grey);
+}
+
+.wallet_fund_range .available_charge{
+    display: flex;
+    gap: 10px;
+    margin: 10px 5px;
+}
+
+.wallet_fund_range .available_charge button{
+    cursor: pointer;
+    padding: 1px 3px;
+}
+.wallet_fund_range input{
+    background-color: transparent;
+    width: 50px;
+    height: 25px;
+    margin: 10px;
+    border: none;
+    outline: none;
+    color: var(--color-white);
+}
+
+/* Chrome, Safari, Edge, Opera */
+.wallet_fund_range input::-webkit-outer-spin-button,
+.wallet_fund_range input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.wallet_fund_range input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.wallet_fund_range .range{
+    background-color: rgb(10, 7, 49);
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 10px 0;
+}
+.wallet_fund_range .range>div{
+    display: flex;
+    margin: 5px;
+}
+.wallet_fund_range .range>div>div{
+    height: fit-content;
+    display: flex;
+}
+.wallet_fund_range .range>div span{
+    display: flex;
+    align-items: center;
+    background-color: rgb(83, 83, 83);
+    color: rgb(209, 207, 207);
+    height: 30px;
+    border-radius: 5px;
+    padding: 5px ;
+    width: fit-content;
+    margin: 0 20px;
+}
+
+.wallet_fund_range .addrange_submit{
+    padding: 5px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.wallet_fund_range .addrange_submit>button{
+    padding: 5px 10px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.subscriptions, .bundles{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    color: var(--color-grey);
+}
+.subscriptions>div, .bundles>div{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: var(--card-background);
+    padding: 10px;
+    border-radius: 10px;
+}
+.subscriptions>div>div{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.subscriptions>div>div>label>input, .bundles>div>div>label>input{
+    margin-right: 10px;
+}
+.subscriptions button, .bundles button{
+    padding: 5px 10px;
+    width: 100%;
+    cursor: pointer;
+}
+.checkbox{
+    border-radius: 10px;
+}
+
+.bundle_container>div{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+.bundle_container>div>div{
+    display: flex;
+    gap: 10px;
+}
+.bundle_container>div input,.bundle_container>div select{
+    width: 70px;
+    background-color: var(--color-input-bkg);
+    color: var(--color-white);
+    border: none;
+    padding: 3px;
+}
+

@@ -5,57 +5,6 @@ import { ParsedUrlQuery } from "querystring";
 import { conString } from "@/utils/conString";
 import { log_Notification } from "./notificationsSlice";
 
-interface Obj {
-  event?: any;
-  allEvents: any;
-  allEventsAfterSearch: any;
-  singleEvent: any;
-  eventCreator: any;
-  eventSearchValue: String;
-  eventMembers: any;
-  eventObservers: any;
-  eventName: String;
-  eventPrivacy: String;
-  eventDate: String;
-  fullEventDetails: any;
-  timeZone: String;
-  hostStatus: String;
-  currency: String;
-  eventDescription: String;
-  depositDeadline: String;
-  completionDeadline: String;
-  requestTimeLimit: String;
-  disputeTimeLimit: String;
-  eventImageName?: String;
-  eventImagePath?: String;
-  invitationEmails?: String[];
-  loading: Boolean;
-  error: { type: String; msg: String; code: String };
-  success: { type: String; msg: String; code: String };
-  depositAmount: String;
-  requestId: String;
-  requestOwnerId: String;
-  categoryDesc: String;
-  requestAmount: String | Number;
-  requestDescription: String;
-  editRequestAmount: String;
-  editRequestDescription: String;
-  disputeDescription: String;
-  disputeFormDescription: String;
-  disputeFormJudge: { userId: String; name: String };
-  disputeForms: any;
-  hasEditCompleted: Boolean;
-  hasDisputeAddedOrRemoved: Boolean;
-  memberRequestList: any;
-  totalMemberRequestsAmount: String | Number;
-  creationStatus: Boolean;
-  showEventForm?: Boolean;
-  createEventStep?: String;
-  joineventNotification: String;
-  tabState: String;
-  tabStateAlertType: String;
-  disputeCalc: { disputes: String; requestWithDisputes: String };
-}
 
 export const createEvent = createAsyncThunk(
   "event/createEvent",
@@ -63,6 +12,38 @@ export const createEvent = createAsyncThunk(
     try {
       const { data }: { data: any } = await axios.post(
         `${conString}/create_event`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
+export const payAllMembersFromHost = createAsyncThunk(
+  "event/payAllMembersFromHost",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.post(
+        `${conString}/pay_all_members_from_host`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
+export const payAllMembersFromJudge = createAsyncThunk(
+  "event/payAllMembersFromJudge",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.post(
+        `${conString}/pay_all_members_from_judge`,
         prop
       );
       return data;
@@ -238,7 +219,7 @@ export const deleteMemberRequest = createAsyncThunk(
   }
 );
 export const getMemberRequestList = createAsyncThunk(
-  "event/getMemberRequestList",
+  "event/getMemberRequestListssss",
   async (prop: any, thunk) => {
     try {
       const { data }: { data: any } = await axios.get(
@@ -366,7 +347,6 @@ export const resetDepositAndCompletionDeadlines = createAsyncThunk(
         `${conString}/set_deposit_and_completion_deadlines`,
         prop
       );
-
       thunk.dispatch(getEventDetail(prop.eventId));
       return data;
     } catch (err: any) {
@@ -392,6 +372,112 @@ export const setEventTimeLimits = createAsyncThunk(
     }
   }
 );
+export const make_Pledge = createAsyncThunk(
+  "event/make_Pledge",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.post(
+        `${conString}/make_pledge`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
+export const edit_Pledge = createAsyncThunk(
+  "event/edit_Pledge",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.post(
+        `${conString}/edit_pledge`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
+export const delete_Pledge = createAsyncThunk(
+  "event/delete_Pledge",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.post(
+        `${conString}/delete_pledge`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
+
+interface Obj {
+  event?: any;
+  allEvents: any;
+  allEventsAfterSearch: any;
+  singleEvent: any;
+  eventCreator: any;
+  eventSearchValue: String;
+  eventMembers: any;
+  eventObservers: any;
+  eventName: String;
+  eventPrivacy: String;
+  eventDate: String;
+  fullEventDetails: any;
+  timeZone: String;
+  hostStatus: String;
+  currency: String;
+  eventDescription: String;
+  depositDeadline: String;
+  completionDeadline: String;
+  requestTimeLimit: String;
+  disputeTimeLimit: String;
+  eventImageName?: String;
+  eventImagePath?: String;
+  invitationEmails?: String[];
+  loading: Boolean;
+  error: { type: String; msg: String; code: String };
+  success: { type: String; msg: String; code: String };
+  depositAmount: String;
+  requestId: String;
+  requestOwnerId: String;
+  categoryDesc: String;
+  requestAmount: String | Number;
+  requestDescription: String;
+  editRequestAmount: String;
+  editRequestDescription: String;
+  pledgeForms: any[];
+  pledgeDesc: String;
+  pledgeAmount: Number | String;
+  editPledgeAmount: Number|String;
+  editPledgeDescription: String;
+  pledgeDate: String;
+  disputeDescription: String;
+  disputeFormDescription: String;
+  disputeFormJudge: { userId: String; name: String };
+  disputeForms: any;
+  hasEditCompleted: Boolean;
+  hasDisputeAddedOrRemoved: Boolean;
+  memberRequestList: any;
+  totalMemberRequestsAmount: String | Number;
+  creationStatus: Boolean;
+  showEventForm?: Boolean;
+  createEventStep?: String;
+  joineventNotification: String;
+  tabState: String;
+  tabStateAlertType: String;
+  disputeCalc: { disputes: String; requestWithDisputes: String };
+}
 
 const initialState: Obj = {
   event: null,
@@ -427,6 +513,12 @@ const initialState: Obj = {
   editRequestDescription: "",
   memberRequestList: [],
   totalMemberRequestsAmount: 0,
+  pledgeForms: [],
+  pledgeDesc: "",
+  pledgeAmount: 0,
+  pledgeDate: Date(),
+  editPledgeAmount: 0,
+  editPledgeDescription: '',
   hasEditCompleted: false,
   hasDisputeAddedOrRemoved: false,
   disputeDescription: "",
@@ -480,6 +572,10 @@ const eventSlice = createSlice({
       state.editRequestAmount = payload.requestAmount;
       state.editRequestDescription = payload.requestDescription;
     },
+    setEditsForPledgeForms: (state: any, { payload }) => {
+      state.editPledgeAmount = payload.pledgeAmount;
+      state.editPledgeDescription = payload.pledgeDescription;
+    },
     setAlertType: (state: any, { payload }) => {
       state.tabStateAlertType = payload;
     },
@@ -512,6 +608,53 @@ const eventSlice = createSlice({
         code: payload,
       };
     });
+
+    //Host Pays All Members of an Event
+    builder.addCase(payAllMembersFromHost.pending, (state: any) => {
+      state.loading = true;
+      // state.creationStatus = false;
+    });
+    builder.addCase(
+      payAllMembersFromHost.fulfilled,
+      (state: any, { payload }) => {
+        state.loading = false;
+      }
+    );
+    builder.addCase(
+      payAllMembersFromHost.rejected,
+      (state: any, { payload }: any) => {
+        let msg = payload?.msg;
+        console.log(msg);
+        state.loading = false;
+        state.error = {
+          type: "server_error",
+          msg,
+          code: msg,
+        };
+      }
+    );
+    //Judge Pays All Members of an Event
+    builder.addCase(payAllMembersFromJudge.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(
+      payAllMembersFromJudge.fulfilled,
+      (state: any, { payload }) => {
+        state.loading = false;
+      }
+    );
+    builder.addCase(
+      payAllMembersFromJudge.rejected,
+      (state: any, { payload }: any) => {
+        let msg = payload.msg;
+        state.loading = false;
+        state.error = {
+          type: "server_error",
+          msg,
+          code: msg,
+        };
+      }
+    );
 
     //Get All Events
     builder.addCase(getAllEvents.pending, (state: any) => {
@@ -586,11 +729,12 @@ const eventSlice = createSlice({
         state.joineventNotification = payload;
         state.error = {
           type: "server_error",
-          msg: "Not able to join event. Please try again",
+          msg: "Not able to join event. Deposit date may have expired",
           code: payload,
         };
       }
     );
+
     //Leave Event
     builder.addCase(leaveEvents.pending, (state: any) => {
       state.loading = true;
@@ -632,7 +776,7 @@ const eventSlice = createSlice({
         state.joineventNotification = payload;
         state.error = {
           type: "server_error",
-          msg: "Not able to join event. Please try again",
+          msg: "Not able to join event. Deposit date may have expired",
           code: payload,
         };
       }
@@ -645,6 +789,7 @@ const eventSlice = createSlice({
     builder.addCase(getEventDetail.fulfilled, (state: any, { payload }) => {
       state.loading = false;
       state.fullEventDetails = payload.eventDetail;
+      state.pledgeForms = payload.eventDetail.pledgeForms;
     });
     builder.addCase(getEventDetail.rejected, (state: any, { payload }) => {
       state.loading = false;
@@ -765,7 +910,7 @@ const eventSlice = createSlice({
         state.hasEditCompleted = false;
         state.error = {
           type: "server_error",
-          msg: "Not able to proceed with event deposit. Please try again",
+          msg: "Not able to proceed with event payment. Please try again",
           code: payload,
         };
       }
@@ -837,6 +982,7 @@ const eventSlice = createSlice({
         };
       }
     );
+
     //REMOVE ALL DISPUTES
     builder.addCase(remove_all_disputes.pending, (state: any) => {
       state.loading = true;
@@ -879,6 +1025,7 @@ const eventSlice = createSlice({
         };
       }
     );
+
     //Set Request/Dispute TimeLimits
     builder.addCase(setEventTimeLimits.pending, (state: any) => {
       state.loading = true;
@@ -904,6 +1051,7 @@ const eventSlice = createSlice({
         };
       }
     );
+
     //RESET DEPOSIT/COMPLETION DEADLINES
     builder.addCase(
       resetDepositAndCompletionDeadlines.pending,
@@ -935,6 +1083,80 @@ const eventSlice = createSlice({
         };
       }
     );
+
+    //Make Pledge
+    builder.addCase(make_Pledge.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(make_Pledge.fulfilled, (state: any, { payload }) => {
+      state.loading = false;
+      state.pledgeForms = payload.pledgeForms;
+      state.success = {
+        type: "server_success",
+        msg: "Sucessful",
+        code: payload.msg,
+      };
+    });
+    builder.addCase(
+      make_Pledge.rejected,
+      (state: any, { payload }: { payload: any }) => {
+        state.loading = false;
+        state.error = {
+          type: "server_error",
+          msg: "Not able set Event Time Limit. Please try again.",
+          code: payload,
+        };
+      }
+    );
+    //Edit Pledge
+    builder.addCase(edit_Pledge.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(edit_Pledge.fulfilled, (state: any, { payload }) => {
+      state.loading = false;
+      state.pledgeForms = payload.pledgeForms;
+      state.success = {
+        type: "server_success",
+        msg: "Sucessful",
+        code: payload.msg,
+      };
+    });
+    builder.addCase(
+      edit_Pledge.rejected,
+      (state: any, { payload }: { payload: any }) => {
+        state.loading = false;
+        state.error = {
+          type: "server_error",
+          msg: "Not able set Event Time Limit. Please try again.",
+          code: payload,
+        };
+      }
+    );
+
+    //Delete Pledge
+    builder.addCase(delete_Pledge.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(delete_Pledge.fulfilled, (state: any, { payload }) => {
+      state.loading = false;
+      state.pledgeForms = payload.pledgeForms;
+      state.success = {
+        type: "server_success",
+        msg: "Sucessful",
+        code: payload.msg,
+      };
+    });
+    builder.addCase(
+      delete_Pledge.rejected,
+      (state: any, { payload }: { payload: any }) => {
+        state.loading = false;
+        state.error = {
+          type: "server_error",
+          msg: "Not able set Event Time Limit. Please try again.",
+          code: payload,
+        };
+      }
+    );
   },
 });
 
@@ -948,6 +1170,7 @@ export const {
   setCategoryName,
   setTabState,
   setEditsForRequestPage,
+  setEditsForPledgeForms,
   logError,
   setAlertType,
 } = eventSlice.actions;

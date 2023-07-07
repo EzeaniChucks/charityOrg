@@ -31,14 +31,14 @@
     padding-top: 20px;
     border-radius: 20px;
     transition: all 0.3s ease-in;
-    border: 1px solid rgb(14, 15, 85);
+    border: 1px solid var(--popup-border);
     opacity: 0;
-    background-color: rgba(40, 29, 70, 0.7);
+    background-color: var(--popup-background);
     backdrop-filter: blur(3px);
     z-index: 101;
 }
 .eventform>h1{
-    color: rgb(243, 187, 154);
+    color: var(--color-pink);
     margin-left: 6px;
     margin-bottom: -10px;
     font-size: 1.4rem;
@@ -52,7 +52,7 @@
 }
 .eventform>svg{
     position: absolute;
-    color: rgb(6, 95, 46);
+    color: var(--color-close);
     top: 10px;
     right: 20px;
     font-size: 2rem;
@@ -242,7 +242,7 @@
     width: 100%;
     margin-bottom: 5px;
     border-radius: 0 0 100px 100px;
-    background-color: rgba(27, 27, 88, 0.4);
+    background-color: var(--headboard-background);
     backdrop-filter: blur(3px);
     z-index: 1;
 }
@@ -258,13 +258,12 @@
     align-items: center;
 }
 .upper_headboard>div>h6{
-    background-color: rgb(43, 43, 43);
+    background-color: var(--color-grey);
     padding: 5px 7px;
-    color: rgb(179, 178, 178);
+    color: rgb(197, 195, 195);
     border-radius: 10px;
     cursor: pointer;
 }
-
 .upper_headboard>svg{
     font-size: 1.5rem;
     cursor: pointer;
@@ -276,7 +275,7 @@
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
-    background-color: rgb(17, 17, 17, 0.3);
+    background-color: var(--popup-background);
     width: 100vw;
     height: 100vh;
     z-index: 100;
@@ -333,7 +332,6 @@
     gap: 10px;
     margin: 20px 30px 10px 30px;
 }
-
 .heading{
     display: flex;
     align-items: center;

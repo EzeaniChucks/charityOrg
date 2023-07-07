@@ -1,22 +1,20 @@
 import { FaList, FaMicrosoft, FaTimesCircle } from "react-icons/fa";
 import { IoIosArrowDropdown } from "react-icons/io";
-import Deposit_Description from "../deposit/deposit_description";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 import { useEffect, useState, ReactEventHandler } from "react";
 import { AppDispatch } from "../../../redux/store";
 import {
-  acceptEventDeposit,
   getEventDetail,
   getMemberRequestList,
   logError,
-  resetEventPaymentInfo,
   updateEventForm,
   setAlertType,
   uploadMemberRequest,
   create_dispute,
+  getSingleEvent,
+  payAllMembersFromHost,
 } from "../../../redux/slices/eventSlice";
-import moment from "moment";
 import { checkUser } from "@/utils/localstorage";
 import { setUser } from "../../../redux/slices/authSlice";
 import style2 from "../../pages/events/[eventCategory]/[eventId]/activity_room.module.css";
@@ -27,6 +25,7 @@ import CountDownTime from "../countDownTimer/countdowntimer";
 
 const RequestForm = () => {
   const {
+    singleEvent,
     fullEventDetails,
     memberRequestList,
     totalMemberRequestsAmount,
@@ -60,6 +59,7 @@ const RequestForm = () => {
   useEffect(() => {
     if (eventId) {
       dispatch(getMemberRequestList(eventId));
+      dispatch(getSingleEvent(eventId));
     }
   }, [eventId, hasDisputeAddedOrRemoved]);
   useEffect(() => {
@@ -171,10 +171,28 @@ const RequestForm = () => {
                   <p className={style.request_ok}>
                     There are no disputes to settle.
                   </p>
-                  <p className={style.request_ok}>
-                    Awaiting host to move on to the next stage of disbursing
-                    payments.
-                  </p>
+                  {singleEvent[0]?.creatorId !== user?.user?._id && (
+                    <p className={style.request_ok}>
+                      Awaiting host to move on to the next stage of disbursing
+                      payments.
+                    </p>
+                  )}
+                  {singleEvent[0]?.creatorId === user?.user?._id && (
+                    <>
+                      <p className={style.request_ok}>
+                        Click the button below to disburse requested payments to
+                        all members of your event
+                      </p>
+                      <button
+                        className={style.btn_add}
+                        onClick={() =>
+                          dispatch(payAllMembersFromHost({ eventId }))
+                        }
+                      >
+                        Pay
+                      </button>
+                    </>
+                  )}
                 </>
               )}
               {calcDisputes() > 0 && (
@@ -184,8 +202,9 @@ const RequestForm = () => {
                     {calcRequestWithDispute()} request(s) yet to be settled.
                   </p>
                   <p className={style.request_notok}>
-                    If these are not resolved by participants before completion
-                    deadline, they will be moved to dispute page for resolution
+                    If these are not resolved by participants before request
+                    time limit, they will be moved to dispute page for
+                    resolution
                   </p>
                 </>
               )}
@@ -255,7 +274,9 @@ const RequestForm = () => {
           <div>
             <h4>Request TimeLimit</h4>
           </div>
-          <CountDownTime targetDate={fullEventDetails?.requestTimeLimit} />
+          {fullEventDetails?.requestTimeLimit && (
+            <CountDownTime targetDate={fullEventDetails?.requestTimeLimit} />
+          )}
         </div>
       </div>
 

@@ -8,12 +8,12 @@ import { conString } from "@/utils/conString";
 
 export const getWalletBalance = createAsyncThunk(
   "/getWalletBalance",
-  async (prop: any, thunk) => {
+  async (prop: any, thunk: any) => {
     try {
       const { data } = await axios.get(
-        `${conString}/${prop}/get_wallet_balance`
+        `${conString}/${prop.userId}/${prop.currency}/get_wallet_balance`
       );
-      return data;
+      return data.balance;
     } catch (err: any) {
       return (
         thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
@@ -41,9 +41,9 @@ export const paymentResponse = createAsyncThunk(
   async (prop: any, thunk) => {
     try {
       const { data } = await axios.get(
-        `${conString}/response?transaction_id=${prop.transaction_id}&tx_ref=${prop.tx_ref}&description=${prop.description}`
+        `${conString}/response?transaction_id=${prop.transaction_id}&tx_ref=${prop.tx_ref}&description=${prop.description}&chargeAmount=${prop.chargeAmount}`
       );
-      return data;
+      return data.balance;
     } catch (err: any) {
       return (
         thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
@@ -70,6 +70,8 @@ export const get_country_banks = createAsyncThunk(
 
 interface Obj {
   walletBalance: Number;
+  walletSummary: any[];
+  wallet_currency: String;
   latestTx: any;
   loading: Boolean;
   showWalletTopUp: Boolean;
@@ -77,16 +79,48 @@ interface Obj {
   error: { type: String; msg: String };
   public_key: String;
   tx_ref: String;
-  topup_amount: String;
+  topup_amount: String | Number;
   topup_currency: String;
   topup_country: String;
   account_number: String;
   topupStatus: String;
   payment_options: String;
   country_banks: any;
+  chargeAmount: Number;
 }
 const initialState: Obj = {
   walletBalance: 0,
+  wallet_currency: "NGN",
+  walletSummary: [
+    {
+      id: 1,
+      type: "Total topUps",
+      amount: 0,
+      uptrend: true,
+      percent: 0,
+    },
+    {
+      id: 2,
+      type: "Total Outflow",
+      amount: 0,
+      uptrend: false,
+      percent: 0,
+    },
+    {
+      id: 3,
+      type: "Total Events Income",
+      amount: 0,
+      uptrend: true,
+      percent: 0,
+    },
+    {
+      id: 4,
+      type: "Event income plus topups",
+      amount: 0,
+      uptrend: true,
+      percent: 0,
+    },
+  ],
   latestTx: [],
   loading: false,
   showWalletTopUp: false,
@@ -101,6 +135,7 @@ const initialState: Obj = {
   topupStatus: "",
   payment_options: "",
   country_banks: [],
+  chargeAmount: 0,
 };
 
 const walletSlice = createSlice({
@@ -129,6 +164,18 @@ const walletSlice = createSlice({
     builder.addCase(getWalletBalance.fulfilled, (state: any, { payload }) => {
       state.loading = false;
       state.walletBalance = payload.balance;
+      state.walletSummary[0].amount = payload.total_topup;
+      state.walletSummary[0].percent = payload.total_topup_percent_inc;
+      state.walletSummary[1].amount = payload.total_outflow;
+      state.walletSummary[1].percent = payload.total_outflow_percent_dec;
+      state.walletSummary[2].amount = payload.total_income_from_events;
+      state.walletSummary[2].percent =
+        payload.total_income_from_events_percent_inc;
+      state.walletSummary[3].amount =
+        payload.total_income_from_events + payload.total_topup;
+      state.walletSummary[3].percent =
+        payload.total_income_from_events_percent_inc +
+        payload.total_topup_percent_inc;
     });
     builder.addCase(getWalletBalance.rejected, (state: any, { payload }) => {
       state.loading = false;
@@ -160,8 +207,20 @@ const walletSlice = createSlice({
     });
     builder.addCase(paymentResponse.fulfilled, (state: any, { payload }) => {
       state.loading = false;
-      state.walletBalance = payload.balance;
       state.topupStatus = "successful";
+      state.walletBalance = payload.balance;
+      state.walletSummary[0].amount = payload.total_topup;
+      state.walletSummary[0].percent = payload.total_topup_percent_inc;
+      state.walletSummary[1].amount = payload.total_outflow;
+      state.walletSummary[1].percent = payload.total_outflow_percent_dec;
+      state.walletSummary[2].amount = payload.total_income_from_events;
+      state.walletSummary[2].percent =
+        payload.total_income_from_events_percent_inc;
+      state.walletSummary[3].amount =
+        payload.total_income_from_events + payload.total_topup;
+      state.walletSummary[3].percent =
+        payload.total_income_from_events_percent_inc +
+        payload.total_topup_percent_inc;
     });
     builder.addCase(paymentResponse.rejected, (state: any, { payload }) => {
       state.loading = false;

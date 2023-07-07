@@ -38,7 +38,8 @@ const ParticlesComp = () => {
       },
       particles: {
         color: {
-          value: "#ffffff",
+          value: "#FF0000",
+          // value: "#eeeeee",
         },
         velocity: -4,
         collisions: {

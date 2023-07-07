@@ -72,7 +72,7 @@ const MyEvents = () => {
       const arr: any = [];
       allEvents?.map((event: any) => {
         event?.members.map((items: any) => {
-          if (items.userId === user?.user?._id) {
+          if (items?.userId === user?.user?._id) {
             arr.push({ ...event, participatingAs: "depositor" });
           }
         });

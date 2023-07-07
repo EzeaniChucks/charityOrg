@@ -304,6 +304,7 @@ const Request_Description = ({
                       };
                       dispatch(remove_dispute(data));
                     }}
+                    disabled={loading}
                   >
                     Remove dispute
                   </button>

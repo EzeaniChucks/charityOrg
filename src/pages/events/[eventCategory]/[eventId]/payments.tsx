@@ -11,6 +11,8 @@ import {
   getAllEventMembersAndObservers,
   getEventDetail,
   getMemberRequestList,
+  logError,
+  payAllMembersFromJudge,
   setAlertType,
   setTabState,
   updateEventForm,
@@ -44,6 +46,8 @@ const Payments_Page = () => {
     memberRequestList,
     totalMemberRequestsAmount,
     disputeForms,
+    hasEditCompleted,
+    hasDisputeAddedOrRemoved,
     error,
   } = useSelector((store: any) => store.event);
   const { notifLogStatus, notifModalIsOpen, notifications } = useSelector(
@@ -93,14 +97,6 @@ const Payments_Page = () => {
     setShowModal(!showModal);
   };
   const handleShowModal = () => {
-    // if (requestAmount === "" || requestDescription === "") {
-    //   return dispatch(
-    //     logError({
-    //       type: "deposit_form_error",
-    //       msg: "Deposit amount and new category name must be filled",
-    //     })
-    //   );
-    // }
     setShowModal(!showModal);
     dispatch(setAlertType("request submit"));
   };
@@ -148,7 +144,7 @@ const Payments_Page = () => {
     if (eventId) {
       dispatch(getMemberRequestList(eventId));
     }
-  }, [eventId]);
+  }, [eventId, hasEditCompleted, hasDisputeAddedOrRemoved]);
 
   useEffect(() => {
     if (isReady) {
@@ -156,6 +152,14 @@ const Payments_Page = () => {
       dispatch(getAllEventMembersAndObservers(eventId));
     }
   }, [isReady, dispatch]);
+  useEffect(() => {
+    if (error.type) {
+      const timeout = setTimeout(() => {
+        dispatch(logError({ type: "", msg: "" }));
+      }, 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [error]);
   // useEffect(() => {
   //   if (eventId) {
   //     socket.emit<any>(eventId, { post: "Message from frontend" });
@@ -290,10 +294,17 @@ const Payments_Page = () => {
                   width: "100%",
                   backgroundColor: "rgb(50, 200, 100, 0.3)",
                 }}
+                onClick={() => dispatch(payAllMembersFromJudge({ eventId }))}
               >
                 PAY ALL MEMBERS
               </button>
             </div>
+            {error?.type === "server_error" && (
+              <h5 className={style3.warning}>{error?.code}</h5>
+            )}
+            {error?.type === "payment_form_error" && (
+              <h5 className={style3.warning}>{error?.msg}</h5>
+            )}
           </div>
         </div>
         {notifModalIsOpen && (

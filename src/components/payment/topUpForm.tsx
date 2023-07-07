@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "../../../redux/store";
 import {
@@ -10,6 +11,7 @@ import { country_array, currency_array } from "@/utils/fundsArrays";
 import style from "../../components/events/events.module.css";
 import styles2 from "../../components/auth/auth.module.css";
 import { conStringFrontEnd } from "@/utils/conString";
+import { fetchChargeRange } from "../../../redux/slices/adminSettingsSlice";
 
 const TopUpForm = () => {
   const {
@@ -22,20 +24,55 @@ const TopUpForm = () => {
     topup_country,
   } = useSelector((store: any) => store.wallet);
   const { user } = useSelector((store: any) => store.user);
+  const { walletChargeRangeArray } = useSelector(
+    (store: any) => store.adminsettings
+  );
+  const [topUpAmountAndTax, setTopUpAmountPlusTax] = useState(0);
+  const [chargePercent, setChargePercent] = useState(0);
+  const [chargeAmount, setChargeAmount] = useState(0);
   const dispatch = useDispatch<AppDispatch>();
 
   const handleChange = (e: any) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
     dispatch(updateWalletTopUpForm({ name, value }));
+
+    if (name === "topup_amount") {
+      let highestAmount = 0;
+      walletChargeRangeArray.map((eachRange: any) => {
+        let { to, from, percent } = eachRange;
+        to = Number(to);
+        from = Number(from);
+        percent = Number(percent);
+        value = Number(value);
+        if (to > highestAmount) {
+          highestAmount = to;
+        }
+        if (value >= from && value <= to) {
+          setTopUpAmountPlusTax(value + (value * percent) / 100);
+          setChargePercent(percent);
+          setChargeAmount((value * percent) / 100);
+        }
+        if (value >= highestAmount) {
+          setTopUpAmountPlusTax(value + (value * percent) / 100);
+          setChargePercent(percent);
+          setChargeAmount((value * percent) / 100);
+        }
+      });
+    }
   };
+  // useEffect(() => {
+  //   console.log(topUpAmountAndTax);
+  //   console.log(chargeAmount);
+  //   console.log(walletChargeRangeArray);
+  // }, [topUpAmountAndTax]);
   const config = {
     public_key,
     tx_ref,
-    amount: Number(topup_amount),
+    amount: Number(topUpAmountAndTax),
     currency: topup_currency,
     country: topup_country,
     payment_options: "card",
-    redirect_url: `${conStringFrontEnd}/dashboard`,
+    redirect_url: `${conStringFrontEnd}/dashboard?chargeAmount=${chargeAmount}`,
     customer: {
       email: user.user.email,
       phone_number: "08067268692",
@@ -63,6 +100,11 @@ const TopUpForm = () => {
     if (!showWalletTopUp) return style.eventform;
     else return [style.eventform, style.showeventform].join(" ");
   };
+
+  useEffect(() => {
+    dispatch(fetchChargeRange());
+  }, []);
+
   return (
     <div className={handleformcontdisplay()}>
       <div style={{ height: "200px" }} className={handleformdisplay()}>
@@ -79,6 +121,13 @@ const TopUpForm = () => {
                 onChange={handleChange}
               />
             </label>
+            {chargeAmount > 0 && (
+              <h6>
+                {" "}
+                You will be charged {chargeAmount}
+                {topup_currency} extra ({chargePercent}%) on this amount.
+              </h6>
+            )}
             <label>
               Currency :{" "}
               <select

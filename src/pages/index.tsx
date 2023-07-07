@@ -4,7 +4,8 @@ import Login from "../components/auth/login";
 import Register from "@/components/auth/register";
 import ParticlesComp from "@/components/ParticlesComp";
 import styles2 from "../components/auth/auth.module.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 // const inter = Inter({ subsets: ["latin"] });
 // interface log {
@@ -15,7 +16,6 @@ import { useState } from "react";
 // }
 export default function Home() {
   const [isLogin, setIsLogin] = useState(true);
-
   return (
     <>
       <Head>

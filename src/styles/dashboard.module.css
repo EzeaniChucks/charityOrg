@@ -22,8 +22,8 @@
     display: flex;
     flex-direction: column;
     /* background-color: var(--glass_dark); */
-    background-color: rgba(27, 27, 88, 0.3);
-    color: white;
+    background-color: var(--dashboard-background);
+    color: var(--color-white);
     min-width: 200px;
     max-width: 250px;
     height: fit-content;
@@ -50,7 +50,7 @@
     gap: 5px;
 }
 .logo_div>div h6{
-    color: pink;
+    color: var(--color-pink);
     font-style: italic;
 }
 .list_div{
@@ -69,7 +69,7 @@
     top: -30px;
     font-size: 1.7rem;
     cursor: pointer;
-    color: tomato;
+    color: var(--color-close);
 }
 .list_div>svg:hover{
     color: rgb(247, 154, 137);
@@ -93,7 +93,7 @@
 .list_div .logout{
     margin-top: 20px;
     cursor: pointer;
-    color: rgb(221, 144, 130);
+    color: var(--color-close);
 }
 
 .modal{
@@ -111,8 +111,8 @@
 .dashboard_modal{
     display: flex;
     flex-direction: column;
-    background-color: rgba(27, 27, 88, 0.3);
-    color: white;
+    background-color: var(--dashboard-background);
+    color: var(--color-grey);
     min-width: 250px;
     max-width: 250px;
     padding-top: 20px;
@@ -125,7 +125,7 @@
     z-index: 1;
 }
 .modal .list_div{
-    color: rgb(224, 224, 224);
+    color: var(--color-white)
 }
 .show_modal{
     opacity: 1;
@@ -153,13 +153,13 @@
 .top_matrix .total_balance_card, .balance_graph_card{
     position: relative;
     padding: 20px;
-    color: grey;
+    color: var(--color-grey);
     min-width: 340px;
     max-width: 500px;
     height: 200px;
     border-radius: 5px;
     overflow: hidden;
-    background-color: rgba(27, 27, 88, 0.3);
+    background-color: var(--card-background);
     backdrop-filter: blur(2px);
     z-index: 1;
 }
@@ -169,7 +169,7 @@
     gap: 5px;
 }
 .top_matrix .total_balance_card>div:nth-of-type(1) h2{
-    color: rgb(221, 221, 221);
+    color: var(--color-grey);
 }
 .top_matrix .total_balance_card>div:nth-of-type(1) h3{
     margin-top: 20px;
@@ -180,7 +180,7 @@
     align-items: flex-start;
     justify-content: center;
     position: absolute;
-    color: white;
+    color: rgb(240, 239, 239);
     padding-left: 100px;
     font-size: 0.8rem;
     background-color: blueviolet;
@@ -191,20 +191,41 @@
     width: 230px;
     padding: 20px;
 }
+.top_matrix .total_balance_card>div:nth-of-type(2) label{
+    position: absolute;
+    top: 35px;
+    left: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.top_matrix .total_balance_card>div:nth-of-type(2) label select{
+    background-color: transparent;
+    font-size: 0.8rem;
+    outline: none;
+    border: none;
+}
 .top_matrix .total_balance_card>div .btn_div{
     display: flex;
+    position: absolute;
+    bottom: 0;
+    left: -13px;
+    justify-content: center;
+    flex-wrap: wrap;
     gap: 5px;
+    /* background-color: aqua; */
+    width: 250px;
 }
 .top_matrix .total_balance_card>div .btn_div button{
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
+    color: var(--color-grey);
     font-size: 0.65rem;
-    margin-top: 10px;
+    margin-top: 5px;
     border: 1px solid blueviolet;
     cursor: pointer;
-    padding: 10px 13px;
+    padding: 10px;
     background-color: transparent;
     border-radius: 20px;
 }
@@ -239,21 +260,26 @@
     margin-top: 20px;
     width: 90%;
     overflow-x: auto;
+    color: var(--color-grey);
     overscroll-behavior-inline: contain;
     scroll-snap-type: inline mandatory;
     scroll-padding-inline: 10px;
 }
 
+.middle_matrix >div>h4{
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--color-pink);
+}
 .middle_matrix_card{
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     flex-direction: column;
     padding: 10px;
     gap: 8px;
-    background-color: rgba(27, 27, 88, 0.3);
+    background-color: var(--card-background);
     border-radius: 5px;
-    color: grey;
     max-width: 200px;
     min-width: 120px;
     scroll-snap-align: start;
@@ -265,7 +291,7 @@
     gap: 5px;
     padding: 7px;
     border-radius: 10px;
-    color: white;
+    color: rgb(196, 196, 196);
 }
 .bottom_matrix{
     display: flex;
@@ -279,18 +305,19 @@
     flex-direction: column;
     padding: 10px;
     padding: 20px;
-    color: grey;
+    color:var(--color-grey);
     min-width: 350px;
     max-width: 500px;
     height: 350px;
     border-radius: 5px;
     overflow: hidden;
-    background-color: rgba(27, 27, 88, 0.3);
+    background-color: var(--card-background);
     backdrop-filter: blur(2px);
     z-index: 1;
 }
 .bottom_matrix .latest_transaction_card{
-    color: rgb(197, 195, 195);
+    color: var(--color-white);
+    overflow-y: auto;
 }
 .bottom_matrix .latest_transaction_card>h2{
     margin-bottom: 15px;
@@ -310,7 +337,7 @@
     font-weight: 900;
 }
 .bottom_matrix .latest_transaction_card>div>div:nth-of-type(2)>h6{
-    color: rgb(110, 110, 110);
+    color: var(--color-grey);
     margin-top: 3px;
 }
 .month_piechart_card{

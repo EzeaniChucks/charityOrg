@@ -18,6 +18,7 @@ import {
   getAllEvents,
   joinEvents,
   joinEventsAsObserver,
+  logError,
   resetCreator,
 } from "../../../../redux/slices/eventSlice";
 import { AppDispatch } from "../../../../redux/store";
@@ -25,9 +26,10 @@ import { checkUser, storeUser } from "@/utils/localstorage";
 import { setUser } from "../../../../redux/slices/authSlice";
 import style from "../../../components/events/singleEvent.module.css";
 import styles2 from "../../../components/auth/auth.module.css";
+import warningstyle from "../../../components/deposit/deposit.module.css";
 
 const SingleEvent = () => {
-  const { allEvents, eventCreator, loading, joineventNotification } =
+  const { allEvents, eventCreator, loading, joineventNotification, error } =
     useSelector((store: any) => store.event);
   const { eventId, eventCategory, inviteAs } = useRouter().query;
   const { isReady, asPath, push, query } = useRouter();
@@ -98,7 +100,14 @@ const SingleEvent = () => {
       isEventMemberOrObserver();
     }
   }, [isReady, allEvents]);
-
+  useEffect(() => {
+    if (error.type) {
+      const timeout = setTimeout(() => {
+        dispatch(logError({ type: "", msg: "" }));
+      }, 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [error, dispatch]);
   return (
     <main className={styles2.container}>
       <div className={style.content}>
@@ -276,6 +285,9 @@ const SingleEvent = () => {
           </div>
         </div>
       </div>
+      {error?.type === "server_error" && (
+        <h5 className={warningstyle.warning}>{error?.msg}</h5>
+      )}
       <div className={styles2.particles}>
         <ParticlesComp />
       </div>

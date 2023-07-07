@@ -56,6 +56,53 @@ export const verify = createAsyncThunk(
     }
   }
 );
+export const fetchCompleteUserDetails = createAsyncThunk(
+  "auth/fetchCompleteUserDetails",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.get(
+        `${conString}/auth/complete_user/${prop}`
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
+export const setUserSubscription = createAsyncThunk(
+  "auth/editUserSubType",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.post(
+        `${conString}/auth/editUserSubType`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
+export const setUserBundle = createAsyncThunk(
+  "auth/editUserBundleAmount",
+  async (prop: any, thunk) => {
+    try {
+      const { data }: { data: any } = await axios.post(
+        `${conString}/auth/editUserBundleAmount`,
+        prop
+      );
+      return data;
+    } catch (err: any) {
+      return (
+        thunk.rejectWithValue(err.response.data.msg) || "Something went wrong"
+      );
+    }
+  }
+);
 
 const initialState: Obj = {
   user: null,
@@ -74,6 +121,8 @@ const initialState: Obj = {
   error: { type: "", msg: "", code: "" },
   afterRegistration: "",
   verification_status: false,
+  userBundleName: "",
+  userBundlePrice: "",
 };
 
 const userSlice = createSlice({
@@ -86,6 +135,7 @@ const userSlice = createSlice({
     },
     updateFormValues: (state: any, action: PayloadAction<any>) => {
       const { name, value } = action.payload;
+      console.log("called", name, value);
       state[name] = value;
     },
     logout: (state: any) => {
@@ -108,7 +158,7 @@ const userSlice = createSlice({
       state.firstName = "";
       state.password = "";
       state.confirmPass = "";
-      state.phoneNumber = "+234";
+      state.phoneNumber = "";
       state.cardNumber = "";
       state.cvv = "";
       state.promoCode = "";
@@ -144,6 +194,66 @@ const userSlice = createSlice({
       state.user = payload;
     });
     builder.addCase(verify.rejected, (state: any, { payload }) => {
+      state.loading = false;
+      state.error = {
+        type: "server_error",
+        msg: "Something went wrong. Please try again",
+        code: payload,
+      };
+    });
+
+    //Fetch Complete User Details
+    builder.addCase(fetchCompleteUserDetails.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(
+      fetchCompleteUserDetails.fulfilled,
+      (state: any, { payload }) => {
+        state.loading = false;
+        state.user = payload;
+      }
+    );
+    builder.addCase(
+      fetchCompleteUserDetails.rejected,
+      (state: any, { payload }) => {
+        state.loading = false;
+        state.error = {
+          type: "server_error",
+          msg: "Something went wrong. Please try again",
+          code: payload,
+        };
+      }
+    );
+
+    //Edit user subscription type
+    builder.addCase(setUserSubscription.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(
+      setUserSubscription.fulfilled,
+      (state: any, { payload }) => {
+        state.loading = false;
+        state.user = payload;
+      }
+    );
+    builder.addCase(setUserSubscription.rejected, (state: any, { payload }) => {
+      state.loading = false;
+      state.error = {
+        type: "server_error",
+        msg: "Something went wrong. Please try again",
+        code: payload,
+      };
+    });
+
+    //Edit user bundle
+    builder.addCase(setUserBundle.pending, (state: any) => {
+      state.loading = true;
+    });
+    builder.addCase(setUserBundle.fulfilled, (state: any, { payload }) => {
+      state.loading = false;
+      state.user = payload;
+    });
+    builder.addCase(setUserBundle.rejected, (state: any, { payload }) => {
       state.loading = false;
       state.error = {
         type: "server_error",
